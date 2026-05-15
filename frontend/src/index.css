@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer components {
+  .badge {
+    @apply inline-flex items-center whitespace-nowrap rounded border px-2.5 py-1 text-xs font-black capitalize;
+  }
+
+  .bank-panel {
+    @apply rounded border border-slate-200 bg-white p-5 shadow-sm;
+  }
+
+  .account-card {
+    @apply rounded border border-gray-200 bg-white p-6 shadow-sm;
+  }
+
+  .benefit-card {
+    @apply rounded border border-gray-200 bg-white p-6 shadow-sm;
+  }
+
+  .benefit-icon {
+    @apply grid h-12 w-12 place-items-center rounded bg-[#00843d] text-lg font-black text-white;
+  }
+
+  .brand-mark {
+    @apply grid h-12 w-12 place-items-center rounded bg-[#00843d] text-base font-black text-white shadow-sm;
+  }
+
+  .breadcrumb {
+    @apply text-sm font-bold text-slate-600;
+  }
+
+  .btn-outline {
+    @apply inline-flex min-h-11 items-center justify-center rounded border-2 border-[#00843d] bg-white px-5 py-2.5 text-sm font-black text-[#00843d] transition hover:bg-[#effaf3] focus:outline-none focus:ring-4 focus:ring-[#bce8cc];
+  }
+
+  .btn-white {
+    @apply inline-flex min-h-12 items-center justify-center rounded border-2 border-white bg-white px-6 py-3 text-sm font-black text-[#101010] shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-white/70;
+  }
+
+  .btn-primary {
+    @apply inline-flex min-h-12 items-center justify-center rounded bg-[#00843d] px-6 py-3 text-sm font-black text-white shadow-sm transition hover:bg-[#006f34] focus:outline-none focus:ring-4 focus:ring-[#bce8cc];
+  }
+
+  .case-card {
+    @apply flex items-start justify-between gap-4 rounded border border-slate-200 bg-[#f8fafc] p-4;
+  }
+
+  .cta-band {
+    @apply bg-[#101010];
+  }
+
+  .dashboard-heading {
+    @apply flex flex-col justify-between gap-4 sm:flex-row sm:items-end;
+  }
+
+  .faq-list {
+    @apply divide-y divide-slate-200 rounded border border-slate-200 bg-white;
+  }
+
+  .faq-row {
+    @apply flex min-h-16 w-full items-center justify-between gap-4 px-5 text-left text-base font-black text-[#101010] transition hover:bg-[#effaf3];
+  }
+
+  .hero-image {
+    @apply h-full w-full object-cover;
+  }
+
+  .hero-image-wrap {
+    @apply min-h-[340px] overflow-hidden rounded border border-white/40 bg-white shadow-2xl shadow-black/10 lg:min-h-[480px];
+  }
+
+  .hero-section {
+    @apply bg-[#effaf3];
+  }
+
+  .quick-link {
+    @apply flex min-h-16 items-center justify-between rounded border border-gray-200 bg-white px-4 text-sm font-black text-[#101010] shadow-sm transition hover:border-[#00843d] hover:text-[#00843d];
+  }
+
+  .section {
+    @apply py-14 sm:py-16;
+  }
+
+  .section-heading {
+    @apply text-3xl font-black leading-tight tracking-tight text-[#101010] sm:text-4xl;
+  }
+
+  .section-kicker {
+    @apply text-sm font-black uppercase tracking-[0.18em] text-[#00843d];
+  }
+
+  .service-tile {
+    @apply flex min-h-16 items-center justify-between rounded border border-gray-200 bg-white px-5 text-left text-sm font-black text-[#101010] shadow-sm transition hover:border-[#00843d] hover:text-[#00843d];
+  }
+
+  .stat-tile {
+    @apply rounded border border-white/15 bg-white/10 p-5;
+  }
+
+  .sync-pill {
+    @apply inline-flex min-h-11 items-center gap-2 rounded border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm;
+  }
+}
