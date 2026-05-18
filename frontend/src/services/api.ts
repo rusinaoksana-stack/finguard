@@ -25,7 +25,17 @@ export async function fetchDisputes() {
   return response.data.data;
 }
 
-export async function login(email: string) {
-  const response = await api.post("/auth/login", { email });
+export async function updateDisputeStatus(id: string, status: "open" | "resolved" | "escalated") {
+  const response = await api.patch(`/disputes/${id}/status`, { status });
+  return response.data.data;
+}
+
+export async function login(email: string, password: string) {
+  const response = await api.post("/auth/login", { email, password });
+  return response.data;
+}
+
+export async function register(name: string, email: string, password: string) {
+  const response = await api.post("/auth/register", { name, email, password });
   return response.data;
 }

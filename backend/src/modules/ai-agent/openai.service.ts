@@ -21,7 +21,7 @@ export async function analyzeTransaction(transaction: Transaction): Promise<AiAn
     temperature: 0.2,
   });
 
-  const text = Array.isArray(response.output) ? response.output.map((item) => item.content[0]?.text || "").join(" ") : "";
+  const text = response.output_text || "";
 
   return {
     score: 0,

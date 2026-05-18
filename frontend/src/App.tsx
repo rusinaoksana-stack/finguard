@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import heroImage from "./assets/finguard-hero-green.png";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
-import { fetchTransactions, fetchDisputes } from "./services/api";
+import { fetchTransactions, fetchDisputes, updateDisputeStatus as saveDisputeStatus } from "./services/api";
 
 type TransactionStatus = "pending" | "completed" | "review";
 type DisputeStatus = "open" | "resolved" | "escalated";
@@ -121,6 +121,41 @@ const serviceTiles = [
   "Contact support",
 ];
 
+const faqItems = [
+  {
+    question: "Can FinGuard AI work without the backend running?",
+    answer:
+      "Yes. The frontend keeps a demo mode available, so login, registration, dashboard cards, transactions, and disputes can still be reviewed while the API is offline.",
+  },
+  {
+    question: "How does the AI recommendation fit into the review process?",
+    answer:
+      "AI recommendations are shown as decision support. A reviewer can check the customer history, transaction details, and dispute context before taking any final action.",
+  },
+  {
+    question: "Can teams export transaction and dispute evidence?",
+    answer:
+      "The interface is prepared for export workflows, including transaction history, case notes, status changes, and evidence summaries for internal review.",
+  },
+];
+
+type AuthMode = "login" | "register";
+type TransactionFilter = "all" | TransactionStatus;
+
+type AuthFormState = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
+const initialAuthForm: AuthFormState = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
+
 function formatCurrency(amount: number, currency: string) {
   return new Intl.NumberFormat("en-IE", {
     style: "currency",
@@ -139,12 +174,20 @@ function formatTime(value: string) {
 }
 
 function App() {
-  const { user, login, logout } = useAuth();
+  const { user, login, register, logout } = useAuth();
   const socket = useSocket();
   const [transactions, setTransactions] = useState<Transaction[]>(demoTransactions);
   const [disputes, setDisputes] = useState<Dispute[]>(demoDisputes);
   const [lastEvent, setLastEvent] = useState("Monitoring is ready");
   const [isLoading, setIsLoading] = useState(false);
+  const [authMode, setAuthMode] = useState<AuthMode>("login");
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authForm, setAuthForm] = useState<AuthFormState>(initialAuthForm);
+  const [authError, setAuthError] = useState("");
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [transactionFilter, setTransactionFilter] = useState<TransactionFilter>("all");
+  const [transactionSearch, setTransactionSearch] = useState("");
+  const [selectedDisputeId, setSelectedDisputeId] = useState(demoDisputes[0]?.id ?? "");
 
   useEffect(() => {
     if (!user) return;
@@ -188,6 +231,133 @@ function App() {
     ];
   }, [transactions, disputes]);
 
+  const filteredTransactions = useMemo(() => {
+    const search = transactionSearch.trim().toLowerCase();
+
+    return transactions.filter((item) => {
+      const matchesStatus = transactionFilter === "all" || item.status === transactionFilter;
+      const matchesSearch =
+        !search ||
+        item.id.toLowerCase().includes(search) ||
+        item.description.toLowerCase().includes(search) ||
+        item.status.toLowerCase().includes(search);
+
+      return matchesStatus && matchesSearch;
+    });
+  }, [transactionFilter, transactionSearch, transactions]);
+
+  const selectedDispute = useMemo(() => {
+    return disputes.find((item) => item.id === selectedDisputeId) ?? disputes[0] ?? null;
+  }, [disputes, selectedDisputeId]);
+
+  const selectedTransaction = useMemo(() => {
+    if (!selectedDispute) return null;
+    return transactions.find((item) => item.id === selectedDispute.transactionId) ?? null;
+  }, [selectedDispute, transactions]);
+
+  const openAuth = (mode: AuthMode) => {
+    setAuthMode(mode);
+    setAuthError("");
+    setIsAuthOpen(true);
+  };
+
+  const updateAuthField = (field: keyof AuthFormState, value: string) => {
+    setAuthForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const handleAuthSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setAuthError("");
+
+    const email = authForm.email.trim();
+    const name = authForm.name.trim();
+
+    if (!email || !authForm.password) {
+      setAuthError("Please enter your email and password.");
+      return;
+    }
+
+    if (authMode === "register" && !name) {
+      setAuthError("Please enter your full name.");
+      return;
+    }
+
+    if (authForm.password.length < 6) {
+      setAuthError("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (authMode === "register" && authForm.password !== authForm.confirmPassword) {
+      setAuthError("Passwords do not match.");
+      return;
+    }
+
+    if (authMode === "login") {
+      await login({ email, password: authForm.password });
+    } else {
+      await register({ name, email, password: authForm.password });
+    }
+
+    setAuthForm(initialAuthForm);
+    setIsAuthOpen(false);
+  };
+
+  const updateDisputeStatus = async (status: DisputeStatus) => {
+    if (!selectedDispute) return;
+
+    try {
+      const updatedDispute = await saveDisputeStatus(selectedDispute.id, status);
+      setDisputes((current) => current.map((item) => (item.id === selectedDispute.id ? updatedDispute : item)));
+      setLastEvent(`${selectedDispute.reason} saved as ${status}`);
+    } catch {
+      setDisputes((current) =>
+        current.map((item) => (item.id === selectedDispute.id ? { ...item, status } : item)),
+      );
+      setLastEvent(`${selectedDispute.reason} marked as ${status} in demo mode`);
+    }
+  };
+
+  const downloadEvidence = () => {
+    const rows = [
+      ["Case ID", "Transaction ID", "Reason", "Status", "Amount", "Transaction status"],
+      ...disputes.map((item) => {
+        const transaction = transactions.find((txn) => txn.id === item.transactionId);
+        return [
+          item.id,
+          item.transactionId,
+          item.reason,
+          item.status,
+          transaction ? formatCurrency(transaction.amount, transaction.currency) : "Unknown",
+          transaction?.status ?? "Unknown",
+        ];
+      }),
+    ];
+    const csv = rows.map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "finguard-evidence.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+    setLastEvent("Evidence export downloaded");
+  };
+
+  const handleServiceClick = (service: string) => {
+    if (service === "Download statements") {
+      downloadEvidence();
+      return;
+    }
+
+    if (service === "Contact support") {
+      document.getElementById("support")?.scrollIntoView({ behavior: "smooth" });
+      setLastEvent("Support questions opened");
+      return;
+    }
+
+    document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" });
+    setLastEvent(`${service} selected`);
+  };
+
   return (
     <main className="min-h-screen bg-white text-[#101010]">
       <div className="h-2 bg-[#00843d]" />
@@ -223,7 +393,7 @@ function App() {
               Sign out
             </button>
           ) : (
-            <button className="btn-primary" onClick={login}>
+            <button className="btn-primary" onClick={() => openAuth("login")}>
               Log in
             </button>
           )}
@@ -242,8 +412,11 @@ function App() {
               clear, confident workflows.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <button className="btn-primary" onClick={login}>
+              <button className="btn-primary" onClick={() => openAuth("login")}>
                 Start demo
+              </button>
+              <button className="btn-white" onClick={() => openAuth("register")}>
+                Create account
               </button>
               <a className="btn-white" href="#features">
                 View features
@@ -324,7 +497,7 @@ function App() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {serviceTiles.map((item) => (
-                <button className="service-tile" key={item}>
+                <button className="service-tile" key={item} onClick={() => handleServiceClick(item)} type="button">
                   {item}
                   <span aria-hidden="true">›</span>
                 </button>
@@ -368,6 +541,31 @@ function App() {
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
             <section className="bank-panel">
+              <div className="mb-5 grid gap-3 lg:grid-cols-[1fr_auto]">
+                <label className="block">
+                  <span className="sr-only">Search transactions</span>
+                  <input
+                    className="control-input"
+                    onChange={(event) => setTransactionSearch(event.target.value)}
+                    placeholder="Search by transaction, status, or ID"
+                    type="search"
+                    value={transactionSearch}
+                  />
+                </label>
+                <div className="segmented-control" aria-label="Filter transactions by status">
+                  {(["all", "review", "pending", "completed"] as TransactionFilter[]).map((status) => (
+                    <button
+                      className={transactionFilter === status ? "segmented-option active" : "segmented-option"}
+                      key={status}
+                      onClick={() => setTransactionFilter(status)}
+                      type="button"
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="overflow-x-auto">
                 <table className="min-w-full text-left text-sm">
                   <thead>
@@ -379,7 +577,7 @@ function App() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {transactions.map((txn) => (
+                    {filteredTransactions.map((txn) => (
                       <tr key={txn.id}>
                         <td className="py-4 pr-4">
                           <p className="font-bold">{txn.description}</p>
@@ -394,22 +592,78 @@ function App() {
                     ))}
                   </tbody>
                 </table>
+                {filteredTransactions.length === 0 ? (
+                  <div className="py-10 text-center text-sm font-bold text-gray-500">
+                    No transactions match this search.
+                  </div>
+                ) : null}
               </div>
             </section>
 
             <aside className="bank-panel">
-              <h3 className="text-xl font-black">Dispute support</h3>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-xl font-black">Dispute support</h3>
+                  <p className="mt-1 text-sm text-gray-500">Open a case to review evidence and update status.</p>
+                </div>
+                <button className="btn-small" onClick={downloadEvidence} type="button">
+                  Export
+                </button>
+              </div>
               <div className="mt-5 space-y-3">
                 {disputes.map((item) => (
-                  <article className="case-card" key={item.id}>
+                  <button
+                    className={selectedDispute?.id === item.id ? "case-card selected" : "case-card"}
+                    key={item.id}
+                    onClick={() => setSelectedDisputeId(item.id)}
+                    type="button"
+                  >
                     <div>
                       <p className="font-bold">{item.reason}</p>
                       <p className="mt-1 text-sm text-slate-500">{item.transactionId}</p>
                     </div>
                     <span className={`badge ${statusStyles[item.status]}`}>{item.status}</span>
-                  </article>
+                  </button>
                 ))}
               </div>
+              {selectedDispute ? (
+                <div className="case-detail">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[#00843d]">Selected case</p>
+                    <h4 className="mt-2 text-lg font-black">{selectedDispute.reason}</h4>
+                    <p className="mt-1 text-sm text-gray-500">{selectedDispute.id}</p>
+                  </div>
+                  <dl className="mt-4 grid gap-3 text-sm">
+                    <div className="detail-row">
+                      <dt>Transaction</dt>
+                      <dd>{selectedDispute.transactionId}</dd>
+                    </div>
+                    <div className="detail-row">
+                      <dt>Amount</dt>
+                      <dd>
+                        {selectedTransaction
+                          ? formatCurrency(selectedTransaction.amount, selectedTransaction.currency)
+                          : "Unknown"}
+                      </dd>
+                    </div>
+                    <div className="detail-row">
+                      <dt>Current status</dt>
+                      <dd>{selectedDispute.status}</dd>
+                    </div>
+                  </dl>
+                  <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                    <button className="btn-small" onClick={() => updateDisputeStatus("open")} type="button">
+                      Open
+                    </button>
+                    <button className="btn-small" onClick={() => updateDisputeStatus("escalated")} type="button">
+                      Escalate
+                    </button>
+                    <button className="btn-small" onClick={() => updateDisputeStatus("resolved")} type="button">
+                      Resolve
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </aside>
           </div>
         </div>
@@ -422,19 +676,140 @@ function App() {
             <h2 className="section-heading">Clear answers for every case</h2>
           </div>
           <div className="faq-list">
-            {[
-              "Can FinGuard AI work without the backend running?",
-              "How does the AI recommendation fit into the review process?",
-              "Can teams export transaction and dispute evidence?",
-            ].map((item) => (
-              <button className="faq-row" key={item}>
-                {item}
-                <span>+</span>
-              </button>
+            {faqItems.map((item, index) => (
+              <article className="faq-item" key={item.question}>
+                <button
+                  aria-controls={`faq-answer-${index}`}
+                  aria-expanded={activeFaq === index}
+                  className="faq-row"
+                  onClick={() => setActiveFaq((current) => (current === index ? null : index))}
+                  type="button"
+                >
+                  <span>{item.question}</span>
+                  <span className="faq-icon" aria-hidden="true">
+                    {activeFaq === index ? "−" : "+"}
+                  </span>
+                </button>
+                {activeFaq === index ? (
+                  <div className="faq-answer" id={`faq-answer-${index}`}>
+                    <p>{item.answer}</p>
+                  </div>
+                ) : null}
+              </article>
             ))}
           </div>
         </div>
       </section>
+
+      {isAuthOpen ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
+          <section className="w-full max-w-md rounded border border-gray-200 bg-white p-5 shadow-2xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="section-kicker">{authMode === "login" ? "Secure access" : "New account"}</p>
+                <h2 className="mt-2 text-2xl font-black text-[#101010]">
+                  {authMode === "login" ? "Log in to FinGuard" : "Create your account"}
+                </h2>
+              </div>
+              <button
+                aria-label="Close auth form"
+                className="grid h-10 w-10 place-items-center rounded border border-gray-200 text-xl font-black text-gray-700 transition hover:bg-gray-50"
+                onClick={() => setIsAuthOpen(false)}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 rounded border border-gray-200 bg-gray-50 p-1">
+              <button
+                className={`rounded px-4 py-2 text-sm font-black ${
+                  authMode === "login" ? "bg-white text-[#00843d] shadow-sm" : "text-gray-600"
+                }`}
+                onClick={() => {
+                  setAuthMode("login");
+                  setAuthError("");
+                }}
+                type="button"
+              >
+                Log in
+              </button>
+              <button
+                className={`rounded px-4 py-2 text-sm font-black ${
+                  authMode === "register" ? "bg-white text-[#00843d] shadow-sm" : "text-gray-600"
+                }`}
+                onClick={() => {
+                  setAuthMode("register");
+                  setAuthError("");
+                }}
+                type="button"
+              >
+                Register
+              </button>
+            </div>
+
+            <form className="mt-5 space-y-4" onSubmit={handleAuthSubmit}>
+              {authMode === "register" ? (
+                <label className="block">
+                  <span className="text-sm font-bold text-gray-700">Full name</span>
+                  <input
+                    className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                    onChange={(event) => updateAuthField("name", event.target.value)}
+                    placeholder="Oksana Rusina"
+                    type="text"
+                    value={authForm.name}
+                  />
+                </label>
+              ) : null}
+
+              <label className="block">
+                <span className="text-sm font-bold text-gray-700">Email</span>
+                <input
+                  className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                  onChange={(event) => updateAuthField("email", event.target.value)}
+                  placeholder="you@example.com"
+                  type="email"
+                  value={authForm.email}
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-bold text-gray-700">Password</span>
+                <input
+                  className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                  onChange={(event) => updateAuthField("password", event.target.value)}
+                  placeholder="Minimum 6 characters"
+                  type="password"
+                  value={authForm.password}
+                />
+              </label>
+
+              {authMode === "register" ? (
+                <label className="block">
+                  <span className="text-sm font-bold text-gray-700">Confirm password</span>
+                  <input
+                    className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                    onChange={(event) => updateAuthField("confirmPassword", event.target.value)}
+                    placeholder="Repeat password"
+                    type="password"
+                    value={authForm.confirmPassword}
+                  />
+                </label>
+              ) : null}
+
+              {authError ? (
+                <p className="rounded border border-green-200 bg-green-50 px-4 py-3 text-sm font-bold text-green-900">
+                  {authError}
+                </p>
+              ) : null}
+
+              <button className="btn-primary w-full" type="submit">
+                {authMode === "login" ? "Log in" : "Create account"}
+              </button>
+            </form>
+          </section>
+        </div>
+      ) : null}
 
       <footer className="bg-[#101010] text-white">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">

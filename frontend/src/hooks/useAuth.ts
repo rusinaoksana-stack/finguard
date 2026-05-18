@@ -1,11 +1,31 @@
 import { useEffect, useState } from "react";
-import { login as requestLogin, setAccessToken } from "../services/api";
+import { login as requestLogin, register as requestRegister, setAccessToken } from "../services/api";
 
 const STORAGE_KEY = "finguard_user";
 const TOKEN_KEY = "finguard_token";
+const REGISTERED_USERS_KEY = "finguard_registered_users";
+
+type AuthUser = {
+  name: string;
+  role: string;
+  email?: string;
+};
+
+type LoginInput = {
+  email: string;
+  password: string;
+};
+
+type RegisterInput = LoginInput & {
+  name: string;
+};
+
+type StoredAccount = RegisterInput & {
+  role: string;
+};
 
 export function useAuth() {
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -18,19 +38,61 @@ export function useAuth() {
     }
   }, []);
 
-  const login = async () => {
-    const demoUser = { name: "FinGuard Admin", role: "admin" };
+  const persistUser = (nextUser: AuthUser, token?: string) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+      setAccessToken(token);
+    }
+    setUser(nextUser);
+  };
+
+  const getRegisteredUsers = (): StoredAccount[] => {
+    const stored = localStorage.getItem(REGISTERED_USERS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  };
+
+  const login = async ({ email, password }: LoginInput) => {
+    const registeredUser = getRegisteredUsers().find(
+      (account) => account.email.toLowerCase() === email.toLowerCase() && account.password === password,
+    );
 
     try {
-      const data = await requestLogin("compliance@finguard.ai");
-      localStorage.setItem(TOKEN_KEY, data.accessToken);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
-      setAccessToken(data.accessToken);
-      setUser(data.user);
+      const data = await requestLogin(email, password);
+      persistUser(data.user, data.accessToken);
     } catch {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(demoUser));
-      setUser(demoUser);
+      if (registeredUser) {
+        persistUser({ name: registeredUser.name, role: registeredUser.role, email: registeredUser.email });
+        return;
+      }
+
+      persistUser({
+        name: email.split("@")[0] || "FinGuard User",
+        role: "demo user",
+        email,
+      });
     }
+  };
+
+  const register = async ({ name, email, password }: RegisterInput) => {
+    const accounts = getRegisteredUsers();
+    const normalizedEmail = email.toLowerCase();
+    const nextAccounts = accounts.filter((account) => account.email.toLowerCase() !== normalizedEmail);
+    const nextUser = { name, role: "customer", email: normalizedEmail };
+
+    try {
+      const data = await requestRegister(name, normalizedEmail, password);
+      persistUser(data.user, data.accessToken);
+      return;
+    } catch {
+      // Keep the demo usable when the backend or database is not running.
+    }
+
+    localStorage.setItem(
+      REGISTERED_USERS_KEY,
+      JSON.stringify([...nextAccounts, { name, email: normalizedEmail, password, role: "customer" }]),
+    );
+    persistUser(nextUser);
   };
 
   const logout = () => {
@@ -40,5 +102,5 @@ export function useAuth() {
     setUser(null);
   };
 
-  return { user, login, logout };
+  return { user, login, register, logout };
 }
