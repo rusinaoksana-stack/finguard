@@ -4,8 +4,17 @@ import { prisma } from "../../lib/prisma";
 
 const router = Router();
 
-router.get("/", authMiddleware, async (_req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
+  const user = (req as any).user;
   const transactions = await prisma.transaction.findMany({
+    where: {
+      account: {
+        userId: user.id,
+      },
+    },
+    include: {
+      account: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -17,6 +26,8 @@ router.get("/", authMiddleware, async (_req, res) => {
       status: item.status,
       createdAt: item.createdAt.toISOString(),
       description: item.description,
+      accountId: item.accountId,
+      accountNumber: item.account.accountNumber,
     })),
   });
 });

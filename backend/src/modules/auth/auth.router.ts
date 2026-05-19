@@ -7,6 +7,10 @@ import { prisma } from "../../lib/prisma";
 
 const router = Router();
 
+function createAccountNumber() {
+  return `FG-${Math.floor(10000000 + Math.random() * 90000000)}`;
+}
+
 function createToken(user: { id: string; email: string; role: string }) {
   return jwt.sign({ sub: user.id, email: user.email, role: user.role }, config.JWT_SECRET, {
     expiresIn: "8h",
@@ -31,6 +35,14 @@ router.post("/register", async (req, res) => {
       name,
       passwordHash,
       role: "user",
+      accounts: {
+        create: {
+          accountNumber: createAccountNumber(),
+          balance: 0,
+          currency: "EUR",
+          status: "active",
+        },
+      },
     },
   });
   const token = createToken(user);

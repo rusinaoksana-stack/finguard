@@ -1,4 +1,4 @@
-# FinGuard AI
+# FinGuard
 
 Automated FinTech dispute and compliance platform scaffold.
 

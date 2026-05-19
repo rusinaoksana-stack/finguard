@@ -25,6 +25,10 @@ body {
     @apply inline-flex items-center whitespace-nowrap rounded border px-2.5 py-1 text-xs font-black capitalize;
   }
 
+  .site-header {
+    @apply sticky top-0 z-30 border-b border-slate-200 bg-white/95 shadow-sm shadow-black/5 backdrop-blur;
+  }
+
   .bank-panel {
     @apply rounded border border-slate-200 bg-white p-5 shadow-sm;
   }
@@ -33,12 +37,20 @@ body {
     @apply rounded border border-gray-200 bg-white p-6 shadow-sm;
   }
 
+  .account-summary-card {
+    @apply rounded border border-slate-200 bg-white p-5 shadow-sm;
+  }
+
+  .app-shell {
+    @apply bg-[#f4f7f5];
+  }
+
   .benefit-card {
     @apply rounded border border-gray-200 bg-white p-6 shadow-sm;
   }
 
   .benefit-icon {
-    @apply grid h-12 w-12 place-items-center rounded bg-[#00843d] text-lg font-black text-white;
+    @apply mx-auto grid h-12 w-12 place-items-center rounded bg-[#00843d] text-lg font-black text-white;
   }
 
   .brand-mark {
@@ -137,8 +149,68 @@ body {
     @apply bg-[#effaf3];
   }
 
+  .language-select-wrap {
+    @apply -my-1;
+  }
+
+  .language-select {
+    @apply min-h-9 rounded border border-slate-200 bg-white px-3 text-xs font-black text-[#00843d] shadow-sm outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc];
+  }
+
+  .mobile-menu-trigger {
+    @apply grid h-12 w-12 place-items-center rounded border border-slate-200 bg-white p-3 focus:outline-none focus:ring-4 focus:ring-[#bce8cc];
+  }
+
+  .mobile-menu-trigger span {
+    @apply block h-0.5 w-5 rounded bg-[#101010];
+  }
+
+  .mobile-nav-link {
+    @apply flex min-h-12 items-center border-b border-slate-100 text-sm font-black text-[#101010];
+  }
+
   .quick-link {
     @apply flex min-h-16 items-center justify-between rounded border border-gray-200 bg-white px-4 text-sm font-black text-[#101010] shadow-sm transition hover:border-[#00843d] hover:text-[#00843d];
+  }
+
+  .revolut-action {
+    @apply flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl bg-white/15 px-3 text-center text-sm font-black text-white transition hover:bg-white/25 focus:outline-none focus:ring-4 focus:ring-white/30;
+  }
+
+  .revolut-action span {
+    @apply grid h-8 w-8 place-items-center rounded-full bg-white text-[#00843d];
+  }
+
+  .revolut-balance-card {
+    @apply rounded-[1.75rem] bg-[#00843d] p-6 shadow-2xl shadow-emerald-900/20 sm:p-8;
+  }
+
+  .revolut-panel {
+    @apply rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm;
+  }
+
+  .revolut-side-card {
+    @apply rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm;
+  }
+
+  .virtual-card {
+    @apply min-h-44 rounded-[1.5rem] bg-[#101010] p-5 text-sm font-black text-white shadow-xl shadow-black/20;
+  }
+
+  .mini-metric {
+    @apply rounded-2xl bg-[#f4f7f5] p-4;
+  }
+
+  .mini-metric p {
+    @apply text-xs font-black uppercase tracking-[0.12em] text-slate-500;
+  }
+
+  .mini-metric strong {
+    @apply mt-2 block text-xl font-black text-[#101010];
+  }
+
+  .preference-row {
+    @apply flex items-center justify-between gap-4 rounded border border-slate-200 bg-white p-4;
   }
 
   .section {
@@ -175,5 +247,65 @@ body {
 
   .sync-pill {
     @apply inline-flex min-h-11 items-center gap-2 rounded border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm;
+  }
+
+  .system-strip {
+    @apply grid gap-3 rounded border border-emerald-200 bg-white p-3 text-sm font-black text-emerald-900 shadow-sm sm:grid-cols-3;
+  }
+
+  .system-strip div {
+    @apply flex items-center gap-2;
+  }
+
+  .system-dot {
+    @apply h-2.5 w-2.5 rounded-full bg-[#00843d] shadow-[0_0_0_4px_rgba(0,132,61,0.12)];
+  }
+
+  .toast {
+    @apply fixed bottom-5 right-5 z-50 flex w-[min(22rem,calc(100vw-2rem))] items-start justify-between gap-4 rounded border bg-white p-4 shadow-2xl shadow-black/20;
+  }
+
+  .toast-success {
+    @apply border-emerald-200;
+  }
+
+  .toast-info {
+    @apply border-slate-200;
+  }
+
+  .toast-warning {
+    @apply border-yellow-200;
+  }
+
+  .toast-close {
+    @apply rounded border border-slate-200 px-2 py-1 text-xs font-black text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-[#bce8cc];
+  }
+
+  .toggle-input {
+    @apply h-5 w-5 accent-[#00843d];
+  }
+
+  .user-avatar {
+    @apply grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#00843d] text-sm font-black text-white;
+  }
+
+  .user-avatar.large {
+    @apply h-12 w-12 text-base;
+  }
+
+  .user-menu {
+    @apply absolute right-0 top-14 z-40 w-80 overflow-hidden rounded border border-slate-200 bg-white text-left shadow-2xl shadow-black/15;
+  }
+
+  .user-menu-item {
+    @apply flex min-h-11 w-full items-center rounded px-3 text-left text-sm font-black text-[#101010] transition hover:bg-[#effaf3] focus:outline-none focus:ring-4 focus:ring-[#bce8cc];
+  }
+
+  .user-menu-item.danger {
+    @apply text-[#00843d] hover:bg-green-50;
+  }
+
+  .user-menu-trigger {
+    @apply grid h-12 w-12 place-items-center rounded-full border-2 border-[#00843d] bg-white transition hover:bg-[#effaf3] focus:outline-none focus:ring-4 focus:ring-[#bce8cc];
   }
 }

@@ -20,8 +20,18 @@ export async function fetchTransactions() {
   return response.data.data;
 }
 
+export async function fetchAccounts() {
+  const response = await api.get("/accounts");
+  return response.data.data;
+}
+
 export async function fetchDisputes() {
   const response = await api.get("/disputes");
+  return response.data.data;
+}
+
+export async function createDispute(transactionId: string, reason: string) {
+  const response = await api.post("/disputes", { transactionId, reason });
   return response.data.data;
 }
 
