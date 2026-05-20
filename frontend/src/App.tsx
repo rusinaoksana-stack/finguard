@@ -8,6 +8,8 @@ import {
   fetchDisputes,
   createDispute,
   updateDisputeStatus as saveDisputeStatus,
+  sendSupportChatMessage,
+  SupportChatMessage,
 } from "./services/api";
 
 type TransactionStatus = "pending" | "completed" | "review";
@@ -400,6 +402,16 @@ const content = {
       kicker: "Need help?",
       title: "Clear answers for every case",
     },
+    chat: {
+      title: "FinGuard assistant",
+      subtitle: "",
+      welcome: "Hi, how I can help you ?",
+      placeholder: "Ask about payments, disputes, or account monitoring...",
+      send: "Send",
+      thinking: "Assistant is checking this...",
+      error: "The assistant is temporarily unavailable. Please try again.",
+      close: "Close support chat",
+    },
     footer: {
       text: "A React banking frontend for secure account monitoring, dispute support, and customer protection.",
       banking: "Banking",
@@ -606,6 +618,17 @@ const content = {
     support: {
       kicker: "Потрібна допомога?",
       title: "Зрозумілі відповіді для кожної справи",
+    },
+    chat: {
+      title: "Асистент FinGuard",
+      subtitle: "",
+      welcome:
+        "Вітаю, я допоможу з акаунтами, транзакціями, заявками на перевірку та роботою кабінету FinGuard.",
+      placeholder: "Запитайте про платежі, спори або моніторинг акаунту...",
+      send: "Надіслати",
+      thinking: "Асистент перевіряє запит...",
+      error: "Асистент тимчасово недоступний. Спробуйте ще раз.",
+      close: "Закрити чат підтримки",
     },
     footer: {
       text: "React-банкінг для моніторингу акаунтів, підтримки заявок і захисту клієнтів.",
@@ -987,6 +1010,48 @@ function formatTime(value: string) {
   }).format(new Date(value));
 }
 
+const localSupportKnowledgeBase = [
+  { patterns: [/log ?in|sign ?in|access/i], answer: "To sign in, use the Log in button in the header and enter your email and password. After login, your cabinet shows accounts, transactions, and review cases." },
+  { patterns: [/register|create.*account|new account/i], answer: "To create an account, choose Create account, enter your name, email, and password, then submit the registration form." },
+  { patterns: [/forgot|reset.*password|change.*password/i], answer: "For password issues, use the login screen and request support if reset is unavailable in the demo. Never share your password or one-time codes in chat." },
+  { patterns: [/delete.*account|remove.*account|close.*account|cancel.*account|account.*delete|account.*close/i], answer: "To close or delete your account, open your profile menu, go to Settings, and contact support for final verification. For security, FinGuard does not delete banking data from chat." },
+  { patterns: [/update.*profile|change.*name|change.*email|personal details/i], answer: "Open the profile menu and go to Settings to review your personal information. Sensitive profile changes may require support verification." },
+  { patterns: [/language|translate|україн|русск|spanish|italian/i], answer: "Use the language selector in the header to switch the interface language. FinGuard keeps the selected language for this browser." },
+  { patterns: [/balance|available funds|how much money/i], answer: "Your available balance is shown in My cabinet on the main account card. Account details are loaded from the connected banking data." },
+  { patterns: [/transaction history|transactions|payment activity|activity/i], answer: "Open Transactions in your cabinet to review payment activity, amounts, dates, statuses, and transaction IDs." },
+  { patterns: [/search.*transaction|find.*transaction|transaction id/i], answer: "Use the search field in Transactions to find activity by transaction ID, status, or description." },
+  { patterns: [/statement|download.*statement|bank statement/i], answer: "Use Download statements or the export tools in the dashboard to prepare account and transaction records for review." },
+  { patterns: [/cancel.*payment|stop.*payment|void.*payment|reverse.*payment|payment.*cancel/i], answer: "To cancel a payment, open Transactions, find the payment, and check its status. Pending payments can be reviewed or reported as a payment issue. Completed payments cannot usually be cancelled, but you can open a dispute or contact support for review." },
+  { patterns: [/failed.*transfer|transfer.*failed|payment failed|declined/i], answer: "If a transfer failed or was declined, check the transaction status first. Confirm the account details, available balance, and card or transfer limits before trying again." },
+  { patterns: [/duplicate|charged twice|double charge|same payment/i], answer: "For a duplicate charge, open Transactions, select the duplicate payment, and create a review case with the reason Duplicate payment." },
+  { patterns: [/dispute|chargeback|refund|payment issue|open.*case/i], answer: "To dispute a payment, open Review cases, choose the transaction, add a short reason, and submit the case for review." },
+  { patterns: [/lost.*card|stolen.*card|freeze.*card|block.*card/i], answer: "If your card is lost or stolen, freeze or block it immediately from Cards if available, then contact support for replacement and security review." },
+  { patterns: [/virtual card|digital card|card details/i], answer: "The virtual card panel in your cabinet shows secure online payment readiness. Use Cards to manage digital card access and limits." },
+  { patterns: [/card limit|spending limit|limit/i], answer: "Card and transfer limits are usually managed from Cards or Settings. Some limit changes may require additional verification." },
+  { patterns: [/fee|fees|charge|pricing/i], answer: "Fees depend on the account, card, and payment type. Check the transaction details or contact support for a full fee breakdown." },
+  { patterns: [/fraud|suspicious|unknown merchant|unauthorized|security alert/i], answer: "If you see suspicious activity, open the transaction, create a review case, and contact support. Do not share passwords, card numbers, or one-time codes." },
+  { patterns: [/locked|blocked|cannot access|account blocked/i], answer: "If your account is locked, contact support for identity verification. This protects your account from unauthorized access." },
+  { patterns: [/notification|alert|email alert|push/i], answer: "Open Settings from the profile menu to manage alerts, monthly summaries, and security notifications." },
+  { patterns: [/export|evidence|csv|audit/i], answer: "Use Export in the dispute support area to download evidence, transaction details, and case status information for review." },
+  { patterns: [/contact|email|human|agent|support/i], answer: "For direct support, use Contact info in the header or email support@finguard.app." },
+  { patterns: [/payment status|pending|completed|review status/i], answer: "Payment status is shown in Transactions. Pending means still processing, Completed means settled, and Review means it may need manual checking." },
+  { patterns: [/add money|top up|deposit/i], answer: "Use Add money in Quick actions to start a top-up flow. In this demo, the action is prepared as part of the banking dashboard experience." },
+  { patterns: [/send money|transfer money|make transfer/i], answer: "Use Transfer in Quick actions to start a payment flow. Always check recipient details carefully before confirming a transfer." },
+  { patterns: [/currency|exchange|foreign|international/i], answer: "International payments and currency exchange may include rates and fees. Review the transaction details before confirming." },
+  { patterns: [/subscription|direct debit|recurring payment/i], answer: "For subscriptions or direct debits, check Transactions for recurring activity. To stop future payments, contact the merchant and report the payment if needed." },
+  { patterns: [/how long|processing time|pending time/i], answer: "Processing time depends on the payment type. Pending card payments may settle or reverse automatically, while bank transfers can take longer." },
+  { patterns: [/safe|secure|privacy|data|gdpr/i], answer: "FinGuard is designed around secure account monitoring and review workflows. Never share passwords, full card numbers, or verification codes in chat." },
+];
+
+function createLocalSupportReply(message: string) {
+  const text = message.toLowerCase();
+  const matchedEntry = localSupportKnowledgeBase.find((entry) =>
+    entry.patterns.some((pattern) => pattern.test(text)),
+  );
+
+  return matchedEntry?.answer ?? "I can help you with FinGuard accounts, transactions, disputed payments, review cases, and profile settings.";
+}
+
 function App() {
   const { user, login, register, logout } = useAuth();
   const socket = useSocket();
@@ -1006,6 +1071,11 @@ function App() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<SupportChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState("");
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [chatError, setChatError] = useState("");
   const [disputeForm, setDisputeForm] = useState(initialDisputeForm);
   const [disputeError, setDisputeError] = useState("");
   const [language, setLanguage] = useState<Language>(() => {
@@ -1249,6 +1319,39 @@ function App() {
     showToast(c.toast.exportTitle, c.toast.exportMessage);
   };
 
+  const openSupportChat = () => {
+    setIsChatOpen(true);
+    setChatError("");
+  };
+
+  const submitChatMessage = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const content = chatInput.trim();
+    if (!content || isChatLoading) return;
+
+    const nextMessages: SupportChatMessage[] = [...chatMessages, { role: "user", content }];
+    setChatMessages(nextMessages);
+    setChatInput("");
+    setChatError("");
+    setIsChatLoading(true);
+
+    try {
+      const { reply } = await sendSupportChatMessage(nextMessages);
+      setChatMessages((current) => [...current, { role: "assistant", content: reply }]);
+    } catch {
+      setChatMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          content: createLocalSupportReply(content),
+        },
+      ]);
+    } finally {
+      setIsChatLoading(false);
+    }
+  };
+
   const handleServiceClick = (service: string) => {
     if (service === c.serviceTiles[4]) {
       downloadEvidence();
@@ -1256,9 +1359,8 @@ function App() {
     }
 
     if (service === c.serviceTiles[5]) {
-      document.getElementById("support")?.scrollIntoView({ behavior: "smooth" });
+      openSupportChat();
       setLastEvent("Support questions opened");
-      showToast(c.toast.supportTitle, c.toast.supportMessage, "info");
       return;
     }
 
@@ -1287,7 +1389,9 @@ function App() {
                 ))}
               </select>
             </label>
-            <span>{c.help}</span>
+            <button className="font-bold" onClick={openSupportChat} type="button">
+              {c.help}
+            </button>
             <a href="#footer">{c.contact}</a>
           </div>
         </div>
@@ -2000,6 +2104,50 @@ function App() {
           </div>
         </div>
       </section>
+
+      {isChatOpen ? (
+        <section className="support-chat" aria-label={c.chat.title}>
+          <div className="support-chat-header">
+            <div>
+              {c.chat.subtitle ? (
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#AEC3B0]">{c.chat.subtitle}</p>
+              ) : null}
+              <h2 className="mt-1 text-xl font-black text-white">{c.chat.title}</h2>
+            </div>
+            <button
+              aria-label={c.chat.close}
+              className="support-chat-close"
+              onClick={() => setIsChatOpen(false)}
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="support-chat-body">
+            <div className="chat-bubble assistant">{c.chat.welcome}</div>
+            {chatMessages.map((message, index) => (
+              <div className={`chat-bubble ${message.role}`} key={`${message.role}-${index}`}>
+                {message.content}
+              </div>
+            ))}
+            {isChatLoading ? <div className="chat-bubble assistant muted">{c.chat.thinking}</div> : null}
+            {chatError ? <p className="chat-error">{chatError}</p> : null}
+          </div>
+
+          <form className="support-chat-form" onSubmit={submitChatMessage}>
+            <input
+              className="support-chat-input"
+              onChange={(event) => setChatInput(event.target.value)}
+              placeholder={c.chat.placeholder}
+              value={chatInput}
+            />
+            <button className="support-chat-send" disabled={!chatInput.trim() || isChatLoading} type="submit">
+              {c.chat.send}
+            </button>
+          </form>
+        </section>
+      ) : null}
 
       {isSettingsOpen && user ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">

@@ -31,3 +31,8 @@ export interface AiAnalysisResponse {
   riskLabel: string;
   recommendation: string;
 }
+
+export interface SupportChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}

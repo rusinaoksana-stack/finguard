@@ -49,3 +49,13 @@ export async function register(name: string, email: string, password: string) {
   const response = await api.post("/auth/register", { name, email, password });
   return response.data;
 }
+
+export type SupportChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export async function sendSupportChatMessage(messages: SupportChatMessage[]) {
+  const response = await api.post("/support/chat", { messages });
+  return response.data.data as { reply: string };
+}
