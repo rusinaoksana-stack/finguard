@@ -106,12 +106,12 @@ const demoDisputes: Dispute[] = [
 ];
 
 const statusStyles: Record<TransactionStatus | DisputeStatus, string> = {
-  completed: "border-emerald-200 bg-emerald-50 text-emerald-800",
-  pending: "border-gray-200 bg-gray-50 text-gray-800",
-  review: "border-green-200 bg-green-50 text-green-800",
-  open: "border-green-200 bg-green-50 text-green-800",
-  resolved: "border-emerald-200 bg-emerald-50 text-emerald-800",
-  escalated: "border-gray-300 bg-gray-100 text-gray-900",
+  completed: "border-[#AEC3B0] bg-[#E3EED4] text-[#375534]",
+  pending: "border-[#AEC3B0] bg-white text-[#375534]",
+  review: "border-[#6B9071] bg-[#E3EED4] text-[#0F2A1D]",
+  open: "border-[#6B9071] bg-[#E3EED4] text-[#0F2A1D]",
+  resolved: "border-[#AEC3B0] bg-[#E3EED4] text-[#375534]",
+  escalated: "border-[#375534] bg-[#AEC3B0] text-[#0F2A1D]",
 };
 
 const benefits = [
@@ -214,9 +214,15 @@ const content = {
   en: {
     topNav: ["Personal", "Business", "Support"],
     help: "Help centre",
-    contact: "Contact us",
+    contact: "Contact info",
     tagline: "Secure banking intelligence",
     signedIn: "Signed in as",
+    publicNav: {
+      personal: "Personal",
+      business: "Business",
+      kids: "Kids & Teens",
+      company: "Company",
+    },
     nav: {
       accounts: "Accounts",
       features: "Features",
@@ -277,7 +283,7 @@ const content = {
     },
     hero: {
       breadcrumb: "Home / Accounts / Protection",
-      title: "Keep every account safer with AI-powered dispute protection",
+      title: "Automated dispute protection for modern banking",
       text:
         "FinGuard helps digital banking teams spot risky activity, manage disputes, and prepare evidence with clear, confident workflows.",
       startDemo: "Start demo",
@@ -404,6 +410,7 @@ const content = {
       helpCentre: "Help centre",
       security: "Security",
       contact: "Contact",
+      email: "support@finguard.app",
     },
     benefits,
     quickLinks,
@@ -414,9 +421,15 @@ const content = {
   uk: {
     topNav: ["Приватним клієнтам", "Бізнесу", "Підтримка"],
     help: "Центр допомоги",
-    contact: "Звʼязатися з нами",
+    contact: "Контактна інформація",
     tagline: "Безпечна банківська аналітика",
     signedIn: "Вхід виконано як",
+    publicNav: {
+      personal: "Приватним клієнтам",
+      business: "Бізнесу",
+      kids: "Дітям і підліткам",
+      company: "Компанія",
+    },
     nav: {
       accounts: "Акаунти",
       features: "Можливості",
@@ -477,7 +490,7 @@ const content = {
     },
     hero: {
       breadcrumb: "Головна / Акаунти / Захист",
-      title: "Захищайте кожен акаунт за допомогою AI-перевірки платежів",
+      title: "Автоматизований захист спорів для сучасного банкінгу",
       text:
         "FinGuard допомагає банківським командам виявляти ризикову активність, керувати заявками та готувати докази в зрозумілому робочому процесі.",
       startDemo: "Запустити демо",
@@ -604,6 +617,7 @@ const content = {
       helpCentre: "Центр допомоги",
       security: "Безпека",
       contact: "Контакти",
+      email: "support@finguard.app",
     },
     benefits: [
       {
@@ -667,9 +681,15 @@ const localizedContent: Record<Language, Content> = {
     ...content.en,
     topNav: ["Личный", "Бизнес", "Поддержка"],
     help: "Центр помощи",
-    contact: "Связаться",
+    contact: "Контактная информация",
     tagline: "Безопасная банковская аналитика",
     signedIn: "Вход выполнен как",
+    publicNav: {
+      personal: "Личный",
+      business: "Бизнес",
+      kids: "Дети и подростки",
+      company: "Компания",
+    },
     nav: {
       accounts: "Счета",
       features: "Возможности",
@@ -758,9 +778,15 @@ const localizedContent: Record<Language, Content> = {
     ...content.en,
     topNav: ["Personal", "Empresa", "Soporte"],
     help: "Centro de ayuda",
-    contact: "Contacto",
+    contact: "Información de contacto",
     tagline: "Inteligencia bancaria segura",
     signedIn: "Sesión iniciada como",
+    publicNav: {
+      personal: "Personal",
+      business: "Business",
+      kids: "Kids & Teens",
+      company: "Company",
+    },
     nav: {
       accounts: "Cuentas",
       features: "Funciones",
@@ -849,9 +875,15 @@ const localizedContent: Record<Language, Content> = {
     ...content.en,
     topNav: ["Personale", "Business", "Supporto"],
     help: "Centro assistenza",
-    contact: "Contatti",
+    contact: "Info contatto",
     tagline: "Intelligenza bancaria sicura",
     signedIn: "Accesso come",
+    publicNav: {
+      personal: "Personal",
+      business: "Business",
+      kids: "Kids & Teens",
+      company: "Company",
+    },
     nav: {
       accounts: "Conti",
       features: "Funzioni",
@@ -1236,20 +1268,15 @@ function App() {
   };
 
   return (
-    <main className="min-h-screen bg-white text-[#101010]">
-      <div className="h-2 bg-[#00843d]" />
+    <main className="min-h-screen bg-white text-[#0F2A1D]">
+      <div className="h-2 bg-[#375534]" />
       <header className="site-header">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-xs font-semibold text-slate-600 sm:px-6 lg:px-8">
-          <div className="flex gap-5">
-            {c.topNav.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
-          </div>
-          <div className="hidden gap-5 sm:flex">
+        <div className="mx-auto flex max-w-7xl justify-end px-4 py-1.5 text-sm font-bold text-[#375534] sm:px-6 lg:px-8">
+          <div className="hidden items-center gap-7 sm:flex">
             <label className="language-select-wrap">
               <span className="sr-only">Language</span>
               <select
-                className="language-select"
+                className="language-select language-select-inline"
                 onChange={(event) => setLanguage(event.target.value as Language)}
                 value={language}
               >
@@ -1261,28 +1288,36 @@ function App() {
               </select>
             </label>
             <span>{c.help}</span>
-            <span>{c.contact}</span>
+            <a href="#footer">{c.contact}</a>
           </div>
         </div>
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="brand-mark">FG</div>
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-4 py-3 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8 lg:py-3.5">
+          <div className="brand-lockup lg:-translate-x-[30px] lg:justify-self-start">
+            <div className="brand-mark brand-mark-header">FG</div>
             <div>
-              <h1 className="text-xl font-black tracking-tight">FinGuard</h1>
-              <p className="text-xs font-semibold text-slate-500">
+              <h1 className="text-3xl font-black tracking-tight sm:text-4xl">FinGuard</h1>
+              <p className="text-base font-bold text-[#6B9071] sm:text-lg">
                 {user ? `${c.signedIn} ${user.name}` : c.tagline}
               </p>
             </div>
           </div>
-          <nav className="hidden items-center gap-7 text-sm font-bold text-[#101010] lg:flex">
-            {!user ? <a href="#accounts">{c.nav.accounts}</a> : null}
-            {!user ? <a href="#features">{c.nav.features}</a> : null}
-            {!user ? <a href="#benefits">{c.nav.benefits}</a> : null}
-            <a href={user ? "#cabinet" : "#dashboard"}>{user ? c.nav.cabinet : c.nav.dashboard}</a>
-            {user ? <a href="#dashboard">{c.dashboard.transactions}</a> : null}
-            <a href="#support">{c.nav.support}</a>
+          <nav className="hidden items-center gap-9 text-base font-semibold text-[#0F2A1D] xl:gap-11 xl:text-lg lg:flex lg:translate-x-[-20px] lg:justify-self-center">
+            {user ? (
+              <>
+                <a className="header-nav-link" href="#cabinet">{c.nav.cabinet}</a>
+                <a className="header-nav-link" href="#dashboard">{c.dashboard.transactions}</a>
+                <a className="header-nav-link" href="#support">{c.nav.support}</a>
+              </>
+            ) : (
+              <>
+                <a className="header-nav-link" href="#accounts">{c.publicNav.personal}</a>
+                <a className="header-nav-link" href="#features">{c.publicNav.business}</a>
+                <a className="header-nav-link" href="#benefits">{c.publicNav.kids}</a>
+                <a className="header-nav-link" href="#footer">{c.publicNav.company}</a>
+              </>
+            )}
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 lg:justify-self-end">
             <button
               aria-expanded={isMobileMenuOpen}
               aria-label="Open mobile navigation"
@@ -1309,15 +1344,15 @@ function App() {
 
                 {isUserMenuOpen ? (
                   <div className="user-menu" role="menu">
-                    <div className="border-b border-slate-200 p-4">
+                    <div className="border-b border-[#AEC3B0] p-4">
                       <div className="flex items-center gap-3">
                         <span className="user-avatar large">{userInitials}</span>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-black text-[#101010]">{user.name}</p>
-                          <p className="truncate text-xs font-semibold text-slate-500">{user.email ?? "Signed in"}</p>
+                          <p className="truncate text-sm font-black text-[#0F2A1D]">{user.name}</p>
+                          <p className="truncate text-xs font-semibold text-[#6B9071]">{user.email ?? "Signed in"}</p>
                         </div>
                       </div>
-                      <div className="mt-3 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-emerald-800">
+                      <div className="mt-3 rounded border border-[#AEC3B0] bg-[#E3EED4] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#375534]">
                         {user.role}
                       </div>
                     </div>
@@ -1358,7 +1393,7 @@ function App() {
                 ) : null}
               </div>
             ) : (
-              <button className="btn-primary" onClick={() => openAuth("login")}>
+              <button className="btn-primary header-login-button" onClick={() => openAuth("login")}>
                 {c.auth.login}
               </button>
             )}
@@ -1366,7 +1401,7 @@ function App() {
         </div>
 
         {isMobileMenuOpen ? (
-          <nav className="border-t border-slate-200 bg-white px-4 py-3 lg:hidden">
+          <nav className="border-t border-[#AEC3B0] bg-white px-4 py-3 lg:hidden">
             <label className="mb-3 block sm:hidden">
               <span className="sr-only">Language</span>
               <select
@@ -1382,16 +1417,18 @@ function App() {
               </select>
             </label>
             {[
-              ...(!user
+              ...(user
                 ? [
-                    [c.nav.accounts, "#accounts"],
-                    [c.nav.features, "#features"],
-                    [c.nav.benefits, "#benefits"],
+                    [c.nav.cabinet, "#cabinet"],
+                    [c.dashboard.transactions, "#dashboard"],
+                    [c.nav.support, "#support"],
                   ]
-                : []),
-              [user ? c.nav.cabinet : c.nav.dashboard, user ? "#cabinet" : "#dashboard"],
-              ...(user ? [[c.dashboard.transactions, "#dashboard"]] : []),
-              [c.nav.support, "#support"],
+                : [
+                    [c.publicNav.personal, "#accounts"],
+                    [c.publicNav.business, "#features"],
+                    [c.publicNav.kids, "#benefits"],
+                    [c.publicNav.company, "#footer"],
+                  ]),
             ].map(([label, href]) => (
               <a
                 className="mobile-nav-link"
@@ -1415,12 +1452,12 @@ function App() {
                 <h2 className="section-heading">
                   {language === "uk" ? `${user.name}${c.cabinet.titleSuffix}` : `${user.name}${c.cabinet.titleSuffix}`}
                 </h2>
-                <p className="mt-3 max-w-2xl text-base leading-7 text-slate-700">
+                <p className="mt-3 max-w-2xl text-base leading-7 text-[#375534]">
                   {c.cabinet.text}
                 </p>
               </div>
               <div className="sync-pill">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="h-2 w-2 rounded-full bg-[#6B9071]" />
                 {isLoading ? c.cabinet.loading : lastEvent}
               </div>
             </div>
@@ -1446,11 +1483,11 @@ function App() {
               <section className="revolut-balance-card">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-sm font-black text-emerald-100">{c.app.mainAccount}</p>
+                    <p className="text-sm font-black text-[#E3EED4]">{c.app.mainAccount}</p>
                     <h3 className="mt-3 text-5xl font-black tracking-tight text-white">
                       {formatCurrency(accounts.reduce((sum, account) => sum + account.balance, 0), accounts[0]?.currency ?? "EUR")}
                     </h3>
-                    <p className="mt-3 text-sm font-semibold text-emerald-100">
+                    <p className="mt-3 text-sm font-semibold text-[#E3EED4]">
                       {accounts[0]?.accountNumber ?? "FG-00000000"}
                     </p>
                   </div>
@@ -1459,7 +1496,7 @@ function App() {
                   </span>
                 </div>
                 <div className="mt-8">
-                  <p className="text-sm font-black text-emerald-100">{c.app.quickActions}</p>
+                  <p className="text-sm font-black text-[#E3EED4]">{c.app.quickActions}</p>
                   <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {[c.app.addMoney, c.app.transfer, c.app.cards, c.app.analytics].map((action) => (
                       <button className="revolut-action" key={action} type="button">
@@ -1479,7 +1516,7 @@ function App() {
                   </div>
                   <div className="mt-12 text-sm font-black">{c.app.virtualCard}</div>
                 </div>
-                <p className="mt-4 text-sm font-bold text-slate-600">{c.app.cardReady}</p>
+                <p className="mt-4 text-sm font-bold text-[#375534]">{c.app.cardReady}</p>
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   <div className="mini-metric">
                     <p>{c.app.spending}</p>
@@ -1495,7 +1532,7 @@ function App() {
               <section className="revolut-panel">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-xl font-black">{c.cabinet.recentTransactions}</h3>
-                  <a className="text-sm font-black text-[#00843d]" href="#dashboard">
+                  <a className="text-sm font-black text-[#375534]" href="#dashboard">
                     {c.cabinet.viewAll}
                   </a>
                 </div>
@@ -1504,7 +1541,7 @@ function App() {
                     <article className="grid gap-3 py-4 sm:grid-cols-[1fr_auto]" key={txn.id}>
                       <div>
                         <p className="font-black">{txn.description}</p>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className="mt-1 text-sm text-[#6B9071]">
                           {txn.id}
                           {txn.accountNumber ? ` · ${txn.accountNumber}` : ""}
                         </p>
@@ -1516,7 +1553,7 @@ function App() {
                     </article>
                   ))}
                   {transactions.length === 0 ? (
-                    <p className="py-6 text-sm font-bold text-slate-500">{c.cabinet.noTransactions}</p>
+                    <p className="py-6 text-sm font-bold text-[#6B9071]">{c.cabinet.noTransactions}</p>
                   ) : null}
                 </div>
               </section>
@@ -1524,7 +1561,7 @@ function App() {
               <section className="revolut-panel">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-xl font-black">{c.cabinet.reviewCases}</h3>
-                  <span className="badge border-green-200 bg-green-50 text-green-800">
+                  <span className="badge border-[#AEC3B0] bg-[#E3EED4] text-[#375534]">
                     {disputes.filter((item) => item.status !== "resolved").length} {c.cabinet.open}
                   </span>
                 </div>
@@ -1541,13 +1578,13 @@ function App() {
                     >
                       <div>
                         <p className="font-black">{item.reason}</p>
-                        <p className="mt-1 text-sm text-slate-500">{item.transactionId}</p>
+                        <p className="mt-1 text-sm text-[#6B9071]">{item.transactionId}</p>
                       </div>
                       <span className={`badge ${statusStyles[item.status]}`}>{statusLabel(item.status)}</span>
                     </button>
                   ))}
                   {disputes.length === 0 ? (
-                    <p className="rounded border border-slate-200 bg-white p-4 text-sm font-bold text-slate-500">
+                    <p className="rounded border border-[#AEC3B0] bg-white p-4 text-sm font-bold text-[#6B9071]">
                       {c.disputes.noCases}
                     </p>
                   ) : null}
@@ -1567,7 +1604,7 @@ function App() {
                 <h2 className="mt-5 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
                   {c.hero.title}
                 </h2>
-                <p className="mt-5 max-w-xl text-lg leading-8 text-slate-700">
+                <p className="mt-5 max-w-xl text-lg leading-8 text-[#375534]">
                   {c.hero.text}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -1588,7 +1625,7 @@ function App() {
             </div>
           </section>
 
-          <section className="bg-gray-50">
+          <section className="bg-[#E3EED4]">
             <div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 sm:px-6 md:grid-cols-4 lg:px-8">
               {c.quickLinks.map((item) => (
                 <a className="quick-link" href="#features" key={item}>
@@ -1609,7 +1646,7 @@ function App() {
                 <div>
                   <p className="section-kicker">{c.accountsSection.kicker}</p>
                   <h2 className="section-heading">{c.accountsSection.title}</h2>
-                  <p className="mt-4 text-lg leading-8 text-slate-600">
+                  <p className="mt-4 text-lg leading-8 text-[#375534]">
                     {c.accountsSection.text}
                   </p>
                 </div>
@@ -1617,8 +1654,8 @@ function App() {
                   {c.accountCards.map((item) => (
                     <article className="account-card" key={item.title}>
                       <h3 className="text-xl font-black">{item.title}</h3>
-                      <p className="mt-3 leading-7 text-slate-600">{item.text}</p>
-                      <a className="mt-5 inline-flex text-sm font-black text-[#00843d]" href="#dashboard">
+                      <p className="mt-3 leading-7 text-[#375534]">{item.text}</p>
+                      <a className="mt-5 inline-flex text-sm font-black text-[#375534]" href="#dashboard">
                         {item.action} ›
                       </a>
                     </article>
@@ -1633,7 +1670,7 @@ function App() {
           <div className="mx-auto max-w-3xl text-center">
             <p className="section-kicker">{c.featuresSection.kicker}</p>
             <h2 className="section-heading">{c.featuresSection.title}</h2>
-            <p className="mt-4 text-lg leading-8 text-slate-600">
+            <p className="mt-4 text-lg leading-8 text-[#375534]">
               {c.featuresSection.text}
             </p>
           </div>
@@ -1642,14 +1679,14 @@ function App() {
               <article className="benefit-card text-center" key={item.title}>
                 <div className="benefit-icon">{index + 1}</div>
                 <h3 className="mt-5 text-xl font-black">{item.title}</h3>
-                <p className="mt-3 leading-7 text-slate-600">{item.text}</p>
+                <p className="mt-3 leading-7 text-[#375534]">{item.text}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-gray-50 py-12">
+      <section className="bg-[#E3EED4] py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr]">
             <div>
@@ -1679,7 +1716,7 @@ function App() {
               <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
                 {stats.map((item) => (
                   <div className="stat-tile" key={item.label}>
-                    <p className="text-sm font-semibold text-slate-200">{item.label}</p>
+                    <p className="text-sm font-semibold text-[#AEC3B0]">{item.label}</p>
                     <p className="mt-2 text-3xl font-black text-white">{item.value}</p>
                   </div>
                 ))}
@@ -1689,7 +1726,7 @@ function App() {
         </>
       ) : null}
 
-      <section className="section bg-gray-50" id="dashboard">
+      <section className="section bg-[#E3EED4]" id="dashboard">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="dashboard-heading">
             <div>
@@ -1697,12 +1734,12 @@ function App() {
               <h2 className="section-heading">
                 {user ? `${user.name}${c.dashboard.userTitleSuffix}` : c.dashboard.demoTitle}
               </h2>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
+              <p className="mt-3 max-w-2xl text-base leading-7 text-[#375534]">
                 {user ? c.dashboard.userText : c.dashboard.demoText}
               </p>
             </div>
             <div className="sync-pill">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="h-2 w-2 rounded-full bg-[#6B9071]" />
               {isLoading ? c.dashboard.syncing : lastEvent}
             </div>
           </div>
@@ -1711,7 +1748,7 @@ function App() {
             <section className="mt-8">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <h3 className="text-xl font-black">{c.cabinet.bankAccounts}</h3>
-                <span className="text-sm font-bold text-slate-500">
+                <span className="text-sm font-bold text-[#6B9071]">
                   {accounts.length} {c.dashboard.activeRecords}
                 </span>
               </div>
@@ -1720,7 +1757,7 @@ function App() {
                   <article className="account-summary-card" key={account.id}>
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-black uppercase tracking-[0.16em] text-[#00843d]">
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-[#375534]">
                           {c.cabinet.currentAccount}
                         </p>
                         <h4 className="mt-2 text-xl font-black">{account.accountNumber}</h4>
@@ -1729,9 +1766,9 @@ function App() {
                         {statusLabel(account.status)}
                       </span>
                     </div>
-                    <p className="mt-6 text-sm font-bold text-slate-500">{c.cabinet.availableBalance}</p>
+                    <p className="mt-6 text-sm font-bold text-[#6B9071]">{c.cabinet.availableBalance}</p>
                     <p className="mt-1 text-3xl font-black">{formatCurrency(account.balance, account.currency)}</p>
-                    <p className="mt-4 text-sm text-slate-500">
+                    <p className="mt-4 text-sm text-[#6B9071]">
                       {c.dashboard.opened} {formatTime(account.createdAt)}
                     </p>
                   </article>
@@ -1739,9 +1776,9 @@ function App() {
               </div>
             </section>
           ) : (
-            <div className="mt-8 rounded border border-[#bce8cc] bg-[#effaf3] p-5">
+            <div className="mt-8 rounded border border-[#AEC3B0] bg-[#E3EED4] p-5">
               <h3 className="text-xl font-black">{c.dashboard.loginPrompt}</h3>
-              <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-700">
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-[#375534]">
                 {c.dashboard.loginPromptText}
               </p>
               <button className="btn-primary mt-4" onClick={() => openAuth("login")} type="button">
@@ -1754,7 +1791,7 @@ function App() {
             <section className="bank-panel">
               <div className="mb-5">
                 <h3 className="text-xl font-black">{c.dashboard.transactions}</h3>
-                <p className="mt-1 text-sm text-slate-500">{c.dashboard.transactionsHelp}</p>
+                <p className="mt-1 text-sm text-[#6B9071]">{c.dashboard.transactionsHelp}</p>
               </div>
               <div className="mb-5 grid gap-3 lg:grid-cols-[1fr_auto]">
                 <label className="block">
@@ -1784,7 +1821,7 @@ function App() {
               <div className="overflow-x-auto">
                 <table className="min-w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
+                    <tr className="border-b border-[#AEC3B0] text-xs uppercase tracking-wide text-[#6B9071]">
                       <th className="py-3 pr-4">{c.dashboard.transaction}</th>
                       <th className="px-4 py-3">{c.dashboard.time}</th>
                       <th className="px-4 py-3">{c.dashboard.amount}</th>
@@ -1796,12 +1833,12 @@ function App() {
                       <tr key={txn.id}>
                         <td className="py-4 pr-4">
                           <p className="font-bold">{txn.description}</p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-[#6B9071]">
                             {txn.id}
                             {txn.accountNumber ? ` · ${txn.accountNumber}` : ""}
                           </p>
                         </td>
-                        <td className="px-4 py-4 text-slate-600">{formatTime(txn.createdAt)}</td>
+                        <td className="px-4 py-4 text-[#375534]">{formatTime(txn.createdAt)}</td>
                         <td className="px-4 py-4 font-black">{formatCurrency(txn.amount, txn.currency)}</td>
                         <td className="py-4 pl-4">
                           <span className={`badge ${statusStyles[txn.status]}`}>{statusLabel(txn.status)}</span>
@@ -1811,7 +1848,7 @@ function App() {
                   </tbody>
                 </table>
                 {filteredTransactions.length === 0 ? (
-                  <div className="py-10 text-center text-sm font-bold text-gray-500">
+                  <div className="py-10 text-center text-sm font-bold text-[#6B9071]">
                     {c.dashboard.noMatches}
                   </div>
                 ) : null}
@@ -1822,17 +1859,17 @@ function App() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-xl font-black">{c.disputes.title}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{c.disputes.text}</p>
+                  <p className="mt-1 text-sm text-[#6B9071]">{c.disputes.text}</p>
                 </div>
                 <button className="btn-small" onClick={downloadEvidence} type="button">
                   {c.disputes.export}
                 </button>
               </div>
               {user ? (
-                <form className="mt-5 rounded border border-slate-200 bg-[#f8fafc] p-4" onSubmit={submitDispute}>
+                <form className="mt-5 rounded border border-[#AEC3B0] bg-[#E3EED4] p-4" onSubmit={submitDispute}>
                   <h4 className="text-sm font-black">{c.disputes.create}</h4>
                   <label className="mt-3 block">
-                    <span className="text-xs font-bold text-slate-600">{c.disputes.transaction}</span>
+                    <span className="text-xs font-bold text-[#375534]">{c.disputes.transaction}</span>
                     <select
                       className="control-input mt-2"
                       onChange={(event) =>
@@ -1849,7 +1886,7 @@ function App() {
                     </select>
                   </label>
                   <label className="mt-3 block">
-                    <span className="text-xs font-bold text-slate-600">{c.disputes.reason}</span>
+                    <span className="text-xs font-bold text-[#375534]">{c.disputes.reason}</span>
                     <input
                       className="control-input mt-2"
                       onChange={(event) => setDisputeForm((current) => ({ ...current, reason: event.target.value }))}
@@ -1858,7 +1895,7 @@ function App() {
                       value={disputeForm.reason}
                     />
                   </label>
-                  {disputeError ? <p className="mt-3 text-xs font-bold text-[#00843d]">{disputeError}</p> : null}
+                  {disputeError ? <p className="mt-3 text-xs font-bold text-[#375534]">{disputeError}</p> : null}
                   <button className="btn-small mt-4 w-full" type="submit">
                     {c.disputes.createButton}
                   </button>
@@ -1874,7 +1911,7 @@ function App() {
                   >
                     <div>
                   <p className="font-bold">{item.reason}</p>
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="mt-1 text-sm text-[#6B9071]">
                         {item.transactionId}
                         {item.accountNumber ? ` · ${item.accountNumber}` : ""}
                       </p>
@@ -1886,11 +1923,11 @@ function App() {
               {selectedDispute ? (
                 <div className="case-detail">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[#00843d]">
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[#375534]">
                       {c.disputes.selected}
                     </p>
                     <h4 className="mt-2 text-lg font-black">{selectedDispute.reason}</h4>
-                    <p className="mt-1 text-sm text-gray-500">{selectedDispute.id}</p>
+                    <p className="mt-1 text-sm text-[#6B9071]">{selectedDispute.id}</p>
                   </div>
                   <dl className="mt-4 grid gap-3 text-sm">
                     <div className="detail-row">
@@ -1966,7 +2003,7 @@ function App() {
 
       {isSettingsOpen && user ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
-          <section className="w-full max-w-lg rounded border border-gray-200 bg-white p-5 shadow-2xl">
+          <section className="w-full max-w-lg rounded border border-[#AEC3B0] bg-white p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-kicker">{c.profile.settings}</p>
@@ -1974,7 +2011,7 @@ function App() {
               </div>
               <button
                 aria-label="Close settings"
-                className="grid h-10 w-10 place-items-center rounded border border-gray-200 text-xl font-black text-gray-700 transition hover:bg-gray-50"
+                className="grid h-10 w-10 place-items-center rounded border border-[#AEC3B0] text-xl font-black text-[#375534] transition hover:bg-[#E3EED4]"
                 onClick={() => setIsSettingsOpen(false)}
                 type="button"
               >
@@ -2012,7 +2049,7 @@ function App() {
                   <label className="preference-row" key={key}>
                     <span>
                       <span className="block text-sm font-black">{title}</span>
-                      <span className="mt-1 block text-sm leading-6 text-slate-500">{text}</span>
+                      <span className="mt-1 block text-sm leading-6 text-[#6B9071]">{text}</span>
                     </span>
                     <input
                       checked={preferences[key as keyof typeof preferences]}
@@ -2027,7 +2064,7 @@ function App() {
               </div>
             </div>
 
-            <div className="mt-6 rounded border border-emerald-200 bg-emerald-50 p-4 text-sm leading-7 text-emerald-950">
+            <div className="mt-6 rounded border border-[#AEC3B0] bg-[#E3EED4] p-4 text-sm leading-7 text-[#0F2A1D]">
               {c.profile.note}
             </div>
 
@@ -2052,17 +2089,17 @@ function App() {
 
       {isAuthOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
-          <section className="w-full max-w-md rounded border border-gray-200 bg-white p-5 shadow-2xl">
+          <section className="w-full max-w-md rounded border border-[#AEC3B0] bg-white p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-kicker">{authMode === "login" ? c.auth.secureAccess : c.auth.newAccount}</p>
-                <h2 className="mt-2 text-2xl font-black text-[#101010]">
+                <h2 className="mt-2 text-2xl font-black text-[#0F2A1D]">
                   {authMode === "login" ? c.auth.loginTitle : c.auth.registerTitle}
                 </h2>
               </div>
               <button
                 aria-label="Close auth form"
-                className="grid h-10 w-10 place-items-center rounded border border-gray-200 text-xl font-black text-gray-700 transition hover:bg-gray-50"
+                className="grid h-10 w-10 place-items-center rounded border border-[#AEC3B0] text-xl font-black text-[#375534] transition hover:bg-[#E3EED4]"
                 onClick={() => setIsAuthOpen(false)}
                 type="button"
               >
@@ -2070,10 +2107,10 @@ function App() {
               </button>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 rounded border border-gray-200 bg-gray-50 p-1">
+            <div className="mt-5 grid grid-cols-2 rounded border border-[#AEC3B0] bg-[#E3EED4] p-1">
               <button
                 className={`rounded px-4 py-2 text-sm font-black ${
-                  authMode === "login" ? "bg-white text-[#00843d] shadow-sm" : "text-gray-600"
+                  authMode === "login" ? "bg-white text-[#375534] shadow-sm" : "text-[#375534]"
                 }`}
                 onClick={() => {
                   setAuthMode("login");
@@ -2085,7 +2122,7 @@ function App() {
               </button>
               <button
                 className={`rounded px-4 py-2 text-sm font-black ${
-                  authMode === "register" ? "bg-white text-[#00843d] shadow-sm" : "text-gray-600"
+                  authMode === "register" ? "bg-white text-[#375534] shadow-sm" : "text-[#375534]"
                 }`}
                 onClick={() => {
                   setAuthMode("register");
@@ -2100,9 +2137,9 @@ function App() {
             <form className="mt-5 space-y-4" onSubmit={handleAuthSubmit}>
               {authMode === "register" ? (
                 <label className="block">
-                  <span className="text-sm font-bold text-gray-700">{c.auth.fullName}</span>
+                  <span className="text-sm font-bold text-[#375534]">{c.auth.fullName}</span>
                   <input
-                    className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                    className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
                     onChange={(event) => updateAuthField("name", event.target.value)}
                     placeholder="Oksana Rusina"
                     type="text"
@@ -2112,9 +2149,9 @@ function App() {
               ) : null}
 
               <label className="block">
-                <span className="text-sm font-bold text-gray-700">{c.auth.email}</span>
+                <span className="text-sm font-bold text-[#375534]">{c.auth.email}</span>
                 <input
-                  className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                  className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
                   onChange={(event) => updateAuthField("email", event.target.value)}
                   placeholder="you@example.com"
                   type="email"
@@ -2123,9 +2160,9 @@ function App() {
               </label>
 
               <label className="block">
-                <span className="text-sm font-bold text-gray-700">{c.auth.password}</span>
+                <span className="text-sm font-bold text-[#375534]">{c.auth.password}</span>
                 <input
-                  className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                  className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
                   onChange={(event) => updateAuthField("password", event.target.value)}
                   placeholder={c.auth.minPassword}
                   type="password"
@@ -2135,9 +2172,9 @@ function App() {
 
               {authMode === "register" ? (
                 <label className="block">
-                  <span className="text-sm font-bold text-gray-700">{c.auth.confirmPassword}</span>
+                  <span className="text-sm font-bold text-[#375534]">{c.auth.confirmPassword}</span>
                   <input
-                    className="mt-2 min-h-12 w-full rounded border border-gray-300 px-4 text-base outline-none transition focus:border-[#00843d] focus:ring-4 focus:ring-[#bce8cc]"
+                    className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
                     onChange={(event) => updateAuthField("confirmPassword", event.target.value)}
                     placeholder={c.auth.repeatPassword}
                     type="password"
@@ -2147,7 +2184,7 @@ function App() {
               ) : null}
 
               {authError ? (
-                <p className="rounded border border-green-200 bg-green-50 px-4 py-3 text-sm font-bold text-green-900">
+                <p className="rounded border border-[#AEC3B0] bg-[#E3EED4] px-4 py-3 text-sm font-bold text-[#0F2A1D]">
                   {authError}
                 </p>
               ) : null}
@@ -2164,7 +2201,7 @@ function App() {
         <div className={`toast toast-${toast.tone}`} role="status">
           <div>
             <p className="text-sm font-black">{toast.title}</p>
-            <p className="mt-1 text-sm text-slate-600">{toast.message}</p>
+            <p className="mt-1 text-sm text-[#375534]">{toast.message}</p>
           </div>
           <button className="toast-close" onClick={() => setToast(null)} type="button">
             {c.toast.dismiss}
@@ -2172,18 +2209,18 @@ function App() {
         </div>
       ) : null}
 
-      <footer className="bg-[#101010] text-white">
+      <footer className="bg-[#0F2A1D] text-white" id="footer">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">
           <div className="md:col-span-2">
-            <div className="brand-mark bg-white text-[#00843d]">FG</div>
+            <div className="brand-mark bg-white text-[#375534]">FG</div>
             <h2 className="mt-4 text-2xl font-black">FinGuard</h2>
-            <p className="mt-3 max-w-md leading-7 text-slate-200">
+            <p className="mt-3 max-w-md leading-7 text-[#AEC3B0]">
               {c.footer.text}
             </p>
           </div>
           <div>
             <h3 className="font-black">{c.footer.banking}</h3>
-            <ul className="mt-4 space-y-3 text-sm text-slate-200">
+            <ul className="mt-4 space-y-3 text-sm text-[#AEC3B0]">
               <li>{c.footer.currentAccounts}</li>
               <li>{c.footer.cards}</li>
               <li>{c.footer.payments}</li>
@@ -2191,10 +2228,14 @@ function App() {
           </div>
           <div>
             <h3 className="font-black">{c.footer.support}</h3>
-            <ul className="mt-4 space-y-3 text-sm text-slate-200">
+            <ul className="mt-4 space-y-3 text-sm text-[#AEC3B0]">
               <li>{c.footer.helpCentre}</li>
               <li>{c.footer.security}</li>
-              <li>{c.footer.contact}</li>
+              <li>
+                <a className="transition hover:text-white" href={`mailto:${c.footer.email}`}>
+                  {c.footer.email}
+                </a>
+              </li>
             </ul>
           </div>
         </div>
