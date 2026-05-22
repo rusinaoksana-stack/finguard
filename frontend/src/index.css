@@ -50,7 +50,17 @@ body {
   }
 
   .benefit-icon {
-    @apply mx-auto grid h-12 w-12 place-items-center rounded bg-[#375534] text-lg font-black text-white;
+    @apply relative mx-auto grid h-24 w-28 place-items-center text-3xl font-black text-[#0F2A1D];
+  }
+
+  .benefit-icon span {
+    @apply relative z-10;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+
+  .benefit-shield {
+    @apply absolute inset-0 h-full w-full;
+    filter: drop-shadow(0 10px 18px rgba(15, 42, 29, 0.12));
   }
 
   .brand-mark {

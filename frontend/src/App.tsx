@@ -1781,7 +1781,26 @@ function App() {
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {c.benefits.map((item, index) => (
               <article className="benefit-card text-center" key={item.title}>
-                <div className="benefit-icon">{index + 1}</div>
+                <div className="benefit-icon" aria-hidden="true">
+                  <svg className="benefit-shield" viewBox="0 0 96 112" focusable="false">
+                    <path
+                      d="M48 5 L88 24 C86 54 80 78 48 106 C16 78 10 54 8 24 Z"
+                      fill={`url(#benefitShieldGradient-${index})`}
+                      stroke="#375534"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="4"
+                    />
+                    <defs>
+                      <linearGradient id={`benefitShieldGradient-${index}`} x1="18" x2="78" y1="10" y2="102" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#E3EED4" stopOpacity="0.92" />
+                        <stop offset="0.58" stopColor="#AEC3B0" stopOpacity="0.54" />
+                        <stop offset="1" stopColor="#6B9071" stopOpacity="0.34" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <span>{index + 1}</span>
+                </div>
                 <h3 className="mt-5 text-xl font-black">{item.title}</h3>
                 <p className="mt-3 leading-7 text-[#375534]">{item.text}</p>
               </article>
