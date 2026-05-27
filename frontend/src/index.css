@@ -6,6 +6,8 @@
   color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  --font-heading: Idiqlat, Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-body: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
 html,
@@ -17,10 +19,18 @@ body,
 body {
   margin: 0;
   background: #E3EED4;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body);
 }
 
 @layer components {
+  h1,
+  h2,
+  h3,
+  h4,
+  .section-heading {
+    font-family: var(--font-heading);
+  }
+
   .badge {
     @apply inline-flex items-center whitespace-nowrap rounded border px-2.5 py-1 text-xs font-black capitalize;
   }
@@ -71,6 +81,19 @@ body {
     @apply h-20 w-20 text-3xl;
   }
 
+  .brand-logo-frame {
+    @apply grid place-items-center bg-transparent shadow-none;
+  }
+
+  .brand-logo-image {
+    @apply h-full w-full object-contain;
+  }
+
+  .brand-title,
+  .brand-subtitle {
+    font-family: var(--font-heading);
+  }
+
   .brand-lockup {
     @apply -mt-8 flex items-center gap-5 sm:-mt-10;
   }
@@ -88,7 +111,8 @@ body {
   }
 
   .btn-primary {
-    @apply inline-flex min-h-12 items-center justify-center rounded bg-[#375534] px-6 py-3 text-sm font-black text-white shadow-sm transition hover:bg-[#375534] focus:outline-none focus:ring-4 focus:ring-[#AEC3B0];
+    @apply inline-flex min-h-12 items-center justify-center rounded bg-[#5D7D5A] px-6 py-3 text-sm font-black text-white transition hover:bg-[#526F50] active:translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-[#AEC3B0];
+    box-shadow: 0 8px 0 #375534, 0 18px 26px rgba(15, 42, 29, 0.18);
   }
 
   .btn-small {
@@ -155,16 +179,171 @@ body {
     @apply px-5 pb-5 pr-12 text-sm leading-7 text-[#375534];
   }
 
-  .hero-image {
-    @apply h-full w-full object-cover;
-  }
-
-  .hero-image-wrap {
-    @apply min-h-[340px] overflow-hidden rounded border border-white/40 bg-white shadow-2xl shadow-black/10 lg:min-h-[480px];
-  }
-
   .hero-section {
-    @apply bg-[#E3EED4];
+    @apply bg-[#C3C3C3];
+  }
+
+  .hero-orbit {
+    @apply relative overflow-hidden;
+    min-height: 640px;
+  }
+
+  .hero-copy {
+    @apply relative z-10 max-w-4xl py-20 lg:py-24;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-copy {
+      transform: translateY(-100px);
+    }
+  }
+
+  .hero-visual {
+    @apply pointer-events-none absolute hidden xl:block;
+  }
+
+  .hero-visual svg {
+    @apply h-full w-full overflow-visible;
+    filter: drop-shadow(0 26px 38px rgba(15, 42, 29, 0.12));
+  }
+
+  .hero-visual-image {
+    @apply h-full w-full object-contain;
+    object-position: left top;
+    filter: drop-shadow(0 30px 44px rgba(15, 42, 29, 0.14));
+  }
+
+  .hero-visual-shield {
+    @apply top-4 h-[1600px] w-[800px] opacity-90;
+    left: calc(50% - 50vw);
+  }
+
+  .hero-visual-card {
+    @apply bottom-14 left-0 h-44 w-72 rotate-[-6deg] opacity-80;
+  }
+
+  .hero-visual-check {
+    @apply bottom-20 right-2 h-32 w-72 rotate-[4deg] opacity-80;
+  }
+
+  .hero-visual-chart {
+    @apply right-8 top-12 h-72 w-[28rem] opacity-90 2xl:right-12 2xl:h-80 2xl:w-[32rem];
+  }
+
+  .hero-glass-shield {
+    fill: url("#heroShieldFill");
+    stroke: rgba(15, 138, 69, 0.58);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 4.5;
+  }
+
+  .hero-lock-shackle {
+    fill: none;
+    stroke: rgba(55, 85, 52, 0.56);
+    stroke-linecap: round;
+    stroke-width: 11;
+  }
+
+  .hero-lock-body {
+    fill: rgba(55, 85, 52, 0.58);
+  }
+
+  .hero-lock-key {
+    fill: rgba(255, 255, 255, 0.82);
+  }
+
+  .hero-lock-slot {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.82);
+    stroke-linecap: round;
+    stroke-width: 5;
+  }
+
+  .hero-card-bg {
+    fill: url("#heroCardFill");
+    stroke: rgba(174, 195, 176, 0.48);
+    stroke-width: 1.5;
+  }
+
+  .hero-card-chip {
+    fill: rgba(107, 144, 113, 0.32);
+  }
+
+  .hero-card-wave {
+    fill: none;
+    stroke: rgba(55, 85, 52, 0.42);
+    stroke-linecap: round;
+    stroke-width: 4.5;
+  }
+
+  .hero-card-line {
+    fill: none;
+    stroke: rgba(107, 144, 113, 0.52);
+    stroke-linecap: round;
+    stroke-width: 8;
+  }
+
+  .hero-card-line-short {
+    stroke-width: 8;
+  }
+
+  .hero-card-dot {
+    fill: rgba(55, 85, 52, 0.42);
+  }
+
+  .hero-note-bg,
+  .hero-panel-bg {
+    fill: rgba(255, 255, 255, 0.48);
+    stroke: rgba(174, 195, 176, 0.52);
+    stroke-width: 1.5;
+  }
+
+  .hero-check-circle,
+  .hero-chart-dot {
+    fill: rgba(15, 138, 69, 0.72);
+  }
+
+  .hero-check-mark {
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 6;
+  }
+
+  .hero-note-line,
+  .hero-panel-row {
+    fill: none;
+    stroke: rgba(107, 144, 113, 0.34);
+    stroke-linecap: round;
+    stroke-width: 8;
+  }
+
+  .hero-chart-line {
+    fill: none;
+    stroke: rgba(15, 138, 69, 0.7);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 7.5;
+  }
+
+  .scroll-cue {
+    @apply relative left-1/2 mt-[60px] block opacity-80 transition-opacity hover:opacity-100 focus:outline-none focus:ring-4 focus:ring-[#AEC3B0];
+    width: min(90vw, 1400px);
+    animation: scrollCueFloat 1.9s ease-in-out infinite;
+  }
+
+  .scroll-cue svg {
+    @apply h-14 w-full;
+  }
+
+  .scroll-cue path {
+    fill: none;
+    stroke: #375534;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 5;
   }
 
   .language-select-wrap {
@@ -181,11 +360,13 @@ body {
   }
 
   .language-select-inline {
-    @apply min-h-0 appearance-none border-0 bg-transparent py-0 pl-0 pr-5 text-sm font-bold leading-none text-[#375534] shadow-none hover:text-[#0F2A1D] focus:ring-0;
+    @apply min-h-0 appearance-none border-0 bg-transparent py-0 pl-0 pr-5 text-sm font-normal leading-none text-[#375534] shadow-none hover:text-[#0F2A1D] focus:ring-0;
   }
 
   .header-login-button {
-    @apply min-h-0 rounded px-6 py-2 text-base;
+    @apply h-10 min-h-0 w-[98px] rounded-full px-0 py-0 text-lg font-normal leading-none;
+    background: #5D7D5A;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
   }
 
   .header-nav-link {
@@ -390,5 +571,16 @@ body {
 
   .user-menu-trigger {
     @apply grid h-12 w-12 place-items-center rounded-full border-2 border-[#375534] bg-white transition hover:bg-[#E3EED4] focus:outline-none focus:ring-4 focus:ring-[#AEC3B0];
+  }
+}
+
+@keyframes scrollCueFloat {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+
+  50% {
+    transform: translate(-50%, 14px);
   }
 }

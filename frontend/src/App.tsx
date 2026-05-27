@@ -1,5 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import heroImage from "./assets/finguard-hero-green.png";
+import logoImage from "./assets/logo.png";
+import heroLeftIcon from "./assets/snapedit_1779843350490.png";
+import heroRightIcon from "./assets/snapedit_1779843373079.png";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
 import {
@@ -1373,7 +1375,7 @@ function App() {
     <main className="min-h-screen bg-white text-[#0F2A1D]">
       <div className="h-2 bg-[#375534]" />
       <header className="site-header">
-        <div className="mx-auto flex max-w-7xl justify-end px-4 py-1.5 text-sm font-bold text-[#375534] sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl justify-end px-4 py-1.5 text-sm font-normal text-[#375534] sm:px-6 lg:px-8">
           <div className="hidden items-center gap-7 sm:flex">
             <label className="language-select-wrap">
               <span className="sr-only">Language</span>
@@ -1389,23 +1391,25 @@ function App() {
                 ))}
               </select>
             </label>
-            <button className="font-bold" onClick={openSupportChat} type="button">
+            <button className="font-normal" onClick={openSupportChat} type="button">
               {c.help}
             </button>
             <a href="#footer">{c.contact}</a>
           </div>
         </div>
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-4 py-3 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8 lg:py-3.5">
-          <div className="brand-lockup lg:-translate-x-[30px] lg:justify-self-start">
-            <div className="brand-mark brand-mark-header">FG</div>
+        <div className="mx-auto flex max-w-none items-center justify-between gap-8 px-5 py-3 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:py-3.5">
+          <div className="brand-lockup lg:justify-self-start">
+            <div className="brand-logo-frame brand-mark-header">
+              <img alt="FinGuard logo" className="brand-logo-image" src={logoImage} />
+            </div>
             <div>
-              <h1 className="text-3xl font-black tracking-tight sm:text-4xl">FinGuard</h1>
-              <p className="text-base font-bold text-[#6B9071] sm:text-lg">
+              <h1 className="brand-title text-3xl font-semibold tracking-tight sm:text-4xl">FinGuard</h1>
+              <p className="brand-subtitle text-base font-normal text-[#6B9071] sm:text-lg">
                 {user ? `${c.signedIn} ${user.name}` : c.tagline}
               </p>
             </div>
           </div>
-          <nav className="hidden items-center gap-9 text-base font-semibold text-[#0F2A1D] xl:gap-11 xl:text-lg lg:flex lg:translate-x-[-20px] lg:justify-self-center">
+          <nav className="hidden items-center gap-9 text-base font-normal text-[#0F2A1D] xl:gap-11 xl:text-lg lg:flex lg:translate-x-[-20px] lg:justify-self-center">
             {user ? (
               <>
                 <a className="header-nav-link" href="#cabinet">{c.nav.cabinet}</a>
@@ -1497,7 +1501,7 @@ function App() {
                 ) : null}
               </div>
             ) : (
-              <button className="btn-primary header-login-button" onClick={() => openAuth("login")}>
+              <button className="btn-primary header-login-button lg:mr-44 xl:mr-48" onClick={() => openAuth("login")}>
                 {c.auth.login}
               </button>
             )}
@@ -1702,41 +1706,39 @@ function App() {
       {!user ? (
         <>
           <section className="hero-section">
-            <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-14">
-              <div>
-                <p className="breadcrumb">{c.hero.breadcrumb}</p>
+            <div className="hero-orbit mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+              <div className="hero-visual hero-visual-shield" aria-hidden="true">
+                <img className="hero-visual-image" src={heroLeftIcon} alt="" />
+              </div>
+              <div className="hero-visual hero-visual-chart" aria-hidden="true">
+                <img className="hero-visual-image" src={heroRightIcon} alt="" />
+              </div>
+
+              <div className="hero-copy mx-auto text-center">
                 <h2 className="mt-5 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-                  {c.hero.title}
+                  <span className="block">Automated</span>
+                  <span className="block">dispute protection</span>
+                  <span className="block">for modern banking</span>
                 </h2>
-                <p className="mt-5 max-w-xl text-lg leading-8 text-[#375534]">
-                  {c.hero.text}
+                <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#375534]">
+                  <span className="block">FinGuard helps digital banking teams spot risky activity,</span>
+                  <span className="block">manage disputes, and prepare evidence with clear,</span>
+                  <span className="block">confident workflows.</span>
                 </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <button className="btn-primary" onClick={() => openAuth("login")}>
-                    {c.hero.startDemo}
+                <div className="mt-8 flex flex-wrap justify-center gap-3">
+                  <button className="btn-primary" onClick={() => openAuth("register")}>
+                    {c.auth.createAccount}
                   </button>
-                <button className="btn-white" onClick={() => openAuth("register")}>
-                  {c.auth.createAccount}
-                </button>
                   <a className="btn-white" href="#features">
                     {c.hero.viewFeatures}
                   </a>
                 </div>
-              </div>
-              <div className="hero-image-wrap">
-                <img alt="FinGuard secure banking dashboard preview" className="hero-image" src={heroImage} />
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-[#E3EED4]">
-            <div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 sm:px-6 md:grid-cols-4 lg:px-8">
-              {c.quickLinks.map((item) => (
-                <a className="quick-link" href="#features" key={item}>
-                  {item}
-                  <span aria-hidden="true">›</span>
+                <a className="scroll-cue" href="#features" aria-label="Scroll to features">
+                  <svg viewBox="0 0 720 90" focusable="false" aria-hidden="true">
+                    <path d="M28 20 L360 70 L692 20" />
+                  </svg>
                 </a>
-              ))}
+              </div>
             </div>
           </section>
         </>
@@ -2379,7 +2381,9 @@ function App() {
       <footer className="bg-[#0F2A1D] text-white" id="footer">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">
           <div className="md:col-span-2">
-            <div className="brand-mark bg-white text-[#375534]">FG</div>
+            <div className="brand-logo-frame h-12 w-12">
+              <img alt="FinGuard logo" className="brand-logo-image" src={logoImage} />
+            </div>
             <h2 className="mt-4 text-2xl font-black">FinGuard</h2>
             <p className="mt-3 max-w-md leading-7 text-[#AEC3B0]">
               {c.footer.text}
