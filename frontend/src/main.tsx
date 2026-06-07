@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@fontsource/idiqlat/400.css";
+import "@fontsource/onest/400.css";
+import "@fontsource/onest/500.css";
+import "@fontsource/onest/600.css";
 import App from "./App";
 import "./index.css";
 

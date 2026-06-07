@@ -1,7 +1,5 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, lazy, useEffect, useMemo, useState } from "react";
 import logoImage from "./assets/logo.png";
-import heroLeftIcon from "./assets/snapedit_1779843350490.png";
-import heroRightIcon from "./assets/snapedit_1779843373079.png";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
 import {
@@ -184,6 +182,10 @@ type AuthMode = "login" | "register";
 type TransactionFilter = "all" | TransactionStatus;
 type Language = "en" | "uk" | "ru" | "es" | "it";
 type ToastTone = "success" | "info" | "warning";
+
+const BankArchitectureScene = lazy(() =>
+  import("./components/BankArchitectureScene").then((module) => ({ default: module.BankArchitectureScene }))
+);
 
 type AuthFormState = {
   name: string;
@@ -1355,14 +1357,20 @@ function App() {
   };
 
   const handleServiceClick = (service: string) => {
-    if (service === c.serviceTiles[4]) {
-      downloadEvidence();
-      return;
-    }
-
     if (service === c.serviceTiles[5]) {
       openSupportChat();
       setLastEvent("Support questions opened");
+      return;
+    }
+
+    if (!user) {
+      openAuth("login");
+      showToast(c.auth.secureAccess, c.dashboard.loginPromptText, "info");
+      return;
+    }
+
+    if (service === c.serviceTiles[4]) {
+      downloadEvidence();
       return;
     }
 
@@ -1372,8 +1380,8 @@ function App() {
   };
 
   return (
-    <main className="min-h-screen bg-white text-[#0F2A1D]">
-      <div className="h-2 bg-[#375534]" />
+    <main className="min-h-screen bg-[#F7F8F4] text-[#0F2A1D]">
+      {user ? (
       <header className="site-header">
         <div className="mx-auto flex max-w-7xl justify-end px-4 py-1.5 text-sm font-normal text-[#375534] sm:px-6 lg:px-8">
           <div className="hidden items-center gap-7 sm:flex">
@@ -1397,19 +1405,19 @@ function App() {
             <a href="#footer">{c.contact}</a>
           </div>
         </div>
-        <div className="mx-auto flex max-w-none items-center justify-between gap-8 px-5 py-3 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:py-3.5">
+        <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-8 px-4 py-3 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-10 lg:py-4">
           <div className="brand-lockup lg:justify-self-start">
-            <div className="brand-logo-frame brand-mark-header">
+            <div className="brand-logo-frame h-12 w-12">
               <img alt="FinGuard logo" className="brand-logo-image" src={logoImage} />
             </div>
             <div>
-              <h1 className="brand-title text-3xl font-semibold tracking-tight sm:text-4xl">FinGuard</h1>
-              <p className="brand-subtitle text-base font-normal text-[#6B9071] sm:text-lg">
+              <h1 className="brand-title text-2xl font-medium tracking-tight sm:text-3xl">FinGuard</h1>
+              <p className="brand-subtitle text-sm font-normal text-[#6B9071] sm:text-base">
                 {user ? `${c.signedIn} ${user.name}` : c.tagline}
               </p>
             </div>
           </div>
-          <nav className="hidden items-center gap-9 text-base font-normal text-[#0F2A1D] xl:gap-11 xl:text-lg lg:flex lg:translate-x-[-20px] lg:justify-self-center">
+          <nav className="hidden items-center gap-9 text-sm font-medium text-[#0F2A1D] xl:gap-11 lg:flex lg:justify-self-center">
             {user ? (
               <>
                 <a className="header-nav-link" href="#cabinet">{c.nav.cabinet}</a>
@@ -1501,7 +1509,7 @@ function App() {
                 ) : null}
               </div>
             ) : (
-              <button className="btn-primary header-login-button lg:mr-44 xl:mr-48" onClick={() => openAuth("login")}>
+              <button className="btn-primary header-login-button" onClick={() => openAuth("login")}>
                 {c.auth.login}
               </button>
             )}
@@ -1550,6 +1558,55 @@ function App() {
           </nav>
         ) : null}
       </header>
+      ) : (
+        <div className="air-public-nav" aria-label="Public navigation">
+          <div className="air-nav-left">
+            <button
+              aria-expanded={isMobileMenuOpen}
+              aria-label="Open navigation"
+              className="air-icon-button air-menu-button"
+              onClick={() => setIsMobileMenuOpen((current) => !current)}
+              type="button"
+            >
+              <span />
+              <span />
+            </button>
+            <button
+              aria-label="Open support"
+              className="air-icon-button air-heart-button"
+              onClick={openSupportChat}
+              type="button"
+            >
+              ♡
+            </button>
+          </div>
+          <button className="air-open-button" onClick={() => openAuth("register")} type="button">
+            Open an account
+            <span aria-hidden="true">⌖</span>
+          </button>
+          {isMobileMenuOpen ? (
+            <nav className="air-menu-panel" aria-label="FinGuard public menu">
+              <a href="#accounts" onClick={() => setIsMobileMenuOpen(false)}>Accounts</a>
+              <a href="#features" onClick={() => setIsMobileMenuOpen(false)}>Security</a>
+              <a href="#benefits" onClick={() => setIsMobileMenuOpen(false)}>Location</a>
+              <button onClick={() => openAuth("login")} type="button">{c.auth.login}</button>
+              <label>
+                <span className="sr-only">Language</span>
+                <select
+                  onChange={(event) => setLanguage(event.target.value as Language)}
+                  value={language}
+                >
+                  {(["en", "uk", "ru", "es", "it"] as Language[]).map((item) => (
+                    <option key={item} value={item}>
+                      {languageLabels[item]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </nav>
+          ) : null}
+        </div>
+      )}
 
       {user ? (
         <section className="app-shell py-8" id="cabinet">
@@ -1705,152 +1762,119 @@ function App() {
 
       {!user ? (
         <>
-          <section className="hero-section">
-            <div className="hero-orbit mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-              <div className="hero-visual hero-visual-shield" aria-hidden="true">
-                <img className="hero-visual-image" src={heroLeftIcon} alt="" />
-              </div>
-              <div className="hero-visual hero-visual-chart" aria-hidden="true">
-                <img className="hero-visual-image" src={heroRightIcon} alt="" />
-              </div>
-
-              <div className="hero-copy mx-auto text-center">
-                <h2 className="mt-5 text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-                  <span className="block">Automated</span>
-                  <span className="block">dispute protection</span>
-                  <span className="block">for modern banking</span>
-                </h2>
-                <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#375534]">
-                  <span className="block">FinGuard helps digital banking teams spot risky activity,</span>
-                  <span className="block">manage disputes, and prepare evidence with clear,</span>
-                  <span className="block">confident workflows.</span>
-                </p>
-                <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <button className="btn-primary" onClick={() => openAuth("register")}>
-                    {c.auth.createAccount}
-                  </button>
-                  <a className="btn-white" href="#features">
-                    {c.hero.viewFeatures}
-                  </a>
-                </div>
-                <a className="scroll-cue" href="#features" aria-label="Scroll to features">
-                  <svg viewBox="0 0 720 90" focusable="false" aria-hidden="true">
-                    <path d="M28 20 L360 70 L692 20" />
-                  </svg>
-                </a>
-              </div>
+          <section className="air-hero">
+            <Suspense fallback={null}>
+              <BankArchitectureScene />
+            </Suspense>
+            <div className="air-hero-slogan">THE ARCHITECTURE<br />OF SECURE BANKING</div>
+            <div className="air-hero-letters" aria-label="FinGuard">
+              <span>F</span>
+              <span>G</span>
+              <span>B</span>
             </div>
-          </section>
-        </>
-      ) : null}
-
-      {!user ? (
-        <>
-          <section className="section" id="accounts">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
-                <div>
-                  <p className="section-kicker">{c.accountsSection.kicker}</p>
-                  <h2 className="section-heading">{c.accountsSection.title}</h2>
-                  <p className="mt-4 text-lg leading-8 text-[#375534]">
-                    {c.accountsSection.text}
-                  </p>
-                </div>
-                <div className="grid gap-5 md:grid-cols-3">
-                  {c.accountCards.map((item) => (
-                    <article className="account-card" key={item.title}>
-                      <h3 className="text-xl font-black">{item.title}</h3>
-                      <p className="mt-3 leading-7 text-[#375534]">{item.text}</p>
-                      <a className="mt-5 inline-flex text-sm font-black text-[#375534]" href="#dashboard">
-                        {item.action} ›
-                      </a>
-                    </article>
-                  ))}
-                </div>
-              </div>
+            <div className="air-hero-center">
+              CLASS (A)<br />PREMIUM DIGITAL<br />BANK
             </div>
+            <div className="air-cookie">
+              THIS WEBSITE USES <strong>COOKIES</strong>
+              <button type="button">ACCEPT</button>
+            </div>
+            <a className="air-scroll" href="#accounts" aria-label="Scroll down">↓</a>
           </section>
 
-      <section className="section" id="features">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker">{c.featuresSection.kicker}</p>
-            <h2 className="section-heading">{c.featuresSection.title}</h2>
-            <p className="mt-4 text-lg leading-8 text-[#375534]">
-              {c.featuresSection.text}
+          <section className="air-photo-section" id="accounts">
+            <div className="air-word-row" aria-hidden="true">
+              <span>THE MOMENTUM</span>
+              <span>TO BANK HIGHER</span>
+            </div>
+            <p className="air-center-copy">
+              FINGUARD IS A NEW GENERATION OF PREMIUM BANKING THAT BRINGS PRIVATE ACCOUNTS,
+              PAYMENT SECURITY, AND DIGITAL SUPPORT TO A NEW LEVEL OF QUALITY.
             </p>
-          </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {c.benefits.map((item, index) => (
-              <article className="benefit-card text-center" key={item.title}>
-                <div className="benefit-icon" aria-hidden="true">
-                  <svg className="benefit-shield" viewBox="0 0 96 112" focusable="false">
-                    <path
-                      d="M48 5 L88 24 C86 54 80 78 48 106 C16 78 10 54 8 24 Z"
-                      fill={`url(#benefitShieldGradient-${index})`}
-                      stroke="#375534"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="4"
-                    />
-                    <defs>
-                      <linearGradient id={`benefitShieldGradient-${index}`} x1="18" x2="78" y1="10" y2="102" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#E3EED4" stopOpacity="0.92" />
-                        <stop offset="0.58" stopColor="#AEC3B0" stopOpacity="0.54" />
-                        <stop offset="1" stopColor="#6B9071" stopOpacity="0.34" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <span>{index + 1}</span>
-                </div>
-                <h3 className="mt-5 text-xl font-black">{item.title}</h3>
-                <p className="mt-3 leading-7 text-[#375534]">{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#E3EED4] py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr]">
-            <div>
-              <p className="section-kicker">{c.popular.kicker}</p>
-              <h2 className="section-heading">{c.popular.title}</h2>
+            <div className="air-split">
+              <div>
+                <h2>
+                  EFFICIENT ACCOUNTS AND PREMIUM INFRASTRUCTURE, PROTECTED PAYMENTS,
+                  INTELLIGENT REVIEW, AND A PRIVATE BANKING EXPERIENCE SET A NEW
+                  BENCHMARK FOR DIGITAL FINANCE.
+                </h2>
+                <p>AT THIS LEVEL,<br />YOUR BANK HAS NO NOISE.</p>
+              </div>
+              <div className="air-glass-image">
+                <Suspense fallback={null}>
+                  <BankArchitectureScene />
+                </Suspense>
+              </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {c.serviceTiles.map((item) => (
-                <button className="service-tile" key={item} onClick={() => handleServiceClick(item)} type="button">
-                  {item}
-                  <span aria-hidden="true">›</span>
-                </button>
+            <button className="air-inline-card" onClick={() => openAuth("register")} type="button">
+              ABOUT THE BANK
+              <span aria-hidden="true">⌖</span>
+            </button>
+          </section>
+
+          <section className="air-white-feature" id="features">
+            <div className="air-word-row">
+              <span>A NEW</span>
+              <span>PREMIUM</span>
+              <span>FORMAT</span>
+            </div>
+            <p className="air-center-copy">
+              FINGUARD IS NOT ONLY A DIGITAL BANK BUT ALSO A STRONG SECURITY STATEMENT
+              FOR CLIENTS WHO EXPECT CONTROL, PRIVACY, AND CLARITY.
+            </p>
+            <div className="air-wide-image">
+              <Suspense fallback={null}>
+                <BankArchitectureScene />
+              </Suspense>
+            </div>
+          </section>
+
+          <section className="air-dark-section" id="benefits">
+            <Suspense fallback={null}>
+              <BankArchitectureScene tone="dark" />
+            </Suspense>
+            <div className="air-dark-grid">
+              {[
+                ["1", "MIN", "OPEN ACCOUNT"],
+                ["3", "MIN", "CARD ISSUE"],
+                ["7", "MIN", "AI REVIEW"],
+                ["11", "MIN", "SUPPORT"],
+              ].map(([value, unit, label]) => (
+                <article className="air-dark-card" key={label}>
+                  <strong>{value}</strong>
+                  <span>{unit}</span>
+                  <p>{label}</p>
+                </article>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-          <section className="cta-band" id="benefits">
-            <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.7fr] lg:px-8">
-              <div>
-                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#8ee3a9]">{c.cta.kicker}</p>
-                <h2 className="mt-4 text-3xl font-black leading-tight text-white sm:text-4xl">
-                  {c.cta.title}
-                </h2>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                {stats.map((item) => (
-                  <div className="stat-tile" key={item.label}>
-                    <p className="text-sm font-semibold text-[#AEC3B0]">{item.label}</p>
-                    <p className="mt-2 text-3xl font-black text-white">{item.value}</p>
-                  </div>
-                ))}
-              </div>
+          <section className="air-black-info">
+            <div className="air-black-image">
+              <Suspense fallback={null}>
+                <BankArchitectureScene tone="dark" />
+              </Suspense>
+            </div>
+            <div className="air-black-copy">
+              <h2>
+                THE PREMIUM FINGUARD BANKING SYSTEM IS DESIGNED TO BECOME A SYMBOL
+                OF CONFIDENCE, SECURITY, AND MODERN MONEY MANAGEMENT.
+              </h2>
+              <button className="air-dark-link" onClick={() => openSupportChat()} type="button">
+                SUPPORT
+                <span aria-hidden="true">⌖</span>
+              </button>
+              <p>
+                THROUGH INTELLIGENT MONITORING, PROTECTED ACCOUNTS, AND CLEAR DIGITAL
+                FLOWS, FINGUARD CREATES A PRIVATE BANKING ENVIRONMENT FOR THE NEXT
+                GENERATION OF CLIENTS.
+              </p>
             </div>
           </section>
         </>
       ) : null}
 
+      {user ? (
       <section className="section bg-[#E3EED4]" id="dashboard">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="dashboard-heading">
@@ -2093,6 +2117,7 @@ function App() {
           </div>
         </div>
       </section>
+      ) : null}
 
       <section className="section" id="support">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.7fr_1fr] lg:px-8">
