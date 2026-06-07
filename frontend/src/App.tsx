@@ -1,5 +1,8 @@
 import { FormEvent, Suspense, lazy, useEffect, useMemo, useState } from "react";
+import bankImage from "./assets/bank_1.png";
+import heroBankImage from "./assets/bank_2.png";
 import logoImage from "./assets/logo.png";
+import safetyImage from "./assets/safety.png";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
 import {
@@ -108,12 +111,12 @@ const demoDisputes: Dispute[] = [
 ];
 
 const statusStyles: Record<TransactionStatus | DisputeStatus, string> = {
-  completed: "border-[#AEC3B0] bg-[#E3EED4] text-[#375534]",
-  pending: "border-[#AEC3B0] bg-white text-[#375534]",
-  review: "border-[#6B9071] bg-[#E3EED4] text-[#0F2A1D]",
-  open: "border-[#6B9071] bg-[#E3EED4] text-[#0F2A1D]",
-  resolved: "border-[#AEC3B0] bg-[#E3EED4] text-[#375534]",
-  escalated: "border-[#375534] bg-[#AEC3B0] text-[#0F2A1D]",
+  completed: "border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]",
+  pending: "border-[#C0C7D1] bg-white text-[#4B5563]",
+  review: "border-[#8A8F98] bg-[#E5E7EB] text-[#111827]",
+  open: "border-[#8A8F98] bg-[#E5E7EB] text-[#111827]",
+  resolved: "border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]",
+  escalated: "border-[#4B5563] bg-[#C0C7D1] text-[#111827]",
 };
 
 const benefits = [
@@ -1380,10 +1383,10 @@ function App() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F7F8F4] text-[#0F2A1D]">
+    <main className="min-h-screen bg-[#F7F7F8] text-[#111827]">
       {user ? (
       <header className="site-header">
-        <div className="mx-auto flex max-w-7xl justify-end px-4 py-1.5 text-sm font-normal text-[#375534] sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl justify-end px-4 py-1.5 text-sm font-normal text-[#4B5563] sm:px-6 lg:px-8">
           <div className="hidden items-center gap-7 sm:flex">
             <label className="language-select-wrap">
               <span className="sr-only">Language</span>
@@ -1412,12 +1415,12 @@ function App() {
             </div>
             <div>
               <h1 className="brand-title text-2xl font-medium tracking-tight sm:text-3xl">FinGuard</h1>
-              <p className="brand-subtitle text-sm font-normal text-[#6B9071] sm:text-base">
+              <p className="brand-subtitle text-sm font-normal text-[#8A8F98] sm:text-base">
                 {user ? `${c.signedIn} ${user.name}` : c.tagline}
               </p>
             </div>
           </div>
-          <nav className="hidden items-center gap-9 text-sm font-medium text-[#0F2A1D] xl:gap-11 lg:flex lg:justify-self-center">
+          <nav className="hidden items-center gap-9 text-sm font-medium text-[#111827] xl:gap-11 lg:flex lg:justify-self-center">
             {user ? (
               <>
                 <a className="header-nav-link" href="#cabinet">{c.nav.cabinet}</a>
@@ -1460,15 +1463,15 @@ function App() {
 
                 {isUserMenuOpen ? (
                   <div className="user-menu" role="menu">
-                    <div className="border-b border-[#AEC3B0] p-4">
+                    <div className="border-b border-[#C0C7D1] p-4">
                       <div className="flex items-center gap-3">
                         <span className="user-avatar large">{userInitials}</span>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-black text-[#0F2A1D]">{user.name}</p>
-                          <p className="truncate text-xs font-semibold text-[#6B9071]">{user.email ?? "Signed in"}</p>
+                          <p className="truncate text-sm font-black text-[#111827]">{user.name}</p>
+                          <p className="truncate text-xs font-semibold text-[#8A8F98]">{user.email ?? "Signed in"}</p>
                         </div>
                       </div>
-                      <div className="mt-3 rounded border border-[#AEC3B0] bg-[#E3EED4] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#375534]">
+                      <div className="mt-3 rounded border border-[#C0C7D1] bg-[#E5E7EB] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#4B5563]">
                         {user.role}
                       </div>
                     </div>
@@ -1517,7 +1520,7 @@ function App() {
         </div>
 
         {isMobileMenuOpen ? (
-          <nav className="border-t border-[#AEC3B0] bg-white px-4 py-3 lg:hidden">
+          <nav className="border-t border-[#C0C7D1] bg-white px-4 py-3 lg:hidden">
             <label className="mb-3 block sm:hidden">
               <span className="sr-only">Language</span>
               <select
@@ -1577,7 +1580,7 @@ function App() {
               onClick={openSupportChat}
               type="button"
             >
-              ♡
+              Support
             </button>
           </div>
           <button className="air-open-button" onClick={() => openAuth("register")} type="button">
@@ -1617,12 +1620,12 @@ function App() {
                 <h2 className="section-heading">
                   {language === "uk" ? `${user.name}${c.cabinet.titleSuffix}` : `${user.name}${c.cabinet.titleSuffix}`}
                 </h2>
-                <p className="mt-3 max-w-2xl text-base leading-7 text-[#375534]">
+                <p className="mt-3 max-w-2xl text-base leading-7 text-[#4B5563]">
                   {c.cabinet.text}
                 </p>
               </div>
               <div className="sync-pill">
-                <span className="h-2 w-2 rounded-full bg-[#6B9071]" />
+                <span className="h-2 w-2 rounded-full bg-[#8A8F98]" />
                 {isLoading ? c.cabinet.loading : lastEvent}
               </div>
             </div>
@@ -1648,20 +1651,20 @@ function App() {
               <section className="revolut-balance-card">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-sm font-black text-[#E3EED4]">{c.app.mainAccount}</p>
-                    <h3 className="mt-3 text-5xl font-black tracking-tight text-white">
+                    <p className="text-sm font-black text-[#4B5563]">{c.app.mainAccount}</p>
+                    <h3 className="mt-3 text-5xl font-black tracking-tight text-[#111827]">
                       {formatCurrency(accounts.reduce((sum, account) => sum + account.balance, 0), accounts[0]?.currency ?? "EUR")}
                     </h3>
-                    <p className="mt-3 text-sm font-semibold text-[#E3EED4]">
+                    <p className="mt-3 text-sm font-semibold text-[#4B5563]">
                       {accounts[0]?.accountNumber ?? "FG-00000000"}
                     </p>
                   </div>
-                  <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-black text-white">
+                  <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-black text-[#111827]">
                     {c.app.protected}
                   </span>
                 </div>
                 <div className="mt-8">
-                  <p className="text-sm font-black text-[#E3EED4]">{c.app.quickActions}</p>
+                  <p className="text-sm font-black text-[#4B5563]">{c.app.quickActions}</p>
                   <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {[c.app.addMoney, c.app.transfer, c.app.cards, c.app.analytics].map((action) => (
                       <button className="revolut-action" key={action} type="button">
@@ -1681,7 +1684,7 @@ function App() {
                   </div>
                   <div className="mt-12 text-sm font-black">{c.app.virtualCard}</div>
                 </div>
-                <p className="mt-4 text-sm font-bold text-[#375534]">{c.app.cardReady}</p>
+                <p className="mt-4 text-sm font-bold text-[#4B5563]">{c.app.cardReady}</p>
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   <div className="mini-metric">
                     <p>{c.app.spending}</p>
@@ -1697,7 +1700,7 @@ function App() {
               <section className="revolut-panel">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-xl font-black">{c.cabinet.recentTransactions}</h3>
-                  <a className="text-sm font-black text-[#375534]" href="#dashboard">
+                  <a className="text-sm font-black text-[#4B5563]" href="#dashboard">
                     {c.cabinet.viewAll}
                   </a>
                 </div>
@@ -1706,7 +1709,7 @@ function App() {
                     <article className="grid gap-3 py-4 sm:grid-cols-[1fr_auto]" key={txn.id}>
                       <div>
                         <p className="font-black">{txn.description}</p>
-                        <p className="mt-1 text-sm text-[#6B9071]">
+                        <p className="mt-1 text-sm text-[#8A8F98]">
                           {txn.id}
                           {txn.accountNumber ? ` · ${txn.accountNumber}` : ""}
                         </p>
@@ -1718,7 +1721,7 @@ function App() {
                     </article>
                   ))}
                   {transactions.length === 0 ? (
-                    <p className="py-6 text-sm font-bold text-[#6B9071]">{c.cabinet.noTransactions}</p>
+                    <p className="py-6 text-sm font-bold text-[#8A8F98]">{c.cabinet.noTransactions}</p>
                   ) : null}
                 </div>
               </section>
@@ -1726,7 +1729,7 @@ function App() {
               <section className="revolut-panel">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-xl font-black">{c.cabinet.reviewCases}</h3>
-                  <span className="badge border-[#AEC3B0] bg-[#E3EED4] text-[#375534]">
+                  <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
                     {disputes.filter((item) => item.status !== "resolved").length} {c.cabinet.open}
                   </span>
                 </div>
@@ -1743,13 +1746,13 @@ function App() {
                     >
                       <div>
                         <p className="font-black">{item.reason}</p>
-                        <p className="mt-1 text-sm text-[#6B9071]">{item.transactionId}</p>
+                        <p className="mt-1 text-sm text-[#8A8F98]">{item.transactionId}</p>
                       </div>
                       <span className={`badge ${statusStyles[item.status]}`}>{statusLabel(item.status)}</span>
                     </button>
                   ))}
                   {disputes.length === 0 ? (
-                    <p className="rounded border border-[#AEC3B0] bg-white p-4 text-sm font-bold text-[#6B9071]">
+                    <p className="rounded border border-[#C0C7D1] bg-white p-4 text-sm font-bold text-[#8A8F98]">
                       {c.disputes.noCases}
                     </p>
                   ) : null}
@@ -1801,9 +1804,7 @@ function App() {
                 <p>AT THIS LEVEL,<br />YOUR BANK HAS NO NOISE.</p>
               </div>
               <div className="air-glass-image">
-                <Suspense fallback={null}>
-                  <BankArchitectureScene />
-                </Suspense>
+                <img alt="Premium bank building exterior" src={bankImage} />
               </div>
             </div>
             <button className="air-inline-card" onClick={() => openAuth("register")} type="button">
@@ -1823,9 +1824,7 @@ function App() {
               FOR CLIENTS WHO EXPECT CONTROL, PRIVACY, AND CLARITY.
             </p>
             <div className="air-wide-image">
-              <Suspense fallback={null}>
-                <BankArchitectureScene />
-              </Suspense>
+              <img alt="Premium banking architecture against blue sky" src={heroBankImage} />
             </div>
           </section>
 
@@ -1851,9 +1850,7 @@ function App() {
 
           <section className="air-black-info">
             <div className="air-black-image">
-              <Suspense fallback={null}>
-                <BankArchitectureScene tone="dark" />
-              </Suspense>
+              <img alt="Secure banking architecture in dark tones" src={safetyImage} />
             </div>
             <div className="air-black-copy">
               <h2>
@@ -1875,7 +1872,7 @@ function App() {
       ) : null}
 
       {user ? (
-      <section className="section bg-[#E3EED4]" id="dashboard">
+      <section className="section bg-[#E5E7EB]" id="dashboard">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="dashboard-heading">
             <div>
@@ -1883,12 +1880,12 @@ function App() {
               <h2 className="section-heading">
                 {user ? `${user.name}${c.dashboard.userTitleSuffix}` : c.dashboard.demoTitle}
               </h2>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-[#375534]">
+              <p className="mt-3 max-w-2xl text-base leading-7 text-[#4B5563]">
                 {user ? c.dashboard.userText : c.dashboard.demoText}
               </p>
             </div>
             <div className="sync-pill">
-              <span className="h-2 w-2 rounded-full bg-[#6B9071]" />
+              <span className="h-2 w-2 rounded-full bg-[#8A8F98]" />
               {isLoading ? c.dashboard.syncing : lastEvent}
             </div>
           </div>
@@ -1897,7 +1894,7 @@ function App() {
             <section className="mt-8">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <h3 className="text-xl font-black">{c.cabinet.bankAccounts}</h3>
-                <span className="text-sm font-bold text-[#6B9071]">
+                <span className="text-sm font-bold text-[#8A8F98]">
                   {accounts.length} {c.dashboard.activeRecords}
                 </span>
               </div>
@@ -1906,7 +1903,7 @@ function App() {
                   <article className="account-summary-card" key={account.id}>
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-black uppercase tracking-[0.16em] text-[#375534]">
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B5563]">
                           {c.cabinet.currentAccount}
                         </p>
                         <h4 className="mt-2 text-xl font-black">{account.accountNumber}</h4>
@@ -1915,9 +1912,9 @@ function App() {
                         {statusLabel(account.status)}
                       </span>
                     </div>
-                    <p className="mt-6 text-sm font-bold text-[#6B9071]">{c.cabinet.availableBalance}</p>
+                    <p className="mt-6 text-sm font-bold text-[#8A8F98]">{c.cabinet.availableBalance}</p>
                     <p className="mt-1 text-3xl font-black">{formatCurrency(account.balance, account.currency)}</p>
-                    <p className="mt-4 text-sm text-[#6B9071]">
+                    <p className="mt-4 text-sm text-[#8A8F98]">
                       {c.dashboard.opened} {formatTime(account.createdAt)}
                     </p>
                   </article>
@@ -1925,9 +1922,9 @@ function App() {
               </div>
             </section>
           ) : (
-            <div className="mt-8 rounded border border-[#AEC3B0] bg-[#E3EED4] p-5">
+            <div className="mt-8 rounded border border-[#C0C7D1] bg-[#E5E7EB] p-5">
               <h3 className="text-xl font-black">{c.dashboard.loginPrompt}</h3>
-              <p className="mt-2 max-w-2xl text-sm leading-7 text-[#375534]">
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-[#4B5563]">
                 {c.dashboard.loginPromptText}
               </p>
               <button className="btn-primary mt-4" onClick={() => openAuth("login")} type="button">
@@ -1940,7 +1937,7 @@ function App() {
             <section className="bank-panel">
               <div className="mb-5">
                 <h3 className="text-xl font-black">{c.dashboard.transactions}</h3>
-                <p className="mt-1 text-sm text-[#6B9071]">{c.dashboard.transactionsHelp}</p>
+                <p className="mt-1 text-sm text-[#8A8F98]">{c.dashboard.transactionsHelp}</p>
               </div>
               <div className="mb-5 grid gap-3 lg:grid-cols-[1fr_auto]">
                 <label className="block">
@@ -1970,7 +1967,7 @@ function App() {
               <div className="overflow-x-auto">
                 <table className="min-w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-[#AEC3B0] text-xs uppercase tracking-wide text-[#6B9071]">
+                    <tr className="border-b border-[#C0C7D1] text-xs uppercase tracking-wide text-[#8A8F98]">
                       <th className="py-3 pr-4">{c.dashboard.transaction}</th>
                       <th className="px-4 py-3">{c.dashboard.time}</th>
                       <th className="px-4 py-3">{c.dashboard.amount}</th>
@@ -1982,12 +1979,12 @@ function App() {
                       <tr key={txn.id}>
                         <td className="py-4 pr-4">
                           <p className="font-bold">{txn.description}</p>
-                          <p className="text-xs text-[#6B9071]">
+                          <p className="text-xs text-[#8A8F98]">
                             {txn.id}
                             {txn.accountNumber ? ` · ${txn.accountNumber}` : ""}
                           </p>
                         </td>
-                        <td className="px-4 py-4 text-[#375534]">{formatTime(txn.createdAt)}</td>
+                        <td className="px-4 py-4 text-[#4B5563]">{formatTime(txn.createdAt)}</td>
                         <td className="px-4 py-4 font-black">{formatCurrency(txn.amount, txn.currency)}</td>
                         <td className="py-4 pl-4">
                           <span className={`badge ${statusStyles[txn.status]}`}>{statusLabel(txn.status)}</span>
@@ -1997,7 +1994,7 @@ function App() {
                   </tbody>
                 </table>
                 {filteredTransactions.length === 0 ? (
-                  <div className="py-10 text-center text-sm font-bold text-[#6B9071]">
+                  <div className="py-10 text-center text-sm font-bold text-[#8A8F98]">
                     {c.dashboard.noMatches}
                   </div>
                 ) : null}
@@ -2008,17 +2005,17 @@ function App() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-xl font-black">{c.disputes.title}</h3>
-                  <p className="mt-1 text-sm text-[#6B9071]">{c.disputes.text}</p>
+                  <p className="mt-1 text-sm text-[#8A8F98]">{c.disputes.text}</p>
                 </div>
                 <button className="btn-small" onClick={downloadEvidence} type="button">
                   {c.disputes.export}
                 </button>
               </div>
               {user ? (
-                <form className="mt-5 rounded border border-[#AEC3B0] bg-[#E3EED4] p-4" onSubmit={submitDispute}>
+                <form className="mt-5 rounded border border-[#C0C7D1] bg-[#E5E7EB] p-4" onSubmit={submitDispute}>
                   <h4 className="text-sm font-black">{c.disputes.create}</h4>
                   <label className="mt-3 block">
-                    <span className="text-xs font-bold text-[#375534]">{c.disputes.transaction}</span>
+                    <span className="text-xs font-bold text-[#4B5563]">{c.disputes.transaction}</span>
                     <select
                       className="control-input mt-2"
                       onChange={(event) =>
@@ -2035,7 +2032,7 @@ function App() {
                     </select>
                   </label>
                   <label className="mt-3 block">
-                    <span className="text-xs font-bold text-[#375534]">{c.disputes.reason}</span>
+                    <span className="text-xs font-bold text-[#4B5563]">{c.disputes.reason}</span>
                     <input
                       className="control-input mt-2"
                       onChange={(event) => setDisputeForm((current) => ({ ...current, reason: event.target.value }))}
@@ -2044,7 +2041,7 @@ function App() {
                       value={disputeForm.reason}
                     />
                   </label>
-                  {disputeError ? <p className="mt-3 text-xs font-bold text-[#375534]">{disputeError}</p> : null}
+                  {disputeError ? <p className="mt-3 text-xs font-bold text-[#4B5563]">{disputeError}</p> : null}
                   <button className="btn-small mt-4 w-full" type="submit">
                     {c.disputes.createButton}
                   </button>
@@ -2060,7 +2057,7 @@ function App() {
                   >
                     <div>
                   <p className="font-bold">{item.reason}</p>
-                      <p className="mt-1 text-sm text-[#6B9071]">
+                      <p className="mt-1 text-sm text-[#8A8F98]">
                         {item.transactionId}
                         {item.accountNumber ? ` · ${item.accountNumber}` : ""}
                       </p>
@@ -2072,11 +2069,11 @@ function App() {
               {selectedDispute ? (
                 <div className="case-detail">
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[#375534]">
+                    <p className="text-xs font-black uppercase tracking-[0.14em] text-[#4B5563]">
                       {c.disputes.selected}
                     </p>
                     <h4 className="mt-2 text-lg font-black">{selectedDispute.reason}</h4>
-                    <p className="mt-1 text-sm text-[#6B9071]">{selectedDispute.id}</p>
+                    <p className="mt-1 text-sm text-[#8A8F98]">{selectedDispute.id}</p>
                   </div>
                   <dl className="mt-4 grid gap-3 text-sm">
                     <div className="detail-row">
@@ -2156,9 +2153,9 @@ function App() {
           <div className="support-chat-header">
             <div>
               {c.chat.subtitle ? (
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#AEC3B0]">{c.chat.subtitle}</p>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B5563]">{c.chat.subtitle}</p>
               ) : null}
-              <h2 className="mt-1 text-xl font-black text-white">{c.chat.title}</h2>
+              <h2 className="mt-1 text-xl font-black text-[#111827]">{c.chat.title}</h2>
             </div>
             <button
               aria-label={c.chat.close}
@@ -2197,7 +2194,7 @@ function App() {
 
       {isSettingsOpen && user ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
-          <section className="w-full max-w-lg rounded border border-[#AEC3B0] bg-white p-5 shadow-2xl">
+          <section className="w-full max-w-lg rounded border border-[#C0C7D1] bg-white p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-kicker">{c.profile.settings}</p>
@@ -2205,7 +2202,7 @@ function App() {
               </div>
               <button
                 aria-label="Close settings"
-                className="grid h-10 w-10 place-items-center rounded border border-[#AEC3B0] text-xl font-black text-[#375534] transition hover:bg-[#E3EED4]"
+                className="grid h-10 w-10 place-items-center rounded border border-[#C0C7D1] text-xl font-black text-[#4B5563] transition hover:bg-[#E5E7EB]"
                 onClick={() => setIsSettingsOpen(false)}
                 type="button"
               >
@@ -2243,7 +2240,7 @@ function App() {
                   <label className="preference-row" key={key}>
                     <span>
                       <span className="block text-sm font-black">{title}</span>
-                      <span className="mt-1 block text-sm leading-6 text-[#6B9071]">{text}</span>
+                      <span className="mt-1 block text-sm leading-6 text-[#8A8F98]">{text}</span>
                     </span>
                     <input
                       checked={preferences[key as keyof typeof preferences]}
@@ -2258,7 +2255,7 @@ function App() {
               </div>
             </div>
 
-            <div className="mt-6 rounded border border-[#AEC3B0] bg-[#E3EED4] p-4 text-sm leading-7 text-[#0F2A1D]">
+            <div className="mt-6 rounded border border-[#C0C7D1] bg-[#E5E7EB] p-4 text-sm leading-7 text-[#111827]">
               {c.profile.note}
             </div>
 
@@ -2283,17 +2280,17 @@ function App() {
 
       {isAuthOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
-          <section className="w-full max-w-md rounded border border-[#AEC3B0] bg-white p-5 shadow-2xl">
+          <section className="w-full max-w-md rounded border border-[#C0C7D1] bg-white p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-kicker">{authMode === "login" ? c.auth.secureAccess : c.auth.newAccount}</p>
-                <h2 className="mt-2 text-2xl font-black text-[#0F2A1D]">
+                <h2 className="mt-2 text-2xl font-black text-[#111827]">
                   {authMode === "login" ? c.auth.loginTitle : c.auth.registerTitle}
                 </h2>
               </div>
               <button
                 aria-label="Close auth form"
-                className="grid h-10 w-10 place-items-center rounded border border-[#AEC3B0] text-xl font-black text-[#375534] transition hover:bg-[#E3EED4]"
+                className="grid h-10 w-10 place-items-center rounded border border-[#C0C7D1] text-xl font-black text-[#4B5563] transition hover:bg-[#E5E7EB]"
                 onClick={() => setIsAuthOpen(false)}
                 type="button"
               >
@@ -2301,10 +2298,10 @@ function App() {
               </button>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 rounded border border-[#AEC3B0] bg-[#E3EED4] p-1">
+            <div className="mt-5 grid grid-cols-2 rounded border border-[#C0C7D1] bg-[#E5E7EB] p-1">
               <button
                 className={`rounded px-4 py-2 text-sm font-black ${
-                  authMode === "login" ? "bg-white text-[#375534] shadow-sm" : "text-[#375534]"
+                  authMode === "login" ? "bg-white text-[#4B5563] shadow-sm" : "text-[#4B5563]"
                 }`}
                 onClick={() => {
                   setAuthMode("login");
@@ -2316,7 +2313,7 @@ function App() {
               </button>
               <button
                 className={`rounded px-4 py-2 text-sm font-black ${
-                  authMode === "register" ? "bg-white text-[#375534] shadow-sm" : "text-[#375534]"
+                  authMode === "register" ? "bg-white text-[#4B5563] shadow-sm" : "text-[#4B5563]"
                 }`}
                 onClick={() => {
                   setAuthMode("register");
@@ -2331,9 +2328,9 @@ function App() {
             <form className="mt-5 space-y-4" onSubmit={handleAuthSubmit}>
               {authMode === "register" ? (
                 <label className="block">
-                  <span className="text-sm font-bold text-[#375534]">{c.auth.fullName}</span>
+                  <span className="text-sm font-bold text-[#4B5563]">{c.auth.fullName}</span>
                   <input
-                    className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
+                    className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                     onChange={(event) => updateAuthField("name", event.target.value)}
                     placeholder="Oksana Rusina"
                     type="text"
@@ -2343,9 +2340,9 @@ function App() {
               ) : null}
 
               <label className="block">
-                <span className="text-sm font-bold text-[#375534]">{c.auth.email}</span>
+                <span className="text-sm font-bold text-[#4B5563]">{c.auth.email}</span>
                 <input
-                  className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
+                  className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                   onChange={(event) => updateAuthField("email", event.target.value)}
                   placeholder="you@example.com"
                   type="email"
@@ -2354,9 +2351,9 @@ function App() {
               </label>
 
               <label className="block">
-                <span className="text-sm font-bold text-[#375534]">{c.auth.password}</span>
+                <span className="text-sm font-bold text-[#4B5563]">{c.auth.password}</span>
                 <input
-                  className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
+                  className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                   onChange={(event) => updateAuthField("password", event.target.value)}
                   placeholder={c.auth.minPassword}
                   type="password"
@@ -2366,9 +2363,9 @@ function App() {
 
               {authMode === "register" ? (
                 <label className="block">
-                  <span className="text-sm font-bold text-[#375534]">{c.auth.confirmPassword}</span>
+                  <span className="text-sm font-bold text-[#4B5563]">{c.auth.confirmPassword}</span>
                   <input
-                    className="mt-2 min-h-12 w-full rounded border border-[#AEC3B0] px-4 text-base outline-none transition focus:border-[#375534] focus:ring-4 focus:ring-[#AEC3B0]"
+                    className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                     onChange={(event) => updateAuthField("confirmPassword", event.target.value)}
                     placeholder={c.auth.repeatPassword}
                     type="password"
@@ -2378,7 +2375,7 @@ function App() {
               ) : null}
 
               {authError ? (
-                <p className="rounded border border-[#AEC3B0] bg-[#E3EED4] px-4 py-3 text-sm font-bold text-[#0F2A1D]">
+                <p className="rounded border border-[#C0C7D1] bg-[#E5E7EB] px-4 py-3 text-sm font-bold text-[#111827]">
                   {authError}
                 </p>
               ) : null}
@@ -2395,7 +2392,7 @@ function App() {
         <div className={`toast toast-${toast.tone}`} role="status">
           <div>
             <p className="text-sm font-black">{toast.title}</p>
-            <p className="mt-1 text-sm text-[#375534]">{toast.message}</p>
+            <p className="mt-1 text-sm text-[#4B5563]">{toast.message}</p>
           </div>
           <button className="toast-close" onClick={() => setToast(null)} type="button">
             {c.toast.dismiss}
@@ -2403,20 +2400,20 @@ function App() {
         </div>
       ) : null}
 
-      <footer className="bg-[#0F2A1D] text-white" id="footer">
+      <footer className="metallic-footer text-white" id="footer">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">
           <div className="md:col-span-2">
             <div className="brand-logo-frame h-12 w-12">
               <img alt="FinGuard logo" className="brand-logo-image" src={logoImage} />
             </div>
             <h2 className="mt-4 text-2xl font-black">FinGuard</h2>
-            <p className="mt-3 max-w-md leading-7 text-[#AEC3B0]">
+            <p className="mt-3 max-w-md leading-7 text-[#C0C7D1]">
               {c.footer.text}
             </p>
           </div>
           <div>
             <h3 className="font-black">{c.footer.banking}</h3>
-            <ul className="mt-4 space-y-3 text-sm text-[#AEC3B0]">
+            <ul className="mt-4 space-y-3 text-sm text-[#C0C7D1]">
               <li>{c.footer.currentAccounts}</li>
               <li>{c.footer.cards}</li>
               <li>{c.footer.payments}</li>
@@ -2424,7 +2421,7 @@ function App() {
           </div>
           <div>
             <h3 className="font-black">{c.footer.support}</h3>
-            <ul className="mt-4 space-y-3 text-sm text-[#AEC3B0]">
+            <ul className="mt-4 space-y-3 text-sm text-[#C0C7D1]">
               <li>{c.footer.helpCentre}</li>
               <li>{c.footer.security}</li>
               <li>
