@@ -8,6 +8,7 @@ import { accountsRouter } from "./modules/accounts/accounts.router";
 import { transactionsRouter } from "./modules/transactions/transactions.router";
 import { disputesRouter } from "./modules/disputes/disputes.router";
 import { supportRouter } from "./modules/support/support.router";
+import { auditorRouter } from "./modules/auditor/auditor.router";
 
 const app = express();
 const server = http.createServer(app);
@@ -52,6 +53,7 @@ app.use("/api/accounts", accountsRouter);
 app.use("/api/transactions", transactionsRouter);
 app.use("/api/disputes", disputesRouter);
 app.use("/api/support", supportRouter);
+app.use("/api/auditor", auditorRouter);
 
 io.on("connection", (socket) => {
   console.log("Socket connected", socket.id);

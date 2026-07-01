@@ -3,94 +3,147 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function main() {
-  const passwordHash = await bcrypt.hash("Password123", 10);
+const DEFAULT_PASSWORD = "Password123";
 
-  const user = await prisma.user.upsert({
-    where: { email: "compliance@finguard.ai" },
-    update: {},
-    create: {
-      email: "compliance@finguard.ai",
-      name: "FinGuard Admin",
+const customerSeeds = [
+  { name: "Oksana Melnyk", email: "customer.demo@finguard.ai", accountNumber: "IE29-FING-1001", balance: 2450.25, transactionCount: 1 },
+  { name: "Andriy Kovalenko", email: "andriy.kovalenko@finguard.ai", accountNumber: "IE29-FING-1002", balance: 3810.4, transactionCount: 2 },
+  { name: "Marta Shevchenko", email: "marta.shevchenko@finguard.ai", accountNumber: "IE29-FING-1003", balance: 1290.0, transactionCount: 3 },
+  { name: "Taras Bondarenko", email: "taras.bondarenko@finguard.ai", accountNumber: "IE29-FING-1004", balance: 4985.9, transactionCount: 4 },
+  { name: "Iryna Hrytsenko", email: "iryna.hrytsenko@finguard.ai", accountNumber: "IE29-FING-1005", balance: 870.55, transactionCount: 5 },
+  { name: "Dmytro Savchuk", email: "dmytro.savchuk@finguard.ai", accountNumber: "IE29-FING-1006", balance: 6420.1, transactionCount: 6 },
+  { name: "Natalia Moroz", email: "natalia.moroz@finguard.ai", accountNumber: "IE29-FING-1007", balance: 3115.7, transactionCount: 7 },
+  { name: "Bohdan Lysenko", email: "bohdan.lysenko@finguard.ai", accountNumber: "IE29-FING-1008", balance: 9050.0, transactionCount: 8 },
+  { name: "Olena Tkachenko", email: "olena.tkachenko@finguard.ai", accountNumber: "IE29-FING-1009", balance: 1575.2, transactionCount: 9 },
+  { name: "Roman Petrenko", email: "roman.petrenko@finguard.ai", accountNumber: "IE29-FING-1010", balance: 7205.45, transactionCount: 10 },
+  { name: "Sofia Kravets", email: "sofia.kravets@finguard.ai", accountNumber: "IE29-FING-1011", balance: 540.8, transactionCount: 1 },
+  { name: "Mykhailo Polishchuk", email: "mykhailo.polishchuk@finguard.ai", accountNumber: "IE29-FING-1012", balance: 2240.0, transactionCount: 3 },
+  { name: "Kateryna Oliinyk", email: "kateryna.oliinyk@finguard.ai", accountNumber: "IE29-FING-1013", balance: 6890.3, transactionCount: 5 },
+  { name: "Viktor Marchenko", email: "viktor.marchenko@finguard.ai", accountNumber: "IE29-FING-1014", balance: 4125.65, transactionCount: 7 },
+  { name: "Anastasiia Rudenko", email: "anastasiia.rudenko@finguard.ai", accountNumber: "IE29-FING-1015", balance: 3380.9, transactionCount: 9 },
+];
+
+const transactionTemplates = [
+  { amount: 48.75, status: "review", description: "Duplicate card charge reported" },
+  { amount: 12.5, status: "completed", description: "Merchant settlement" },
+  { amount: 734.2, status: "pending", description: "Cross-border wallet transfer" },
+  { amount: 96.4, status: "completed", description: "Online grocery purchase" },
+  { amount: 129.99, status: "review", description: "Unusual device payment" },
+  { amount: 18.2, status: "completed", description: "Subscription renewal" },
+  { amount: 420.0, status: "pending", description: "Incoming bank transfer" },
+  { amount: 67.35, status: "completed", description: "Fuel station payment" },
+  { amount: 250.0, status: "review", description: "High-risk merchant transaction" },
+  { amount: 31.8, status: "completed", description: "Public transport top-up" },
+] as const;
+
+async function seedAdmin(passwordHash: string) {
+  await prisma.user.upsert({
+    where: { email: "auditor@finguard.ai" },
+    update: {
+      name: "FinGuard Auditor",
       role: "admin",
+      passwordHash,
+    },
+    create: {
+      email: "auditor@finguard.ai",
+      name: "FinGuard Auditor",
+      role: "admin",
+      passwordHash,
+    },
+  });
+}
+
+async function seedCustomer(
+  customer: (typeof customerSeeds)[number],
+  index: number,
+  passwordHash: string,
+) {
+  const user = await prisma.user.upsert({
+    where: { email: customer.email },
+    update: {
+      name: customer.name,
+      role: "user",
+      passwordHash,
+    },
+    create: {
+      email: customer.email,
+      name: customer.name,
+      role: "user",
       passwordHash,
     },
   });
 
   const account = await prisma.account.upsert({
-    where: { accountNumber: "IE29-FING-0001" },
-    update: {},
+    where: { accountNumber: customer.accountNumber },
+    update: {
+      userId: user.id,
+      balance: customer.balance,
+      currency: "EUR",
+      status: "active",
+    },
     create: {
       userId: user.id,
-      accountNumber: "IE29-FING-0001",
-      balance: 4820.75,
+      accountNumber: customer.accountNumber,
+      balance: customer.balance,
       currency: "EUR",
       status: "active",
     },
   });
 
-  await prisma.transaction.upsert({
-    where: { id: "txn_001" },
-    update: {},
-    create: {
-      id: "txn_001",
-      accountId: account.id,
-      amount: 48.75,
-      currency: "EUR",
-      status: "review",
-      description: "Refund request for duplicate charge",
-    },
-  });
+  for (let transactionIndex = 0; transactionIndex < customer.transactionCount; transactionIndex += 1) {
+    const template = transactionTemplates[transactionIndex];
+    const transactionId = `txn_seed_${String(index + 1).padStart(2, "0")}_${String(transactionIndex + 1).padStart(2, "0")}`;
 
-  await prisma.transaction.upsert({
-    where: { id: "txn_002" },
-    update: {},
-    create: {
-      id: "txn_002",
-      accountId: account.id,
-      amount: 12.5,
-      currency: "EUR",
-      status: "completed",
-      description: "Merchant settlement",
-    },
-  });
+    await prisma.transaction.upsert({
+      where: { id: transactionId },
+      update: {
+        accountId: account.id,
+        amount: template.amount + index * 3,
+        currency: "EUR",
+        status: template.status,
+        description: template.description,
+        createdAt: new Date(Date.UTC(2026, 5, 1 + index, 9 + transactionIndex, 0, 0)),
+      },
+      create: {
+        id: transactionId,
+        accountId: account.id,
+        amount: template.amount + index * 3,
+        currency: "EUR",
+        status: template.status,
+        description: template.description,
+        createdAt: new Date(Date.UTC(2026, 5, 1 + index, 9 + transactionIndex, 0, 0)),
+      },
+    });
 
-  await prisma.transaction.upsert({
-    where: { id: "txn_003" },
-    update: {},
-    create: {
-      id: "txn_003",
-      accountId: account.id,
-      amount: 734.2,
-      currency: "EUR",
-      status: "pending",
-      description: "Cross-border wallet transfer",
-    },
-  });
+    if (template.status === "review") {
+      await prisma.dispute.upsert({
+        where: { id: `disp_seed_${transactionId}` },
+        update: {
+          transactionId,
+          reason: template.description,
+          status: transactionIndex % 2 === 0 ? "open" : "escalated",
+          notes: "Seeded case for auditor transaction review.",
+        },
+        create: {
+          id: `disp_seed_${transactionId}`,
+          transactionId,
+          reason: template.description,
+          status: transactionIndex % 2 === 0 ? "open" : "escalated",
+          notes: "Seeded case for auditor transaction review.",
+        },
+      });
+    }
+  }
+}
 
-  await prisma.dispute.upsert({
-    where: { id: "disp_001" },
-    update: {},
-    create: {
-      id: "disp_001",
-      transactionId: "txn_001",
-      reason: "Duplicate payment",
-      status: "open",
-      notes: "Customer reports duplicate card charge.",
-    },
-  });
+async function main() {
+  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
 
-  await prisma.dispute.upsert({
-    where: { id: "disp_002" },
-    update: {},
-    create: {
-      id: "disp_002",
-      transactionId: "txn_003",
-      reason: "Unusual transfer pattern",
-      status: "escalated",
-      notes: "Large transfer flagged for manual review.",
-    },
-  });
+  await seedAdmin(passwordHash);
+
+  for (const [index, customer] of customerSeeds.entries()) {
+    await seedCustomer(customer, index, passwordHash);
+  }
 }
 
 main()

@@ -29,4 +29,5 @@ Automated FinTech dispute and compliance platform scaffold.
 - Add `.env` files in `backend/` and `frontend/` for secrets and environment configuration.
 - The backend includes sample routes for auth, transactions, disputes, and AI integrations.
 - The frontend includes a dashboard and chat UI skeleton.
-- For testing email: compliance@finguard.ai and password: Password123
+- Test customer: customer.demo@finguard.ai / Password123
+- Test auditor: auditor@finguard.ai / Password123

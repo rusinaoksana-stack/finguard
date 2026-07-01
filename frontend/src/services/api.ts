@@ -30,6 +30,11 @@ export async function fetchDisputes() {
   return response.data.data;
 }
 
+export async function fetchAuditorCustomers() {
+  const response = await api.get("/auditor/customers");
+  return response.data.data;
+}
+
 export async function createDispute(transactionId: string, reason: string) {
   const response = await api.post("/disputes", { transactionId, reason });
   return response.data.data;

@@ -7,6 +7,7 @@ import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
 import {
   fetchAccounts,
+  fetchAuditorCustomers,
   fetchTransactions,
   fetchDisputes,
   createDispute,
@@ -45,6 +46,35 @@ type BankAccount = {
   currency: string;
   status: "active" | "frozen" | "closed";
   createdAt: string;
+};
+
+type AuditorDispute = Dispute & {
+  notes?: string | null;
+};
+
+type AuditorTransaction = Transaction & {
+  dispute?: AuditorDispute | null;
+};
+
+type AuditorAccount = BankAccount & {
+  transactions: AuditorTransaction[];
+};
+
+type AuditorCustomer = {
+  id: string;
+  name: string;
+  email: string;
+  role: "user";
+  createdAt: string;
+  accounts: AuditorAccount[];
+  summary: {
+    accountCount: number;
+    transactionCount: number;
+    reviewCount: number;
+    openDisputeCount: number;
+    totalBalance: number;
+    totalVolume: number;
+  };
 };
 
 const demoAccounts: BankAccount[] = [
@@ -107,6 +137,31 @@ const demoDisputes: Dispute[] = [
     reason: "Unusual transfer pattern",
     status: "escalated",
     createdAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+  },
+];
+
+const demoAuditorCustomers: AuditorCustomer[] = [
+  {
+    id: "demo_customer_001",
+    name: "Demo Customer",
+    email: "customer.demo@finguard.ai",
+    role: "user",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 120).toISOString(),
+    accounts: demoAccounts.map((account) => ({
+      ...account,
+      transactions: demoTransactions.map((transaction) => ({
+        ...transaction,
+        dispute: demoDisputes.find((dispute) => dispute.transactionId === transaction.id) ?? null,
+      })),
+    })),
+    summary: {
+      accountCount: demoAccounts.length,
+      transactionCount: demoTransactions.length,
+      reviewCount: demoTransactions.filter((transaction) => transaction.status === "review").length,
+      openDisputeCount: demoDisputes.filter((dispute) => dispute.status !== "resolved").length,
+      totalBalance: demoAccounts.reduce((sum, account) => sum + account.balance, 0),
+      totalVolume: demoTransactions.reduce((sum, transaction) => sum + transaction.amount, 0),
+    },
   },
 ];
 
@@ -1065,6 +1120,8 @@ function App() {
   const [accounts, setAccounts] = useState<BankAccount[]>(demoAccounts);
   const [transactions, setTransactions] = useState<Transaction[]>(demoTransactions);
   const [disputes, setDisputes] = useState<Dispute[]>(demoDisputes);
+  const [auditorCustomers, setAuditorCustomers] = useState<AuditorCustomer[]>(demoAuditorCustomers);
+  const [selectedAuditorCustomerId, setSelectedAuditorCustomerId] = useState(demoAuditorCustomers[0]?.id ?? "");
   const [lastEvent, setLastEvent] = useState("Monitoring is ready");
   const [isLoading, setIsLoading] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
@@ -1096,6 +1153,7 @@ function App() {
     securityChecks: true,
   });
   const c = localizedContent[language];
+  const isAuditor = user?.role === "admin";
 
   const showToast = (title: string, message: string, tone: ToastTone = "success") => {
     setToast({ title, message, tone });
@@ -1121,6 +1179,24 @@ function App() {
 
     window.scrollTo({ top: 0, behavior: "smooth" });
     setIsLoading(true);
+
+    if (user.role === "admin") {
+      fetchAuditorCustomers()
+        .then((customerData) => {
+          const nextCustomers = customerData.length ? customerData : demoAuditorCustomers;
+          setAuditorCustomers(nextCustomers);
+          setSelectedAuditorCustomerId((current) => current || nextCustomers[0]?.id || "");
+          setLastEvent(`${nextCustomers.length} customers loaded for audit`);
+        })
+        .catch(() => {
+          setAuditorCustomers(demoAuditorCustomers);
+          setSelectedAuditorCustomerId(demoAuditorCustomers[0]?.id ?? "");
+          setLastEvent("Auditor demo mode active while API is offline");
+        })
+        .finally(() => setIsLoading(false));
+      return;
+    }
+
     Promise.all([fetchAccounts(), fetchTransactions(), fetchDisputes()])
       .then(([accountData, transactionData, disputeData]) => {
         setAccounts(accountData.length ? accountData : demoAccounts);
@@ -1186,6 +1262,24 @@ function App() {
     if (!selectedDispute) return null;
     return transactions.find((item) => item.id === selectedDispute.transactionId) ?? null;
   }, [selectedDispute, transactions]);
+
+  const selectedAuditorCustomer = useMemo(() => {
+    return (
+      auditorCustomers.find((customer) => customer.id === selectedAuditorCustomerId) ??
+      auditorCustomers[0] ??
+      null
+    );
+  }, [auditorCustomers, selectedAuditorCustomerId]);
+
+  const selectedAuditorTransactions = useMemo(() => {
+    return selectedAuditorCustomer?.accounts.flatMap((account) => account.transactions) ?? [];
+  }, [selectedAuditorCustomer]);
+
+  const selectedAuditorDisputes = useMemo(() => {
+    return selectedAuditorTransactions
+      .map((transaction) => transaction.dispute)
+      .filter((dispute): dispute is AuditorDispute => Boolean(dispute));
+  }, [selectedAuditorTransactions]);
 
   const userInitials = useMemo(() => {
     if (!user) return "FG";
@@ -1423,8 +1517,8 @@ function App() {
           <nav className="hidden items-center gap-9 text-sm font-medium text-[#111827] xl:gap-11 lg:flex lg:justify-self-center">
             {user ? (
               <>
-                <a className="header-nav-link" href="#cabinet">{c.nav.cabinet}</a>
-                <a className="header-nav-link" href="#dashboard">{c.dashboard.transactions}</a>
+                <a className="header-nav-link" href="#cabinet">{isAuditor ? "Customers" : c.nav.cabinet}</a>
+                <a className="header-nav-link" href="#dashboard">{isAuditor ? "Audit details" : c.dashboard.transactions}</a>
                 <a className="header-nav-link" href="#support">{c.nav.support}</a>
               </>
             ) : (
@@ -1538,8 +1632,8 @@ function App() {
             {[
               ...(user
                 ? [
-                    [c.nav.cabinet, "#cabinet"],
-                    [c.dashboard.transactions, "#dashboard"],
+                    [isAuditor ? "Customers" : c.nav.cabinet, "#cabinet"],
+                    [isAuditor ? "Audit details" : c.dashboard.transactions, "#dashboard"],
                     [c.nav.support, "#support"],
                   ]
                 : [
@@ -1611,7 +1705,229 @@ function App() {
         </div>
       )}
 
-      {user ? (
+      {user && isAuditor ? (
+        <section className="app-shell py-8" id="cabinet">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="dashboard-heading">
+              <div>
+                <p className="section-kicker">Auditor cabinet</p>
+                <h2 className="section-heading">Customer transaction review</h2>
+                <p className="mt-3 max-w-2xl text-base leading-7 text-[#4B5563]">
+                  Select a customer to review their profile, accounts, transactions, and open review cases.
+                </p>
+              </div>
+              <div className="sync-pill">
+                <span className="h-2 w-2 rounded-full bg-[#8A8F98]" />
+                {isLoading ? "Loading customer data" : lastEvent}
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-6 lg:grid-cols-[0.45fr_1fr]" id="dashboard">
+              <aside className="bank-panel">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-black">Users</h3>
+                    <p className="mt-1 text-sm text-[#8A8F98]">{auditorCustomers.length} customer records</p>
+                  </div>
+                  <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">admin</span>
+                </div>
+
+                <div className="mt-5 grid gap-3">
+                  {auditorCustomers.map((customer) => (
+                    <button
+                      className={
+                        selectedAuditorCustomer?.id === customer.id
+                          ? "auditor-user-row selected"
+                          : "auditor-user-row"
+                      }
+                      key={customer.id}
+                      onClick={() => setSelectedAuditorCustomerId(customer.id)}
+                      type="button"
+                    >
+                      <span>
+                        <strong>{customer.name}</strong>
+                        <small>{customer.email}</small>
+                      </span>
+                      <span className="auditor-user-count">{customer.summary.transactionCount}</span>
+                    </button>
+                  ))}
+                </div>
+              </aside>
+
+              <div className="grid gap-6">
+                {selectedAuditorCustomer ? (
+                  <>
+                    <section className="bank-panel">
+                      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+                        <div>
+                          <p className="section-kicker">Selected customer</p>
+                          <h3 className="mt-2 text-3xl font-black">{selectedAuditorCustomer.name}</h3>
+                          <p className="mt-2 text-sm font-semibold text-[#4B5563]">{selectedAuditorCustomer.email}</p>
+                        </div>
+                        <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
+                          Since {formatTime(selectedAuditorCustomer.createdAt)}
+                        </span>
+                      </div>
+
+                      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                        {[
+                          ["Balance", formatCurrency(selectedAuditorCustomer.summary.totalBalance, "EUR")],
+                          ["Accounts", selectedAuditorCustomer.summary.accountCount.toString()],
+                          ["Transactions", selectedAuditorCustomer.summary.transactionCount.toString()],
+                          ["In review", selectedAuditorCustomer.summary.reviewCount.toString()],
+                          ["Open cases", selectedAuditorCustomer.summary.openDisputeCount.toString()],
+                        ].map(([label, value]) => (
+                          <div className="auditor-metric" key={label}>
+                            <span>{label}</span>
+                            <strong>{value}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+
+                    <section className="bank-panel">
+                      <div className="mb-4 flex items-center justify-between gap-4">
+                        <h3 className="text-xl font-black">Accounts</h3>
+                        <span className="text-sm font-bold text-[#8A8F98]">
+                          {selectedAuditorCustomer.accounts.length} active record(s)
+                        </span>
+                      </div>
+                      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                        {selectedAuditorCustomer.accounts.map((account) => (
+                          <article className="account-summary-card" key={account.id}>
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B5563]">
+                                  Current account
+                                </p>
+                                <h4 className="mt-2 text-xl font-black">{account.accountNumber}</h4>
+                              </div>
+                              <span className={`badge ${statusStyles[account.status === "active" ? "completed" : "pending"]}`}>
+                                {statusLabel(account.status)}
+                              </span>
+                            </div>
+                            <p className="mt-6 text-sm font-bold text-[#8A8F98]">Available balance</p>
+                            <p className="mt-1 text-3xl font-black">{formatCurrency(account.balance, account.currency)}</p>
+                            <p className="mt-4 text-sm text-[#8A8F98]">
+                              Opened {formatTime(account.createdAt)}
+                            </p>
+                          </article>
+                        ))}
+                      </div>
+                    </section>
+
+                    <section className="bank-panel">
+                      <div className="mb-5">
+                        <h3 className="text-xl font-black">Transactions</h3>
+                        <p className="mt-1 text-sm text-[#8A8F98]">
+                          Full account activity for the selected customer.
+                        </p>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full text-left text-sm">
+                          <thead>
+                            <tr className="border-b border-[#C0C7D1] text-xs uppercase tracking-wide text-[#8A8F98]">
+                              <th className="py-3 pr-4">Transaction</th>
+                              <th className="px-4 py-3">Account</th>
+                              <th className="px-4 py-3">Time</th>
+                              <th className="px-4 py-3">Amount</th>
+                              <th className="py-3 pl-4">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {selectedAuditorTransactions.map((transaction) => (
+                              <tr key={transaction.id}>
+                                <td className="py-4 pr-4">
+                                  <p className="font-bold">{transaction.description}</p>
+                                  <p className="text-xs text-[#8A8F98]">{transaction.id}</p>
+                                </td>
+                                <td className="px-4 py-4 text-[#4B5563]">{transaction.accountNumber}</td>
+                                <td className="px-4 py-4 text-[#4B5563]">{formatTime(transaction.createdAt)}</td>
+                                <td className="px-4 py-4 font-black">
+                                  {formatCurrency(transaction.amount, transaction.currency)}
+                                </td>
+                                <td className="py-4 pl-4">
+                                  <span className={`badge ${statusStyles[transaction.status]}`}>
+                                    {statusLabel(transaction.status)}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+
+                    <section className="bank-panel">
+                      <div className="mb-5 flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-xl font-black">Review cases</h3>
+                          <p className="mt-1 text-sm text-[#8A8F98]">
+                            Disputes and flagged transactions for auditor verification.
+                          </p>
+                        </div>
+                        <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
+                          {selectedAuditorDisputes.length} cases
+                        </span>
+                      </div>
+                      <div className="grid gap-3">
+                        {selectedAuditorDisputes.map((dispute) => {
+                          const transaction = selectedAuditorTransactions.find((item) => item.id === dispute.transactionId);
+                          return (
+                            <article className="case-detail mt-0" key={dispute.id}>
+                              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                                <div>
+                                  <h4 className="text-base font-black">{dispute.reason}</h4>
+                                  <p className="mt-1 text-sm text-[#8A8F98]">
+                                    {dispute.id} · {dispute.transactionId}
+                                  </p>
+                                </div>
+                                <span className={`badge ${statusStyles[dispute.status]}`}>
+                                  {statusLabel(dispute.status)}
+                                </span>
+                              </div>
+                              <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                                <div className="detail-row">
+                                  <dt>Account</dt>
+                                  <dd>{transaction?.accountNumber ?? "Unknown"}</dd>
+                                </div>
+                                <div className="detail-row">
+                                  <dt>Amount</dt>
+                                  <dd>
+                                    {transaction
+                                      ? formatCurrency(transaction.amount, transaction.currency)
+                                      : "Unknown"}
+                                  </dd>
+                                </div>
+                                <div className="detail-row sm:col-span-2">
+                                  <dt>Notes</dt>
+                                  <dd>{dispute.notes ?? "No notes"}</dd>
+                                </div>
+                              </dl>
+                            </article>
+                          );
+                        })}
+                        {selectedAuditorDisputes.length === 0 ? (
+                          <p className="rounded border border-[#C0C7D1] bg-[#E5E7EB] p-4 text-sm font-bold text-[#8A8F98]">
+                            No review cases for this customer.
+                          </p>
+                        ) : null}
+                      </div>
+                    </section>
+                  </>
+                ) : (
+                  <section className="bank-panel">
+                    <h3 className="text-xl font-black">No customer selected</h3>
+                    <p className="mt-2 text-sm text-[#8A8F98]">Choose a user from the list to view audit details.</p>
+                  </section>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {user && !isAuditor ? (
         <section className="app-shell py-8" id="cabinet">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="dashboard-heading">
@@ -1871,7 +2187,7 @@ function App() {
         </>
       ) : null}
 
-      {user ? (
+      {user && !isAuditor ? (
       <section className="section bg-[#E5E7EB]" id="dashboard">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="dashboard-heading">
