@@ -308,6 +308,168 @@ body {
     @apply bg-[#E5E7EB];
   }
 
+  .desktop-bank-shell {
+    @apply bg-[#081122] text-white;
+    background:
+      radial-gradient(circle at 24% 8%, rgba(53, 103, 202, 0.36), transparent 36%),
+      linear-gradient(150deg, #090d2f 0%, #102b5a 46%, #081122 100%);
+  }
+
+  .bank-laptop-main {
+    @apply flex min-h-0 flex-col gap-5;
+  }
+
+  .bank-dashboard-topbar {
+    @apply flex flex-col justify-between gap-4 rounded-lg border border-white/10 bg-white/[0.06] p-4 backdrop-blur sm:flex-row sm:items-center;
+  }
+
+  .bank-top-icon {
+    @apply grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/10 text-sm font-semibold text-white transition hover:bg-white/20 focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
+  .bank-status-pill,
+  .bank-mini-badge {
+    @apply inline-flex min-h-9 items-center rounded-full border border-white/10 bg-white/10 px-3 text-xs font-semibold uppercase tracking-[0.12em] text-white/80;
+  }
+
+  .bank-hero-card {
+    @apply relative min-h-[430px] overflow-hidden rounded-lg border border-white/10 p-5 shadow-2xl shadow-black/25 sm:p-7 lg:min-h-[500px];
+    background:
+      radial-gradient(circle at 82% 28%, rgba(54, 214, 157, 0.24), transparent 24%),
+      linear-gradient(155deg, rgba(24, 57, 128, 0.92) 0%, rgba(16, 34, 81, 0.96) 48%, rgba(6, 17, 38, 0.98) 100%);
+  }
+
+  .bank-hero-balance {
+    @apply relative z-10 flex items-center justify-center gap-4 pt-14 text-center sm:pt-20;
+  }
+
+  .bank-hero-balance p {
+    @apply mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-white/55;
+  }
+
+  .bank-hero-balance strong {
+    @apply block text-6xl font-semibold leading-none tracking-normal text-white sm:text-7xl lg:text-8xl;
+  }
+
+  .bank-round-plus {
+    @apply grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/10 bg-white/10 text-2xl font-semibold leading-none text-white/75 transition hover:bg-white/20 focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
+  .bank-card-stage {
+    @apply absolute inset-x-0 bottom-20 z-0 flex justify-center px-8;
+    perspective: 980px;
+  }
+
+  .bank-card-visual {
+    @apply flex h-44 w-[min(520px,78vw)] -rotate-3 flex-col rounded-lg border border-white/10 p-6 text-white shadow-2xl shadow-black/45;
+    background:
+      linear-gradient(160deg, rgba(16, 23, 37, 0.98) 0%, rgba(33, 45, 65, 0.96) 58%, rgba(7, 12, 20, 0.98) 100%);
+    transform: rotateX(58deg) rotateZ(-3deg);
+    transform-origin: center bottom;
+  }
+
+  .bank-card-visual span {
+    @apply text-lg font-semibold tracking-[0.16em];
+  }
+
+  .bank-card-visual p {
+    @apply text-xl font-semibold tracking-[0.32em] text-white/70;
+  }
+
+  .bank-card-visual small {
+    @apply mt-2 block text-xs font-semibold uppercase tracking-[0.18em] text-white/40;
+  }
+
+  .bank-card-switch {
+    @apply absolute bottom-8 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/20 px-4 py-2 text-sm font-semibold text-white/70 backdrop-blur;
+  }
+
+  .bank-action-row {
+    @apply grid gap-4 md:grid-cols-3;
+  }
+
+  .bank-action-button {
+    @apply flex min-h-28 flex-col items-center justify-center gap-3 rounded-lg border border-white/10 bg-black/20 px-4 text-center text-sm font-semibold text-white/85 shadow-xl shadow-black/15 transition hover:bg-black/30 focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
+  .bank-action-button span {
+    @apply grid h-14 w-14 place-items-center rounded-full bg-black/50 text-2xl text-white;
+  }
+
+  .bank-operations-panel,
+  .bank-sidebar-panel {
+    @apply rounded-lg border border-white/10 bg-black/20 p-5 shadow-xl shadow-black/15 backdrop-blur;
+  }
+
+  .bank-operations-panel h3,
+  .bank-sidebar-panel h3 {
+    @apply text-xl font-semibold text-white;
+  }
+
+  .bank-operations-panel a,
+  .bank-sidebar-link {
+    @apply rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-white/70 transition hover:bg-white/15 hover:text-white focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
+  .bank-operation-row {
+    @apply grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 py-4;
+  }
+
+  .bank-operation-icon {
+    @apply grid h-12 w-12 place-items-center rounded-lg bg-white/10 text-lg font-semibold text-white;
+  }
+
+  .bank-operation-row p,
+  .bank-case-row strong {
+    @apply truncate text-sm font-semibold text-white;
+  }
+
+  .bank-operation-row span,
+  .bank-case-row small {
+    @apply mt-1 block truncate text-xs font-medium text-white/45;
+  }
+
+  .bank-operation-row strong {
+    @apply block text-base font-semibold text-white;
+  }
+
+  .bank-laptop-sidebar {
+    @apply grid content-start gap-5;
+  }
+
+  .bank-sidebar-label {
+    @apply text-xs font-semibold uppercase tracking-[0.16em] text-white/45;
+  }
+
+  .bank-health-row {
+    @apply flex items-center justify-between gap-4 rounded-lg bg-white/[0.07] px-4 py-3;
+  }
+
+  .bank-health-row span {
+    @apply text-sm font-medium text-white/55;
+  }
+
+  .bank-health-row strong {
+    @apply text-sm font-semibold text-white;
+  }
+
+  .bank-mini-card {
+    @apply mt-5 flex min-h-32 flex-col justify-between rounded-lg border border-white/10 p-5 shadow-xl shadow-black/20;
+    background: linear-gradient(145deg, #f8fafc 0%, #b9c1ce 32%, #434c5b 67%, #111827 100%);
+  }
+
+  .bank-mini-card span {
+    @apply text-sm font-semibold tracking-[0.22em] text-[#111827];
+  }
+
+  .bank-mini-card strong {
+    @apply max-w-48 text-sm font-semibold leading-5 text-white;
+  }
+
+  .bank-case-row {
+    @apply flex w-full items-center justify-between gap-3 rounded-lg bg-white/[0.07] px-4 py-3 text-left transition hover:bg-white/[0.11] focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
   .benefit-card {
     @apply min-h-80 bg-[#F7F7F8] p-7 text-left shadow-none;
   }

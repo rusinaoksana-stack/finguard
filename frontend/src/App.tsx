@@ -1152,7 +1152,7 @@ function App() {
     monthlySummary: true,
     securityChecks: true,
   });
-  const c = localizedContent[language];
+  const c = user ? content.en : localizedContent[language];
   const isAuditor = user?.role === "admin";
 
   const showToast = (title: string, message: string, tone: ToastTone = "success") => {
@@ -1165,8 +1165,8 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem(LANGUAGE_KEY, language);
-    document.documentElement.lang = language === "uk" ? "uk" : "en";
-  }, [language]);
+    document.documentElement.lang = user ? "en" : language === "uk" ? "uk" : "en";
+  }, [language, user]);
 
   useEffect(() => {
     if (!toast) return;
@@ -1928,131 +1928,141 @@ function App() {
       ) : null}
 
       {user && !isAuditor ? (
-        <section className="app-shell py-8" id="cabinet">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="dashboard-heading">
-              <div>
-                <p className="section-kicker">{c.cabinet.kicker}</p>
-                <h2 className="section-heading">
-                  {language === "uk" ? `${user.name}${c.cabinet.titleSuffix}` : `${user.name}${c.cabinet.titleSuffix}`}
-                </h2>
-                <p className="mt-3 max-w-2xl text-base leading-7 text-[#4B5563]">
-                  {c.cabinet.text}
-                </p>
-              </div>
-              <div className="sync-pill">
-                <span className="h-2 w-2 rounded-full bg-[#8A8F98]" />
-                {isLoading ? c.cabinet.loading : lastEvent}
-              </div>
-            </div>
-
-            <div className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="lg:col-span-3">
-                <div className="system-strip">
+        <section className="desktop-bank-shell" id="cabinet">
+          <div className="mx-auto grid min-h-[calc(100vh-92px)] max-w-[1440px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8">
+            <div className="bank-laptop-main">
+              <div className="bank-dashboard-topbar">
+                <div className="flex items-center gap-4">
+                  <span className="user-avatar large">{userInitials}</span>
                   <div>
-                    <span className="system-dot" />
-                    {c.dashboard.sessionSecure}
+                    <p className="text-sm font-semibold text-white/60">Welcome back</p>
+                    <h2 className="text-2xl font-semibold leading-tight text-white">{user.name}</h2>
                   </div>
-                  <div>
-                    <span className="system-dot" />
-                    {c.dashboard.databaseConnected}
-                  </div>
-                  <div>
-                    <span className="system-dot" />
-                    {c.dashboard.apiReady}
-                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button className="bank-top-icon" onClick={openSupportChat} type="button">
+                    <span aria-hidden="true">?</span>
+                    <span className="sr-only">Open support</span>
+                  </button>
+                  <button className="bank-top-icon" onClick={() => setIsSettingsOpen(true)} type="button">
+                    <span aria-hidden="true">⚙</span>
+                    <span className="sr-only">Open settings</span>
+                  </button>
+                  <span className="bank-status-pill">{isLoading ? "Syncing" : "Protected"}</span>
                 </div>
               </div>
 
-              <section className="revolut-balance-card">
-                <div className="flex items-start justify-between gap-4">
+              <section className="bank-hero-card">
+                <div className="bank-hero-balance">
+                  <button aria-label="Add money" className="bank-round-plus" type="button">+</button>
                   <div>
-                    <p className="text-sm font-black text-[#4B5563]">{c.app.mainAccount}</p>
-                    <h3 className="mt-3 text-5xl font-black tracking-tight text-[#111827]">
-                      {formatCurrency(accounts.reduce((sum, account) => sum + account.balance, 0), accounts[0]?.currency ?? "EUR")}
-                    </h3>
-                    <p className="mt-3 text-sm font-semibold text-[#4B5563]">
-                      {accounts[0]?.accountNumber ?? "FG-00000000"}
-                    </p>
+                    <p>Total balance</p>
+                    <strong>{formatCurrency(accounts.reduce((sum, account) => sum + account.balance, 0), accounts[0]?.currency ?? "EUR")}</strong>
                   </div>
-                  <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-black text-[#111827]">
-                    {c.app.protected}
-                  </span>
                 </div>
-                <div className="mt-8">
-                  <p className="text-sm font-black text-[#4B5563]">{c.app.quickActions}</p>
-                  <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {[c.app.addMoney, c.app.transfer, c.app.cards, c.app.analytics].map((action) => (
-                      <button className="revolut-action" key={action} type="button">
-                        <span>{action.slice(0, 1)}</span>
-                        {action}
-                      </button>
-                    ))}
-                  </div>
+
+                <div className="bank-card-stage">
+                  <article className="bank-card-visual" aria-label="FinGuard Visa card">
+                    <div className="flex items-start justify-between">
+                      <span>FinGuard</span>
+                      <span>VISA</span>
+                    </div>
+                    <div className="mt-auto">
+                      <p>4441 **** **** 8430</p>
+                      <small>{accounts[0]?.accountNumber ?? "FG-00000000"}</small>
+                    </div>
+                  </article>
+                </div>
+
+                <div className="bank-card-switch">
+                  <span aria-hidden="true">▣</span>
+                  All cards
                 </div>
               </section>
 
-              <section className="revolut-side-card">
-                <div className="virtual-card">
-                  <div className="flex items-start justify-between">
-                    <span>FinGuard</span>
-                    <span>•••• 2480</span>
-                  </div>
-                  <div className="mt-12 text-sm font-black">{c.app.virtualCard}</div>
-                </div>
-                <p className="mt-4 text-sm font-bold text-[#4B5563]">{c.app.cardReady}</p>
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="mini-metric">
-                    <p>{c.app.spending}</p>
-                    <strong>{formatCurrency(transactions.reduce((sum, txn) => sum + txn.amount, 0), "EUR")}</strong>
-                  </div>
-                  <div className="mini-metric">
-                    <p>{c.app.protection}</p>
-                    <strong>{disputes.filter((item) => item.status !== "resolved").length}</strong>
-                  </div>
-                </div>
-              </section>
+              <div className="bank-action-row" aria-label="Quick banking actions">
+                {[
+                  { label: "Card transfer", icon: "▰", action: () => setLastEvent("Card transfer selected") },
+                  { label: "IBAN payment", icon: "▤", action: () => setLastEvent("IBAN payment selected") },
+                  { label: "Other payments", icon: "▥", action: () => document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" }) },
+                ].map(({ label, icon, action }) => (
+                  <button className="bank-action-button" key={label} onClick={action} type="button">
+                    <span>{icon}</span>
+                    {label}
+                  </button>
+                ))}
+              </div>
 
-              <section className="revolut-panel">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-black">{c.cabinet.recentTransactions}</h3>
-                  <a className="text-sm font-black text-[#4B5563]" href="#dashboard">
-                    {c.cabinet.viewAll}
-                  </a>
+              <section className="bank-operations-panel">
+                <div className="flex items-center justify-between gap-4">
+                  <h3>Operations</h3>
+                  <a href="#dashboard">All</a>
                 </div>
-                <div className="mt-5 divide-y divide-slate-100">
-                  {transactions.slice(0, 3).map((txn) => (
-                    <article className="grid gap-3 py-4 sm:grid-cols-[1fr_auto]" key={txn.id}>
-                      <div>
-                        <p className="font-black">{txn.description}</p>
-                        <p className="mt-1 text-sm text-[#8A8F98]">
-                          {txn.id}
-                          {txn.accountNumber ? ` · ${txn.accountNumber}` : ""}
-                        </p>
+                <div className="mt-4 divide-y divide-white/10">
+                  {transactions.slice(0, 4).map((txn) => (
+                    <article className="bank-operation-row" key={txn.id}>
+                      <div className="bank-operation-icon">{txn.description.slice(0, 1).toUpperCase()}</div>
+                      <div className="min-w-0 flex-1">
+                        <p>{txn.description}</p>
+                        <span>{formatTime(txn.createdAt)} · {txn.id}</span>
                       </div>
-                      <div className="sm:text-right">
-                        <p className="font-black">{formatCurrency(txn.amount, txn.currency)}</p>
+                      <div className="text-right">
+                        <strong>-{formatCurrency(txn.amount, txn.currency)}</strong>
                         <span className={`badge mt-2 ${statusStyles[txn.status]}`}>{statusLabel(txn.status)}</span>
                       </div>
                     </article>
                   ))}
                   {transactions.length === 0 ? (
-                    <p className="py-6 text-sm font-bold text-[#8A8F98]">{c.cabinet.noTransactions}</p>
+                    <p className="py-8 text-sm font-semibold text-white/55">{c.cabinet.noTransactions}</p>
                   ) : null}
                 </div>
               </section>
+            </div>
 
-              <section className="revolut-panel">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-black">{c.cabinet.reviewCases}</h3>
-                  <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
-                    {disputes.filter((item) => item.status !== "resolved").length} {c.cabinet.open}
-                  </span>
+            <aside className="bank-laptop-sidebar">
+              <section className="bank-sidebar-panel">
+                <p className="bank-sidebar-label">Account health</p>
+                <h3>Secure session active</h3>
+                <div className="mt-5 grid gap-3">
+                  {[
+                    [c.dashboard.sessionSecure, "Active"],
+                    [c.dashboard.databaseConnected, accounts.length ? "Online" : "Demo"],
+                    [c.dashboard.apiReady, isLoading ? "Syncing" : "Ready"],
+                  ].map(([label, value]) => (
+                    <div className="bank-health-row" key={label}>
+                      <span>{label}</span>
+                      <strong>{value}</strong>
+                    </div>
+                  ))}
                 </div>
-                <div className="mt-5 space-y-3">
+              </section>
+
+              <section className="bank-sidebar-panel">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="bank-sidebar-label">Digital card</p>
+                    <h3>{c.app.virtualCard}</h3>
+                  </div>
+                  <span className="bank-mini-badge">{c.app.protected}</span>
+                </div>
+                <div className="bank-mini-card">
+                  <span>•••• 2480</span>
+                  <strong>{c.app.cardReady}</strong>
+                </div>
+              </section>
+
+              <section className="bank-sidebar-panel">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="bank-sidebar-label">Review cases</p>
+                    <h3>{disputes.filter((item) => item.status !== "resolved").length} open</h3>
+                  </div>
+                  <a className="bank-sidebar-link" href="#dashboard">View</a>
+                </div>
+                <div className="mt-4 space-y-3">
                   {disputes.slice(0, 3).map((item) => (
                     <button
-                      className="case-card"
+                      className="bank-case-row"
                       key={item.id}
                       onClick={() => {
                         setSelectedDisputeId(item.id);
@@ -2060,21 +2070,16 @@ function App() {
                       }}
                       type="button"
                     >
-                      <div>
-                        <p className="font-black">{item.reason}</p>
-                        <p className="mt-1 text-sm text-[#8A8F98]">{item.transactionId}</p>
-                      </div>
+                      <span>
+                        <strong>{item.reason}</strong>
+                        <small>{item.transactionId}</small>
+                      </span>
                       <span className={`badge ${statusStyles[item.status]}`}>{statusLabel(item.status)}</span>
                     </button>
                   ))}
-                  {disputes.length === 0 ? (
-                    <p className="rounded border border-[#C0C7D1] bg-white p-4 text-sm font-bold text-[#8A8F98]">
-                      {c.disputes.noCases}
-                    </p>
-                  ) : null}
                 </div>
               </section>
-            </div>
+            </aside>
           </div>
         </section>
       ) : null}
