@@ -1,7 +1,6 @@
 import { FormEvent, Suspense, lazy, useEffect, useMemo, useState } from "react";
 import bankImage from "./assets/bank_1.png";
 import heroBankImage from "./assets/bank_2.png";
-import logoImage from "./assets/logo.png";
 import safetyImage from "./assets/safety.png";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
@@ -1480,8 +1479,14 @@ function App() {
     <main className="min-h-screen bg-[#F7F7F8] text-[#111827]">
       {user ? (
       <header className="site-header">
-        <div className="mx-auto flex max-w-7xl justify-end px-4 py-1.5 text-sm font-normal text-[#4B5563] sm:px-6 lg:px-8">
-          <div className="hidden items-center gap-7 sm:flex">
+        <div className="mx-auto grid max-w-[1500px] grid-cols-[minmax(0,1fr)_auto] gap-x-5 gap-y-2 px-4 py-3 sm:px-6 lg:grid-cols-[minmax(15rem,0.72fr)_minmax(24rem,1fr)_auto] lg:grid-rows-[auto_auto_auto] lg:px-10">
+          <div className="brand-lockup self-center lg:col-start-1 lg:row-span-2 lg:row-start-1">
+            <h1 className="brand-title text-[clamp(2.5rem,3vw,3.75rem)] font-medium leading-none tracking-tight text-[#111827]">
+              FinGuard
+            </h1>
+          </div>
+
+          <div className="hidden items-center justify-end gap-7 text-sm font-normal text-[#4B5563] sm:flex lg:col-start-2 lg:row-start-1 lg:-translate-x-7">
             <label className="language-select-wrap">
               <span className="sr-only">Language</span>
               <select
@@ -1501,20 +1506,8 @@ function App() {
             </button>
             <a href="#footer">{c.contact}</a>
           </div>
-        </div>
-        <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-8 px-4 py-3 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-10 lg:py-4">
-          <div className="brand-lockup lg:justify-self-start">
-            <div className="brand-logo-frame h-12 w-12">
-              <img alt="FinGuard logo" className="brand-logo-image" src={logoImage} />
-            </div>
-            <div>
-              <h1 className="brand-title text-2xl font-medium tracking-tight sm:text-3xl">FinGuard</h1>
-              <p className="brand-subtitle text-sm font-normal text-[#8A8F98] sm:text-base">
-                {user ? `${c.signedIn} ${user.name}` : c.tagline}
-              </p>
-            </div>
-          </div>
-          <nav className="hidden items-center gap-9 text-sm font-medium text-[#111827] xl:gap-11 lg:flex lg:justify-self-center">
+
+          <nav className="z-10 hidden items-center justify-center gap-8 text-sm font-semibold text-[#111827] lg:col-span-3 lg:col-start-1 lg:row-start-2 lg:flex xl:gap-10">
             {user ? (
               <>
                 <a className="header-nav-link" href="#cabinet">{isAuditor ? "Customers" : c.nav.cabinet}</a>
@@ -1530,7 +1523,12 @@ function App() {
               </>
             )}
           </nav>
-          <div className="flex items-center gap-2 lg:justify-self-end">
+
+          <p className="brand-subtitle col-span-2 text-sm font-normal leading-none text-[#8A8F98] sm:text-base lg:col-span-1 lg:col-start-1 lg:row-start-3">
+            {`${c.signedIn} ${user.name}`}
+          </p>
+
+          <div className="row-span-2 row-start-1 flex items-center justify-end gap-2 lg:col-start-3 lg:row-span-3 lg:row-start-1">
             <button
               aria-expanded={isMobileMenuOpen}
               aria-label="Open mobile navigation"
@@ -2724,10 +2722,7 @@ function App() {
       <footer className="metallic-footer text-white" id="footer">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">
           <div className="md:col-span-2">
-            <div className="brand-logo-frame h-12 w-12">
-              <img alt="FinGuard logo" className="brand-logo-image" src={logoImage} />
-            </div>
-            <h2 className="mt-4 text-2xl font-black">FinGuard</h2>
+            <h2 className="brand-title text-2xl font-black text-white">FinGuard</h2>
             <p className="mt-3 max-w-md leading-7 text-[#C0C7D1]">
               {c.footer.text}
             </p>
