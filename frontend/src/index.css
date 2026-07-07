@@ -59,7 +59,8 @@ body {
   }
 
   .air-open-button {
-    @apply flex h-11 min-w-[310px] items-center justify-between rounded-md bg-black px-4 text-sm font-medium uppercase text-white;
+    @apply flex h-11 items-center justify-center gap-[10px] rounded-md bg-black px-4 text-sm font-medium uppercase text-white;
+    width: fit-content;
   }
 
   .air-open-button span,
@@ -83,7 +84,7 @@ body {
   }
 
   .air-hero {
-    @apply relative min-h-screen overflow-hidden bg-white text-black;
+    @apply relative min-h-screen overflow-hidden bg-[#f4f4f2] text-black;
     border-top: 4px solid #302836;
   }
 
@@ -100,7 +101,29 @@ body {
   }
 
   .air-hero-letters {
-    @apply absolute inset-x-7 top-[40vh] z-10 flex items-center justify-between text-[clamp(10rem,15vw,20rem)] font-normal leading-none text-black;
+    @apply absolute inset-x-7 top-1/2 z-10 grid -translate-y-1/2 items-center text-[clamp(10rem,15vw,20rem)] font-normal leading-none text-black;
+    grid-template-columns: max-content minmax(5rem, 0.72fr) max-content minmax(5rem, 0.72fr) max-content;
+    column-gap: clamp(1rem, 3.2vw, 5rem);
+  }
+
+  .air-hero-letters span {
+    @apply block;
+    z-index: 2;
+  }
+
+  .air-hero-letter-image {
+    @apply block max-w-none justify-self-center object-contain;
+    width: clamp(16rem, 31vw, 42rem);
+    aspect-ratio: 1 / 1;
+  }
+
+  .air-hero-letter-image-percent {
+    width: clamp(14rem, 27vw, 36rem);
+  }
+
+  .air-hero-letter-image-cards {
+    width: clamp(28rem, 42vw, 58rem);
+    z-index: 1;
   }
 
   .air-hero-center {

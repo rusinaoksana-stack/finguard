@@ -1,6 +1,8 @@
 import { FormEvent, Suspense, lazy, useEffect, useMemo, useState } from "react";
 import bankImage from "./assets/bank_1.png";
 import heroBankImage from "./assets/bank_2.png";
+import creditsCardsImage from "./assets/credits_cards.png";
+import persentImage from "./assets/persent.png";
 import safetyImage from "./assets/safety.png";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
@@ -2085,17 +2087,13 @@ function App() {
       {!user ? (
         <>
           <section className="air-hero">
-            <Suspense fallback={null}>
-              <BankArchitectureScene />
-            </Suspense>
             <div className="air-hero-slogan">THE ARCHITECTURE<br />OF SECURE BANKING</div>
             <div className="air-hero-letters" aria-label="FinGuard">
               <span>F</span>
+              <img className="air-hero-letter-image air-hero-letter-image-percent" src={persentImage} alt="" aria-hidden="true" />
               <span>G</span>
+              <img className="air-hero-letter-image air-hero-letter-image-cards" src={creditsCardsImage} alt="" aria-hidden="true" />
               <span>B</span>
-            </div>
-            <div className="air-hero-center">
-              CLASS (A)<br />PREMIUM DIGITAL<br />BANK
             </div>
             <div className="air-cookie">
               THIS WEBSITE USES <strong>COOKIES</strong>
