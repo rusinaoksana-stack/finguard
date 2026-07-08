@@ -20,6 +20,7 @@ body {
   margin: 0;
   background: #ffffff;
   font-family: var(--font-body);
+  overflow-x: hidden;
 }
 
 @layer components {
@@ -289,6 +290,265 @@ body {
 
   .air-dark-link {
     @apply ml-auto flex h-[4.4rem] w-[19rem] items-center justify-between rounded-md bg-white/10 px-4 text-sm font-medium uppercase text-white hover:bg-white hover:text-black;
+  }
+
+  @media (max-width: 767px) {
+    .air-public-nav {
+      @apply items-center px-3 py-3;
+    }
+
+    .air-nav-left {
+      @apply gap-2;
+    }
+
+    .air-icon-button,
+    .air-open-button {
+      @apply h-10;
+    }
+
+    .air-menu-button {
+      @apply w-14;
+    }
+
+    .air-menu-button span {
+      @apply w-6;
+    }
+
+    .air-menu-button span + span {
+      @apply w-4;
+    }
+
+    .air-heart-button {
+      @apply w-[4.5rem] px-2 text-xs;
+    }
+
+    .air-open-button {
+      @apply gap-2 px-3 text-xs;
+    }
+
+    .air-open-button span {
+      @apply text-xl;
+    }
+
+    .air-menu-panel {
+      @apply left-3 top-16 w-[calc(100vw-1.5rem)];
+    }
+
+    .air-hero {
+      min-height: 100svh;
+    }
+
+    .air-hero-slogan {
+      @apply inset-x-4 top-24 text-center text-[clamp(1.75rem,8vw,2.5rem)] leading-[0.98];
+    }
+
+    .air-hero-letters {
+      @apply inset-x-3 top-[48%] text-[clamp(4.2rem,18vw,6rem)];
+      grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1.3fr) max-content;
+      column-gap: clamp(0.25rem, 1.6vw, 0.75rem);
+    }
+
+    .air-hero-letter-image {
+      width: min(24vw, 7rem);
+      height: auto;
+    }
+
+    .air-hero-letter-image-percent {
+      width: min(23vw, 6.5rem);
+    }
+
+    .air-hero-letter-image-cards {
+      width: min(31vw, 9rem);
+    }
+
+    .air-cookie {
+      @apply bottom-3 w-[calc(100vw-1.5rem)] justify-between gap-2 px-3 py-2 text-[0.65rem];
+    }
+
+    .air-cookie button {
+      @apply shrink-0 px-3 py-2;
+    }
+
+    .air-scroll {
+      @apply bottom-20 right-3;
+    }
+
+    .air-photo-section,
+    .air-white-feature {
+      min-height: auto;
+      padding-bottom: 4rem;
+    }
+
+    .air-word-row {
+      @apply flex-col items-start gap-1 whitespace-normal px-4 pt-6 text-[clamp(2rem,10vw,3.25rem)] leading-[0.95];
+      width: 100%;
+    }
+
+    .air-word-row span {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .air-word-row span:nth-child(even) {
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    .air-center-copy {
+      @apply mt-20 max-w-[20rem] px-4 text-base;
+    }
+
+    .air-split {
+      @apply mt-20 min-h-0 gap-10 px-4;
+    }
+
+    .air-split h2 {
+      @apply text-[clamp(1.8rem,8vw,2.6rem)];
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .air-split p {
+      @apply mt-8 text-base;
+    }
+
+    .air-glass-image {
+      @apply min-h-0;
+      aspect-ratio: 4 / 5;
+    }
+
+    .air-glass-image img {
+      @apply min-h-0;
+    }
+
+    .air-inline-card {
+      @apply static mx-4 mt-4 h-14;
+      width: calc(100% - 2rem);
+    }
+
+    .air-wide-image {
+      @apply mt-16 h-auto w-[calc(100vw-2rem)];
+      aspect-ratio: 4 / 5;
+    }
+
+    .air-dark-section {
+      @apply min-h-0 px-4 py-20;
+    }
+
+    .air-dark-grid {
+      @apply grid-cols-1 gap-4;
+    }
+
+    .air-dark-card {
+      @apply min-h-[24rem] p-5;
+    }
+
+    .air-dark-card strong {
+      @apply text-6xl;
+    }
+
+    .air-dark-card span {
+      @apply mt-8;
+    }
+
+    .air-dark-card p {
+      @apply text-3xl;
+    }
+
+    .air-black-info {
+      @apply min-h-0 grid-cols-1 gap-10 px-4 py-20;
+    }
+
+    .air-black-image {
+      @apply min-h-0;
+      aspect-ratio: 4 / 5;
+    }
+
+    .air-black-image img {
+      @apply min-h-0;
+    }
+
+    .air-black-copy h2 {
+      @apply text-[clamp(1.9rem,8vw,2.75rem)];
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .section-heading,
+    .system-title,
+    .dashboard-title {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      font-size: clamp(1.75rem, 8vw, 2.5rem);
+      line-height: 1.05;
+    }
+
+    .air-black-copy p {
+      @apply text-base;
+    }
+
+    .air-dark-link {
+      @apply ml-0 h-14 w-full;
+    }
+
+    .detail-row {
+      @apply items-start;
+    }
+
+    .detail-row dd {
+      @apply max-w-[58%] break-words text-right;
+    }
+
+    .bank-operation-row {
+      @apply gap-3;
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .bank-operation-row > strong {
+      @apply col-span-2 text-right;
+    }
+
+    .system-metrics {
+      @apply grid-cols-1;
+    }
+
+    .balance-readout strong {
+      @apply text-4xl;
+    }
+
+    .support-chat {
+      @apply inset-x-3 bottom-3 max-h-[calc(100svh-1.5rem)] w-auto;
+    }
+
+    .support-chat-form {
+      @apply gap-2 p-3;
+    }
+
+    .support-chat-send {
+      @apply px-3;
+    }
+
+    .toast {
+      @apply inset-x-3 bottom-3 w-auto;
+    }
+  }
+
+  @media (max-width: 389px) {
+    .air-heart-button {
+      @apply hidden;
+    }
+
+    .air-open-button {
+      @apply px-2 text-[0.7rem];
+    }
+
+    .air-hero-letters {
+      @apply text-[3.75rem];
+    }
+
+    .air-cookie {
+      @apply text-[0.58rem];
+    }
   }
 
   h1,
