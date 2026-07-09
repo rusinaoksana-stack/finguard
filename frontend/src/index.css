@@ -154,7 +154,13 @@ body {
   }
 
   .air-word-row {
-    @apply pointer-events-none flex justify-between gap-8 whitespace-nowrap px-7 pt-5 text-[clamp(4rem,8vw,10rem)] font-normal uppercase leading-[0.8] text-black;
+    @apply pointer-events-none flex w-full whitespace-nowrap px-7 pt-5 text-[clamp(3.25rem,5vw,6rem)] font-normal uppercase leading-[0.9] text-black;
+  }
+
+  .air-word-row span {
+    @apply block w-full max-w-full;
+    text-align: justify;
+    text-align-last: justify;
   }
 
   .air-center-copy {
@@ -196,7 +202,7 @@ body {
   }
 
   .air-inline-card {
-    @apply absolute bottom-8 left-[34vw] z-10 flex h-[4.75rem] w-[19rem] items-center justify-between rounded-md bg-[#ececec] px-4 text-sm font-medium uppercase text-black hover:bg-black hover:text-white;
+    @apply absolute bottom-8 left-[7vw] z-10 flex h-[4.75rem] w-[19rem] items-center justify-between rounded-md bg-[#ececec] px-4 text-sm font-medium uppercase text-black hover:bg-black hover:text-white;
   }
 
   .air-wide-image {
@@ -386,6 +392,8 @@ body {
 
     .air-word-row span {
       max-width: 100%;
+      text-align: left;
+      text-align-last: auto;
       overflow-wrap: anywhere;
     }
 
@@ -734,6 +742,10 @@ body {
   .bank-operation-row span,
   .bank-case-row small {
     @apply mt-1 block truncate text-xs font-medium text-white/45;
+  }
+
+  .bank-operation-row .badge {
+    @apply mt-2 inline-flex text-[#111827];
   }
 
   .bank-operation-row strong {
@@ -1485,6 +1497,149 @@ body {
 
   .user-menu-trigger {
     @apply grid h-12 w-12 place-items-center rounded-full border-2 border-[#4B5563] bg-white transition hover:bg-[#E5E7EB] focus:outline-none focus:ring-4 focus:ring-[#C0C7D1];
+  }
+
+  .profile-menu-overlay {
+    @apply fixed inset-0 z-50 bg-[#11141a] text-white;
+  }
+
+  .profile-menu-panel {
+    @apply relative mx-auto flex h-[100svh] w-full max-w-[42rem] flex-col overflow-y-auto px-6 pb-8 pt-5;
+    background:
+      radial-gradient(circle at 9% 21%, rgba(110, 139, 154, 0.36), transparent 25rem),
+      radial-gradient(circle at 86% 53%, rgba(124, 126, 137, 0.28), transparent 18rem),
+      linear-gradient(135deg, #171a20 0%, #222834 48%, #191d25 100%);
+  }
+
+  .profile-menu-topbar {
+    @apply sticky top-0 z-10 grid min-h-14 grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 bg-transparent pb-4;
+  }
+
+  .profile-close-button {
+    @apply grid h-11 w-11 place-items-center rounded-full text-4xl font-light leading-none text-white transition hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
+  .profile-top-name {
+    @apply truncate text-center text-lg font-black;
+  }
+
+  .profile-upgrade-button {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white/10 px-4 text-sm font-black text-white transition hover:bg-white/[0.16] focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
+  .profile-identity {
+    @apply grid justify-items-center gap-2 pb-8 pt-1 text-center;
+  }
+
+  .profile-photo {
+    @apply grid h-28 w-28 place-items-center rounded-full border-4 border-[#9daea3] bg-[#dfe5df] text-3xl font-black text-[#111827] shadow-2xl shadow-black/30;
+  }
+
+  .profile-identity h2 {
+    @apply mt-3 max-w-full break-words text-[clamp(2.25rem,10vw,3.5rem)] font-black leading-none;
+  }
+
+  .profile-identity p {
+    @apply max-w-full break-all text-sm font-semibold text-white/[0.58];
+  }
+
+  .profile-premium-card {
+    @apply relative flex min-h-28 w-full items-center justify-between overflow-hidden rounded-[1.35rem] px-6 text-left transition hover:brightness-110 focus:outline-none focus:ring-4 focus:ring-white/20;
+    background: linear-gradient(135deg, rgba(125, 153, 138, 0.92), rgba(45, 58, 63, 0.98));
+  }
+
+  .profile-premium-card strong {
+    @apply block text-3xl font-black leading-none text-white;
+  }
+
+  .profile-premium-card small {
+    @apply mt-3 block text-base font-semibold text-white/75;
+  }
+
+  .profile-card-stack {
+    @apply pointer-events-none absolute bottom-[-1.5rem] right-2 h-28 w-36;
+  }
+
+  .profile-card-stack span {
+    @apply absolute block h-20 w-28 rounded-xl border border-white/20 bg-white/15 shadow-xl shadow-black/25;
+    transform: rotate(-26deg);
+  }
+
+  .profile-card-stack span:last-child {
+    @apply right-0 top-3 bg-white/25;
+  }
+
+  .profile-card-stack span::after {
+    content: "FG";
+    @apply absolute left-4 top-4 text-xl font-black text-white/80;
+  }
+
+  .profile-action-card {
+    @apply mt-6 grid gap-1 rounded-[1.35rem] bg-[#3b424f]/[0.92] px-4 py-4 shadow-2xl shadow-black/20 backdrop-blur;
+  }
+
+  .profile-action-row,
+  .profile-logout-row {
+    @apply grid min-h-[4.75rem] w-full grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-2 text-left text-xl font-semibold text-white transition hover:bg-white/[0.08] focus:outline-none focus:ring-4 focus:ring-white/20;
+  }
+
+  .profile-action-icon {
+    @apply grid h-10 w-10 place-items-center text-xl font-black text-white;
+  }
+
+  .profile-action-label {
+    @apply min-w-0 break-words;
+  }
+
+  .profile-action-badge {
+    @apply grid h-10 min-w-10 place-items-center rounded-full bg-white px-3 text-base font-black text-[#111827];
+  }
+
+  .profile-logout-row {
+    @apply mt-6 rounded-[1.35rem] bg-[#3b424f]/[0.92] px-6 backdrop-blur;
+  }
+
+  .profile-version {
+    @apply mt-10 text-center text-sm font-semibold leading-5 text-white/[0.38];
+  }
+
+  @media (min-width: 768px) {
+    .profile-menu-overlay {
+      @apply flex items-center justify-end bg-black/[0.55] p-6 backdrop-blur-sm;
+    }
+
+    .profile-menu-panel {
+      @apply mx-0 h-[min(860px,calc(100vh-3rem))] max-w-[30rem] rounded-[1.75rem] px-6 shadow-2xl shadow-black/40;
+    }
+
+    .profile-top-name {
+      @apply text-left;
+    }
+
+    .profile-identity {
+      @apply pb-5;
+    }
+
+    .profile-photo {
+      @apply h-20 w-20 text-2xl;
+    }
+
+    .profile-identity h2 {
+      @apply text-4xl;
+    }
+
+    .profile-premium-card {
+      @apply min-h-24 rounded-2xl;
+    }
+
+    .profile-action-card {
+      @apply rounded-2xl py-3;
+    }
+
+    .profile-action-row,
+    .profile-logout-row {
+      @apply min-h-14 text-base;
+    }
   }
 }
 

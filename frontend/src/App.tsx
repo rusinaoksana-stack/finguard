@@ -144,7 +144,7 @@ const demoDisputes: Dispute[] = [
 const demoAuditorCustomers: AuditorCustomer[] = [
   {
     id: "demo_customer_001",
-    name: "Demo Customer",
+    name: "Emma Murphy",
     email: "customer.demo@finguard.ai",
     role: "user",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 120).toISOString(),
@@ -260,6 +260,11 @@ const initialAuthForm: AuthFormState = {
   confirmPassword: "",
 };
 
+const demoCredentials = [
+  { label: "Customer", email: "customer.demo@finguard.ai", password: "Password123" },
+  { label: "Auditor", email: "auditor@finguard.ai", password: "Password123" },
+];
+
 const initialDisputeForm = {
   transactionId: "",
   reason: "",
@@ -314,6 +319,8 @@ const content = {
       missingName: "Please enter your full name.",
       shortPassword: "Password must be at least 6 characters.",
       mismatch: "Passwords do not match.",
+      demoAccess: "Test access",
+      fillDemo: "Use",
     },
     profile: {
       accountOverview: "Account overview",
@@ -531,6 +538,8 @@ const content = {
       missingName: "Введіть повне імʼя.",
       shortPassword: "Пароль має містити щонайменше 6 символів.",
       mismatch: "Паролі не збігаються.",
+      demoAccess: "Тестовий доступ",
+      fillDemo: "Взяти",
     },
     profile: {
       accountOverview: "Огляд акаунта",
@@ -1282,11 +1291,35 @@ function App() {
       .filter((dispute): dispute is AuditorDispute => Boolean(dispute));
   }, [selectedAuditorTransactions]);
 
+  const displayUserName = useMemo(() => {
+    if (!user) return "";
+    return user.email?.toLowerCase() === "customer.demo@finguard.ai" ? "Emma Murphy" : user.name;
+  }, [user]);
+
   const userInitials = useMemo(() => {
     if (!user) return "FG";
-    const parts = user.name.trim().split(/\s+/).filter(Boolean);
-    return (parts.length > 1 ? `${parts[0][0]}${parts[1][0]}` : user.name.slice(0, 2)).toUpperCase();
-  }, [user]);
+    const parts = displayUserName.trim().split(/\s+/).filter(Boolean);
+    return (parts.length > 1 ? `${parts[0][0]}${parts[1][0]}` : displayUserName.slice(0, 2)).toUpperCase();
+  }, [displayUserName, user]);
+
+  const profileHandle = useMemo(() => {
+    if (!user) return "@finguard";
+    const base = displayUserName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+    return `@${base || "finguard"}`;
+  }, [displayUserName, user]);
+
+  const profileMenuItems = useMemo(
+    () => [
+      { icon: "!", label: "Вхідні", badge: "20", action: () => setLastEvent("Inbox opened") },
+      { icon: "i", label: "Особиста інформація", action: () => setIsSettingsOpen(true) },
+      { icon: "B", label: "Реквізити рахунку", action: () => setLastEvent(accounts[0]?.accountNumber ?? "Account details") },
+      { icon: "R", label: "Безпека", action: () => setIsSettingsOpen(true) },
+      { icon: "D", label: "Документи й виписки", action: () => setLastEvent("Documents and statements opened") },
+      { icon: "?", label: "Довідка", action: () => setIsChatOpen(true) },
+      { icon: "*", label: "Налаштування", action: () => setIsSettingsOpen(true) },
+    ],
+    [accounts],
+  );
 
   const openAuth = (mode: AuthMode) => {
     setAuthMode(mode);
@@ -1527,7 +1560,7 @@ function App() {
           </nav>
 
           <p className="brand-subtitle col-span-2 text-sm font-normal leading-none text-[#8A8F98] sm:text-base lg:col-span-1 lg:col-start-1 lg:row-start-3">
-            {`${c.signedIn} ${user.name}`}
+            {`${c.signedIn} ${displayUserName}`}
           </p>
 
           <div className="row-span-2 row-start-1 flex items-center justify-end gap-2 lg:col-start-3 lg:row-span-3 lg:row-start-1">
@@ -1544,66 +1577,19 @@ function App() {
             </button>
 
             {user ? (
-              <div className="relative">
+              <div>
                 <button
                   aria-expanded={isUserMenuOpen}
                   aria-label="Open user menu"
                   className="user-menu-trigger"
-                  onClick={() => setIsUserMenuOpen((current) => !current)}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsUserMenuOpen(true);
+                  }}
                   type="button"
                 >
                   <span className="user-avatar">{userInitials}</span>
                 </button>
-
-                {isUserMenuOpen ? (
-                  <div className="user-menu" role="menu">
-                    <div className="border-b border-[#C0C7D1] p-4">
-                      <div className="flex items-center gap-3">
-                        <span className="user-avatar large">{userInitials}</span>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-black text-[#111827]">{user.name}</p>
-                          <p className="truncate text-xs font-semibold text-[#8A8F98]">{user.email ?? "Signed in"}</p>
-                        </div>
-                      </div>
-                      <div className="mt-3 rounded border border-[#C0C7D1] bg-[#E5E7EB] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#4B5563]">
-                        {user.role}
-                      </div>
-                    </div>
-
-                    <div className="p-2">
-                      <a
-                        className="user-menu-item"
-                        href="#cabinet"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        role="menuitem"
-                      >
-                        {c.profile.accountOverview}
-                      </a>
-                      <button
-                        className="user-menu-item"
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          setIsSettingsOpen(true);
-                        }}
-                        role="menuitem"
-                        type="button"
-                      >
-                        {c.profile.settings}
-                      </button>
-                      <button
-                        className="user-menu-item danger"
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          logout();
-                        }}
-                        role="menuitem"
-                        type="button"
-                      >
-                        {c.profile.signOut}
-                      </button>
-                    </div>
-                  </div>
-                ) : null}
               </div>
             ) : (
               <button className="btn-primary header-login-button" onClick={() => openAuth("login")}>
@@ -1936,7 +1922,7 @@ function App() {
                   <span className="user-avatar large">{userInitials}</span>
                   <div>
                     <p className="text-sm font-semibold text-white/60">Welcome back</p>
-                    <h2 className="text-2xl font-semibold leading-tight text-white">{user.name}</h2>
+                    <h2 className="text-2xl font-semibold leading-tight text-white">{displayUserName}</h2>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
@@ -2104,8 +2090,7 @@ function App() {
 
           <section className="air-photo-section" id="accounts">
             <div className="air-word-row" aria-hidden="true">
-              <span>THE MOMENTUM</span>
-              <span>TO BANK HIGHER</span>
+              <span>THE MOMENTUM TO BANK HIGHER</span>
             </div>
             <p className="air-center-copy">
               FINGUARD IS A NEW GENERATION OF PREMIUM BANKING THAT BRINGS PRIVATE ACCOUNTS,
@@ -2132,9 +2117,7 @@ function App() {
 
           <section className="air-white-feature" id="features">
             <div className="air-word-row">
-              <span>A NEW</span>
-              <span>PREMIUM</span>
-              <span>FORMAT</span>
+              <span>A NEW PREMIUM FORMAT</span>
             </div>
             <p className="air-center-copy">
               FINGUARD IS NOT ONLY A DIGITAL BANK BUT ALSO A STRONG SECURITY STATEMENT
@@ -2195,7 +2178,7 @@ function App() {
             <div>
               <p className="section-kicker">{user ? c.dashboard.userKicker : c.dashboard.demoKicker}</p>
               <h2 className="section-heading">
-                {user ? `${user.name}${c.dashboard.userTitleSuffix}` : c.dashboard.demoTitle}
+                {user ? `${displayUserName}${c.dashboard.userTitleSuffix}` : c.dashboard.demoTitle}
               </h2>
               <p className="mt-3 max-w-2xl text-base leading-7 text-[#4B5563]">
                 {user ? c.dashboard.userText : c.dashboard.demoText}
@@ -2509,6 +2492,96 @@ function App() {
         </section>
       ) : null}
 
+      {isUserMenuOpen && user ? (
+        <div className="profile-menu-overlay" role="dialog" aria-modal="true" aria-label="User profile menu">
+          <section className="profile-menu-panel">
+            <div className="profile-menu-topbar">
+              <button
+                aria-label="Close user menu"
+                className="profile-close-button"
+                onClick={() => setIsUserMenuOpen(false)}
+                type="button"
+              >
+                ×
+              </button>
+              <div className="profile-top-name">{displayUserName}</div>
+              <button
+                className="profile-upgrade-button"
+                onClick={() => {
+                  setIsUserMenuOpen(false);
+                  setLastEvent("Premium upgrade selected");
+                }}
+                type="button"
+              >
+                <span aria-hidden="true">◇</span>
+                Покращити
+              </button>
+            </div>
+
+            <div className="profile-identity">
+              <span className="profile-photo" aria-hidden="true">{userInitials}</span>
+              <h2>{displayUserName}</h2>
+              <p>{profileHandle} · {user.email ?? "customer.demo@finguard.ai"}</p>
+            </div>
+
+            <button
+              className="profile-premium-card"
+              onClick={() => {
+                setIsUserMenuOpen(false);
+                setLastEvent("Premium plan benefits opened");
+              }}
+              type="button"
+            >
+              <span>
+                <strong>Premium</strong>
+                <small>Переваги плану ›</small>
+              </span>
+              <span className="profile-card-stack" aria-hidden="true">
+                <span />
+                <span />
+              </span>
+            </button>
+
+            <div className="profile-action-card" role="menu">
+              {profileMenuItems.map((item) => (
+                <button
+                  className="profile-action-row"
+                  key={item.label}
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    item.action();
+                  }}
+                  role="menuitem"
+                  type="button"
+                >
+                  <span className="profile-action-icon" aria-hidden="true">{item.icon}</span>
+                  <span className="profile-action-label">{item.label}</span>
+                  {item.badge ? <span className="profile-action-badge">{item.badge}</span> : null}
+                </button>
+              ))}
+            </div>
+
+            <button
+              className="profile-logout-row"
+              onClick={() => {
+                setIsUserMenuOpen(false);
+                logout();
+              }}
+              type="button"
+            >
+              <span className="profile-action-icon" aria-hidden="true">↪</span>
+              <span>Вийти</span>
+            </button>
+
+            <p className="profile-version">
+              Версія 10.136<br />
+              FinGuard Bank UAB (Irish Branch)<br />
+              Останній вхід: 9 лип. 2026 р., 22:50
+            </p>
+          </section>
+        </div>
+      ) : null}
+
       {isSettingsOpen && user ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
           <section className="w-full max-w-lg rounded border border-[#C0C7D1] bg-white p-5 shadow-2xl">
@@ -2530,7 +2603,7 @@ function App() {
             <div className="mt-6 grid gap-3">
               <div className="detail-row">
                 <dt>{c.profile.name}</dt>
-                <dd>{user.name}</dd>
+                <dd>{displayUserName}</dd>
               </div>
               <div className="detail-row">
                 <dt>{c.profile.email}</dt>
@@ -2643,13 +2716,46 @@ function App() {
             </div>
 
             <form className="mt-5 space-y-4" onSubmit={handleAuthSubmit}>
+              {authMode === "login" ? (
+                <div className="rounded border border-[#C0C7D1] bg-[#F9FAFB] p-3">
+                  <p className="text-xs font-black uppercase tracking-wide text-[#4B5563]">{c.auth.demoAccess}</p>
+                  <div className="mt-3 grid gap-2">
+                    {demoCredentials.map((credential) => (
+                      <button
+                        className="flex min-h-12 items-center justify-between gap-3 rounded border border-[#C0C7D1] bg-white px-3 text-left text-sm transition hover:border-[#8A8F98] hover:bg-[#E5E7EB]"
+                        key={credential.email}
+                        onClick={() => {
+                          setAuthForm((current) => ({
+                            ...current,
+                            email: credential.email,
+                            password: credential.password,
+                          }));
+                          setAuthError("");
+                        }}
+                        type="button"
+                      >
+                        <span>
+                          <span className="block font-black text-[#111827]">{credential.label}</span>
+                          <span className="block break-all text-xs font-semibold text-[#4B5563]">
+                            {credential.email} / {credential.password}
+                          </span>
+                        </span>
+                        <span className="shrink-0 rounded border border-[#C0C7D1] px-2 py-1 text-xs font-black text-[#4B5563]">
+                          {c.auth.fillDemo}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
               {authMode === "register" ? (
                 <label className="block">
                   <span className="text-sm font-bold text-[#4B5563]">{c.auth.fullName}</span>
                   <input
                     className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                     onChange={(event) => updateAuthField("name", event.target.value)}
-                    placeholder="Oksana Rusina"
+                    placeholder="Emma Murphy"
                     type="text"
                     value={authForm.name}
                   />
