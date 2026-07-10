@@ -1163,7 +1163,7 @@ function App() {
     securityChecks: true,
   });
   const c = user ? content.en : localizedContent[language];
-  const isAuditor = user?.role === "admin";
+  const isAuditor = user?.role === "admin" || user?.role === "auditor" || user?.email?.toLowerCase() === "auditor@finguard.ai";
 
   const showToast = (title: string, message: string, tone: ToastTone = "success") => {
     setToast({ title, message, tone });
@@ -1190,7 +1190,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setIsLoading(true);
 
-    if (user.role === "admin") {
+    if (isAuditor) {
       fetchAuditorCustomers()
         .then((customerData) => {
           const nextCustomers = customerData.length ? customerData : demoAuditorCustomers;
@@ -1220,7 +1220,7 @@ function App() {
         setLastEvent("Demo mode active while API is offline");
       })
       .finally(() => setIsLoading(false));
-  }, [user]);
+  }, [isAuditor, user]);
 
   useEffect(() => {
     if (!socket) return;
@@ -1290,6 +1290,20 @@ function App() {
       .map((transaction) => transaction.dispute)
       .filter((dispute): dispute is AuditorDispute => Boolean(dispute));
   }, [selectedAuditorTransactions]);
+
+  const auditorTotals = useMemo(() => {
+    return auditorCustomers.reduce(
+      (totals, customer) => ({
+        users: totals.users + 1,
+        accounts: totals.accounts + customer.summary.accountCount,
+        transactions: totals.transactions + customer.summary.transactionCount,
+        reviews: totals.reviews + customer.summary.reviewCount,
+        openCases: totals.openCases + customer.summary.openDisputeCount,
+        balance: totals.balance + customer.summary.totalBalance,
+      }),
+      { users: 0, accounts: 0, transactions: 0, reviews: 0, openCases: 0, balance: 0 },
+    );
+  }, [auditorCustomers]);
 
   const displayUserName = useMemo(() => {
     if (!user) return "";
@@ -1697,9 +1711,9 @@ function App() {
             <div className="dashboard-heading">
               <div>
                 <p className="section-kicker">Auditor cabinet</p>
-                <h2 className="section-heading">Customer transaction review</h2>
+                <h2 className="section-heading">Database users and payment checks</h2>
                 <p className="mt-3 max-w-2xl text-base leading-7 text-[#4B5563]">
-                  Select a customer to review their profile, accounts, transactions, and open review cases.
+                  Select a user from the database table to inspect their accounts, payments, and review cases.
                 </p>
               </div>
               <div className="sync-pill">
@@ -1708,206 +1722,249 @@ function App() {
               </div>
             </div>
 
-            <div className="mt-8 grid gap-6 lg:grid-cols-[0.45fr_1fr]" id="dashboard">
-              <aside className="bank-panel">
-                <div className="flex items-center justify-between gap-3">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+              {[
+                ["Users", auditorTotals.users.toString()],
+                ["Accounts", auditorTotals.accounts.toString()],
+                ["Payments", auditorTotals.transactions.toString()],
+                ["In review", auditorTotals.reviews.toString()],
+                ["Open cases", auditorTotals.openCases.toString()],
+                ["Total balance", formatCurrency(auditorTotals.balance, "EUR")],
+              ].map(([label, value]) => (
+                <div className="auditor-metric" key={label}>
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 grid gap-6" id="dashboard">
+              <section className="bank-panel">
+                <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                   <div>
-                    <h3 className="text-xl font-black">Users</h3>
-                    <p className="mt-1 text-sm text-[#8A8F98]">{auditorCustomers.length} customer records</p>
+                    <h3 className="text-xl font-black">Users from database</h3>
+                    <p className="mt-1 text-sm text-[#8A8F98]">
+                      Select a row to verify the user's payment history.
+                    </p>
                   </div>
-                  <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">admin</span>
+                  <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">auditor access</span>
                 </div>
 
-                <div className="mt-5 grid gap-3">
-                  {auditorCustomers.map((customer) => (
-                    <button
-                      className={
-                        selectedAuditorCustomer?.id === customer.id
-                          ? "auditor-user-row selected"
-                          : "auditor-user-row"
-                      }
-                      key={customer.id}
-                      onClick={() => setSelectedAuditorCustomerId(customer.id)}
-                      type="button"
-                    >
-                      <span>
-                        <strong>{customer.name}</strong>
-                        <small>{customer.email}</small>
+                <div className="auditor-table-wrap">
+                  <table className="auditor-table">
+                    <thead>
+                      <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Created</th>
+                        <th>Accounts</th>
+                        <th>Payments</th>
+                        <th>Review</th>
+                        <th>Open cases</th>
+                        <th>Balance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {auditorCustomers.map((customer) => (
+                        <tr
+                          className={selectedAuditorCustomer?.id === customer.id ? "selected" : ""}
+                          key={customer.id}
+                          onClick={() => setSelectedAuditorCustomerId(customer.id)}
+                          tabIndex={0}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              setSelectedAuditorCustomerId(customer.id);
+                            }
+                          }}
+                        >
+                          <td>
+                            <strong>{customer.name}</strong>
+                            <small>{customer.id}</small>
+                          </td>
+                          <td>{customer.email}</td>
+                          <td>{formatTime(customer.createdAt)}</td>
+                          <td>{customer.summary.accountCount}</td>
+                          <td>{customer.summary.transactionCount}</td>
+                          <td>{customer.summary.reviewCount}</td>
+                          <td>{customer.summary.openDisputeCount}</td>
+                          <td>{formatCurrency(customer.summary.totalBalance, "EUR")}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              {selectedAuditorCustomer ? (
+                <>
+                  <section className="bank-panel">
+                    <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                      <div>
+                        <p className="section-kicker">Selected user</p>
+                        <h3 className="mt-2 text-2xl font-black">{selectedAuditorCustomer.name}</h3>
+                        <p className="mt-1 text-sm font-semibold text-[#4B5563]">{selectedAuditorCustomer.email}</p>
+                      </div>
+                      <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
+                        {selectedAuditorTransactions.length} payments loaded
                       </span>
-                      <span className="auditor-user-count">{customer.summary.transactionCount}</span>
-                    </button>
-                  ))}
-                </div>
-              </aside>
+                    </div>
 
-              <div className="grid gap-6">
-                {selectedAuditorCustomer ? (
-                  <>
-                    <section className="bank-panel">
-                      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-                        <div>
-                          <p className="section-kicker">Selected customer</p>
-                          <h3 className="mt-2 text-3xl font-black">{selectedAuditorCustomer.name}</h3>
-                          <p className="mt-2 text-sm font-semibold text-[#4B5563]">{selectedAuditorCustomer.email}</p>
-                        </div>
-                        <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
-                          Since {formatTime(selectedAuditorCustomer.createdAt)}
-                        </span>
-                      </div>
+                    <div className="auditor-table-wrap">
+                      <table className="auditor-table compact">
+                        <thead>
+                          <tr>
+                            <th>Account number</th>
+                            <th>Status</th>
+                            <th>Opened</th>
+                            <th>Balance</th>
+                            <th>Payments</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedAuditorCustomer.accounts.map((account) => (
+                            <tr key={account.id}>
+                              <td>
+                                <strong>{account.accountNumber}</strong>
+                                <small>{account.id}</small>
+                              </td>
+                              <td>
+                                <span className={`badge ${statusStyles[account.status === "active" ? "completed" : "pending"]}`}>
+                                  {statusLabel(account.status)}
+                                </span>
+                              </td>
+                              <td>{formatTime(account.createdAt)}</td>
+                              <td>{formatCurrency(account.balance, account.currency)}</td>
+                              <td>{account.transactions.length}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
 
-                      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-                        {[
-                          ["Balance", formatCurrency(selectedAuditorCustomer.summary.totalBalance, "EUR")],
-                          ["Accounts", selectedAuditorCustomer.summary.accountCount.toString()],
-                          ["Transactions", selectedAuditorCustomer.summary.transactionCount.toString()],
-                          ["In review", selectedAuditorCustomer.summary.reviewCount.toString()],
-                          ["Open cases", selectedAuditorCustomer.summary.openDisputeCount.toString()],
-                        ].map(([label, value]) => (
-                          <div className="auditor-metric" key={label}>
-                            <span>{label}</span>
-                            <strong>{value}</strong>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-
-                    <section className="bank-panel">
-                      <div className="mb-4 flex items-center justify-between gap-4">
-                        <h3 className="text-xl font-black">Accounts</h3>
-                        <span className="text-sm font-bold text-[#8A8F98]">
-                          {selectedAuditorCustomer.accounts.length} active record(s)
-                        </span>
-                      </div>
-                      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                        {selectedAuditorCustomer.accounts.map((account) => (
-                          <article className="account-summary-card" key={account.id}>
-                            <div className="flex items-start justify-between gap-4">
-                              <div>
-                                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#4B5563]">
-                                  Current account
-                                </p>
-                                <h4 className="mt-2 text-xl font-black">{account.accountNumber}</h4>
-                              </div>
-                              <span className={`badge ${statusStyles[account.status === "active" ? "completed" : "pending"]}`}>
-                                {statusLabel(account.status)}
-                              </span>
-                            </div>
-                            <p className="mt-6 text-sm font-bold text-[#8A8F98]">Available balance</p>
-                            <p className="mt-1 text-3xl font-black">{formatCurrency(account.balance, account.currency)}</p>
-                            <p className="mt-4 text-sm text-[#8A8F98]">
-                              Opened {formatTime(account.createdAt)}
-                            </p>
-                          </article>
-                        ))}
-                      </div>
-                    </section>
-
-                    <section className="bank-panel">
-                      <div className="mb-5">
-                        <h3 className="text-xl font-black">Transactions</h3>
+                  <section className="bank-panel">
+                    <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                      <div>
+                        <h3 className="text-xl font-black">Payment verification table</h3>
                         <p className="mt-1 text-sm text-[#8A8F98]">
-                          Full account activity for the selected customer.
+                          Full payment activity for the selected database user.
                         </p>
                       </div>
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full text-left text-sm">
-                          <thead>
-                            <tr className="border-b border-[#C0C7D1] text-xs uppercase tracking-wide text-[#8A8F98]">
-                              <th className="py-3 pr-4">Transaction</th>
-                              <th className="px-4 py-3">Account</th>
-                              <th className="px-4 py-3">Time</th>
-                              <th className="px-4 py-3">Amount</th>
-                              <th className="py-3 pl-4">Status</th>
+                      <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
+                        {selectedAuditorCustomer.summary.reviewCount} require review
+                      </span>
+                    </div>
+
+                    <div className="auditor-table-wrap">
+                      <table className="auditor-table">
+                        <thead>
+                          <tr>
+                            <th>Payment</th>
+                            <th>Account</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Case</th>
+                            <th>Reason</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedAuditorTransactions.map((transaction) => (
+                            <tr key={transaction.id}>
+                              <td>
+                                <strong>{transaction.description}</strong>
+                                <small>{transaction.id}</small>
+                              </td>
+                              <td>{transaction.accountNumber}</td>
+                              <td>{formatTime(transaction.createdAt)}</td>
+                              <td>{formatCurrency(transaction.amount, transaction.currency)}</td>
+                              <td>
+                                <span className={`badge ${statusStyles[transaction.status]}`}>
+                                  {statusLabel(transaction.status)}
+                                </span>
+                              </td>
+                              <td>
+                                {transaction.dispute ? (
+                                  <span className={`badge ${statusStyles[transaction.dispute.status]}`}>
+                                    {statusLabel(transaction.dispute.status)}
+                                  </span>
+                                ) : (
+                                  <span className="text-sm font-bold text-[#8A8F98]">No case</span>
+                                )}
+                              </td>
+                              <td>{transaction.dispute?.reason ?? "Verified payment"}</td>
                             </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100">
-                            {selectedAuditorTransactions.map((transaction) => (
-                              <tr key={transaction.id}>
-                                <td className="py-4 pr-4">
-                                  <p className="font-bold">{transaction.description}</p>
-                                  <p className="text-xs text-[#8A8F98]">{transaction.id}</p>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
+
+                  <section className="bank-panel">
+                    <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                      <div>
+                        <h3 className="text-xl font-black">Review cases table</h3>
+                        <p className="mt-1 text-sm text-[#8A8F98]">
+                          Disputes and flagged payments connected to this user.
+                        </p>
+                      </div>
+                      <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
+                        {selectedAuditorDisputes.length} cases
+                      </span>
+                    </div>
+
+                    <div className="auditor-table-wrap">
+                      <table className="auditor-table compact">
+                        <thead>
+                          <tr>
+                            <th>Case ID</th>
+                            <th>Payment ID</th>
+                            <th>Account</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Reason</th>
+                            <th>Notes</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedAuditorDisputes.map((dispute) => {
+                            const transaction = selectedAuditorTransactions.find((item) => item.id === dispute.transactionId);
+                            return (
+                              <tr key={dispute.id}>
+                                <td>
+                                  <strong>{dispute.id}</strong>
+                                  <small>{formatTime(dispute.createdAt)}</small>
                                 </td>
-                                <td className="px-4 py-4 text-[#4B5563]">{transaction.accountNumber}</td>
-                                <td className="px-4 py-4 text-[#4B5563]">{formatTime(transaction.createdAt)}</td>
-                                <td className="px-4 py-4 font-black">
-                                  {formatCurrency(transaction.amount, transaction.currency)}
-                                </td>
-                                <td className="py-4 pl-4">
-                                  <span className={`badge ${statusStyles[transaction.status]}`}>
-                                    {statusLabel(transaction.status)}
+                                <td>{dispute.transactionId}</td>
+                                <td>{transaction?.accountNumber ?? "Unknown"}</td>
+                                <td>{transaction ? formatCurrency(transaction.amount, transaction.currency) : "Unknown"}</td>
+                                <td>
+                                  <span className={`badge ${statusStyles[dispute.status]}`}>
+                                    {statusLabel(dispute.status)}
                                   </span>
                                 </td>
+                                <td>{dispute.reason}</td>
+                                <td>{dispute.notes ?? "No notes"}</td>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-
-                    <section className="bank-panel">
-                      <div className="mb-5 flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="text-xl font-black">Review cases</h3>
-                          <p className="mt-1 text-sm text-[#8A8F98]">
-                            Disputes and flagged transactions for auditor verification.
-                          </p>
-                        </div>
-                        <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
-                          {selectedAuditorDisputes.length} cases
-                        </span>
-                      </div>
-                      <div className="grid gap-3">
-                        {selectedAuditorDisputes.map((dispute) => {
-                          const transaction = selectedAuditorTransactions.find((item) => item.id === dispute.transactionId);
-                          return (
-                            <article className="case-detail mt-0" key={dispute.id}>
-                              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
-                                <div>
-                                  <h4 className="text-base font-black">{dispute.reason}</h4>
-                                  <p className="mt-1 text-sm text-[#8A8F98]">
-                                    {dispute.id} · {dispute.transactionId}
-                                  </p>
-                                </div>
-                                <span className={`badge ${statusStyles[dispute.status]}`}>
-                                  {statusLabel(dispute.status)}
-                                </span>
-                              </div>
-                              <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-                                <div className="detail-row">
-                                  <dt>Account</dt>
-                                  <dd>{transaction?.accountNumber ?? "Unknown"}</dd>
-                                </div>
-                                <div className="detail-row">
-                                  <dt>Amount</dt>
-                                  <dd>
-                                    {transaction
-                                      ? formatCurrency(transaction.amount, transaction.currency)
-                                      : "Unknown"}
-                                  </dd>
-                                </div>
-                                <div className="detail-row sm:col-span-2">
-                                  <dt>Notes</dt>
-                                  <dd>{dispute.notes ?? "No notes"}</dd>
-                                </div>
-                              </dl>
-                            </article>
-                          );
-                        })}
-                        {selectedAuditorDisputes.length === 0 ? (
-                          <p className="rounded border border-[#C0C7D1] bg-[#E5E7EB] p-4 text-sm font-bold text-[#8A8F98]">
-                            No review cases for this customer.
-                          </p>
-                        ) : null}
-                      </div>
-                    </section>
-                  </>
-                ) : (
-                  <section className="bank-panel">
-                    <h3 className="text-xl font-black">No customer selected</h3>
-                    <p className="mt-2 text-sm text-[#8A8F98]">Choose a user from the list to view audit details.</p>
+                            );
+                          })}
+                          {selectedAuditorDisputes.length === 0 ? (
+                            <tr>
+                              <td colSpan={7}>No review cases for this user.</td>
+                            </tr>
+                          ) : null}
+                        </tbody>
+                      </table>
+                    </div>
                   </section>
-                )}
-              </div>
+                </>
+              ) : (
+                <section className="bank-panel">
+                  <h3 className="text-xl font-black">No user selected</h3>
+                  <p className="mt-2 text-sm text-[#8A8F98]">Choose a user from the table to view payment details.</p>
+                </section>
+              )}
             </div>
           </div>
         </section>

@@ -619,6 +619,50 @@ body {
     @apply grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#C0C7D1] bg-white text-sm font-black text-[#4B5563];
   }
 
+  .auditor-table-wrap {
+    @apply overflow-x-auto rounded border border-[#C0C7D1] bg-white;
+  }
+
+  .auditor-table {
+    @apply min-w-[980px] w-full border-collapse text-left text-sm;
+  }
+
+  .auditor-table.compact {
+    @apply min-w-[820px];
+  }
+
+  .auditor-table th {
+    @apply border-b border-[#C0C7D1] bg-[#E5E7EB] px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-[#4B5563];
+  }
+
+  .auditor-table td {
+    @apply border-b border-[#E5E7EB] px-4 py-4 align-top font-semibold text-[#4B5563];
+  }
+
+  .auditor-table tbody tr {
+    @apply transition hover:bg-[#F7F7F8];
+  }
+
+  .auditor-table tbody tr.selected {
+    @apply bg-[#F7F7F8] shadow-[inset_4px_0_0_#4B5563];
+  }
+
+  .auditor-table tbody tr:focus {
+    @apply outline-none ring-4 ring-inset ring-[#C0C7D1];
+  }
+
+  .auditor-table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .auditor-table strong {
+    @apply block font-black text-[#111827];
+  }
+
+  .auditor-table small {
+    @apply mt-1 block text-xs font-bold text-[#8A8F98];
+  }
+
   .app-shell {
     @apply bg-[#E5E7EB];
   }
