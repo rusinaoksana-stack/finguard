@@ -98,33 +98,54 @@ body {
   }
 
   .air-hero-slogan {
-    @apply absolute left-[41vw] top-7 z-10 text-[clamp(2.1rem,2.9vw,4.1rem)] font-normal uppercase leading-[0.95] tracking-normal text-black;
+    @apply absolute top-7 z-20 text-[clamp(2.1rem,2.9vw,4.1rem)] font-normal uppercase leading-[0.95] tracking-normal text-black;
+    left: calc(41vw - 50px);
   }
 
   .air-hero-letters {
     @apply absolute inset-x-7 top-1/2 z-10 grid -translate-y-1/2 items-center text-[clamp(10rem,15vw,20rem)] font-normal leading-none text-black;
     grid-template-columns: max-content minmax(5rem, 0.72fr) max-content minmax(5rem, 0.72fr) max-content;
     column-gap: clamp(1rem, 3.2vw, 5rem);
+    isolation: isolate;
+  }
+
+  .air-hero-letters::before {
+    @apply pointer-events-none absolute z-[2];
+    content: "";
+    left: 50%;
+    top: 50%;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0.7;
+    background:
+      linear-gradient(112deg, rgba(255, 255, 255, 0.92) 0%, rgba(196, 203, 211, 0.72) 15%, rgba(255, 255, 255, 0.96) 29%, rgba(125, 134, 145, 0.58) 44%, rgba(252, 254, 255, 0.94) 58%, rgba(154, 163, 174, 0.64) 74%, rgba(255, 255, 255, 0.9) 100%),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 1px, rgba(83, 91, 103, 0.12) 1px 2px, transparent 2px 5px),
+      radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.96), transparent 28%),
+      radial-gradient(circle at 76% 72%, rgba(102, 111, 124, 0.28), transparent 34%);
+    transform: translate(-50%, -50%);
   }
 
   .air-hero-letters span {
-    @apply block;
-    z-index: 2;
+    @apply relative z-[3] block;
   }
 
   .air-hero-letter-image {
-    @apply block max-w-none justify-self-center object-contain;
-    width: clamp(16rem, 31vw, 42rem);
-    aspect-ratio: 1 / 1;
+    @apply relative z-[1] block max-w-none justify-self-center object-contain;
+    align-self: end;
+    width: clamp(20rem, 40.91vw, 58.7rem);
+    height: auto;
+    object-position: center bottom;
+    transform-origin: center bottom;
+    transform: translateY(clamp(0rem, 4.7vw, 7rem));
   }
 
   .air-hero-letter-image-percent {
-    width: clamp(14rem, 27vw, 36rem);
+    margin-left: -10px;
+    width: calc(clamp(20rem, 40.91vw, 58.7rem) + 50px);
   }
 
   .air-hero-letter-image-cards {
-    width: clamp(28rem, 42vw, 58rem);
-    z-index: 1;
+    width: calc(clamp(20rem, 40.91vw, 58.7rem) + 40px);
   }
 
   .air-hero-center {
@@ -355,16 +376,18 @@ body {
     }
 
     .air-hero-letter-image {
-      width: min(24vw, 7rem);
+      width: min(34vw, 10rem);
       height: auto;
+      transform: none;
     }
 
     .air-hero-letter-image-percent {
-      width: min(23vw, 6.5rem);
+      margin-left: -10px;
+      width: calc(min(34vw, 10rem) + 50px);
     }
 
     .air-hero-letter-image-cards {
-      width: min(31vw, 9rem);
+      width: calc(min(34vw, 10rem) + 40px);
     }
 
     .air-cookie {
