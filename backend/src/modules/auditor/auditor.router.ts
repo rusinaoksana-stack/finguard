@@ -1,18 +1,15 @@
 import { Router } from "express";
 import { authMiddleware } from "../auth/auth.middleware";
+import { requireRole } from "../auth/role.middleware";
 import { prisma } from "../../lib/prisma";
+import { asyncHandler } from "../../lib/async-handler";
 
 const router = Router();
 
 router.use(authMiddleware);
+router.use(requireRole("admin"));
 
-router.get("/customers", async (req, res) => {
-  const user = (req as any).user;
-
-  if (user.role !== "admin") {
-    return res.status(403).json({ message: "Auditor access is required" });
-  }
-
+router.get("/customers", asyncHandler(async (_req, res) => {
   const customers = await prisma.user.findMany({
     where: { role: "user" },
     include: {
@@ -85,6 +82,6 @@ router.get("/customers", async (req, res) => {
       };
     }),
   });
-});
+}));
 
 export { router as auditorRouter };

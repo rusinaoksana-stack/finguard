@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { authMiddleware } from "../auth/auth.middleware";
 import { prisma } from "../../lib/prisma";
+import { asyncHandler } from "../../lib/async-handler";
 
 const router = Router();
 
-router.get("/", authMiddleware, async (req, res) => {
-  const user = (req as any).user;
+router.get("/", authMiddleware, asyncHandler(async (req, res) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ message: "Unauthorized" });
+
   const accounts = await prisma.account.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: "asc" },
@@ -21,6 +24,6 @@ router.get("/", authMiddleware, async (req, res) => {
       createdAt: item.createdAt.toISOString(),
     })),
   });
-});
+}));
 
 export { router as accountsRouter };

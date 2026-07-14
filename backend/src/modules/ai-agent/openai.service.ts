@@ -175,8 +175,6 @@ export async function analyzeTransaction(transaction: Transaction): Promise<AiAn
 }
 
 export async function createSupportChatReply(messages: SupportChatMessage[]): Promise<string> {
-  const latestMessage = messages[messages.length - 1]?.content.trim() || "";
-
   if (!config.OPENAI_API_KEY) {
     return createDemoSupportChatReply(messages);
   }

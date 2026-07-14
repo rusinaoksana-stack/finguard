@@ -3,7 +3,10 @@ import { login as requestLogin, register as requestRegister, setAccessToken } fr
 
 const STORAGE_KEY = "finguard_user";
 const TOKEN_KEY = "finguard_token";
-const REGISTERED_USERS_KEY = "finguard_registered_users";
+const DEMO_USERS = [
+  { name: "Emma Murphy", role: "user", email: "customer.demo@finguard.ai", password: "Password123" },
+  { name: "FinGuard Auditor", role: "admin", email: "auditor@finguard.ai", password: "Password123" },
+];
 
 type AuthUser = {
   name: string;
@@ -20,10 +23,6 @@ type RegisterInput = LoginInput & {
   name: string;
 };
 
-type StoredAccount = RegisterInput & {
-  role: string;
-};
-
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
 
@@ -36,14 +35,6 @@ export function useAuth() {
     if (stored) {
       const storedUser = JSON.parse(stored) as AuthUser;
       setUser(storedUser);
-
-      if (storedUser.email?.toLowerCase() === "auditor@finguard.ai") {
-        requestLogin("auditor@finguard.ai", "Password123")
-          .then((data) => persistUser(data.user, data.accessToken))
-          .catch(() => {
-            persistUser({ name: "auditor", role: "admin", email: "auditor@finguard.ai" });
-          });
-      }
     }
   }, []);
 
@@ -56,46 +47,26 @@ export function useAuth() {
     setUser(nextUser);
   };
 
-  const getRegisteredUsers = (): StoredAccount[] => {
-    const stored = localStorage.getItem(REGISTERED_USERS_KEY);
-    return stored ? JSON.parse(stored) : [];
-  };
-
   const login = async ({ email, password }: LoginInput) => {
-    const registeredUser = getRegisteredUsers().find(
-      (account) => account.email.toLowerCase() === email.toLowerCase() && account.password === password,
-    );
-
     try {
       const data = await requestLogin(email, password);
       persistUser(data.user, data.accessToken);
     } catch {
-      if (registeredUser) {
-        persistUser({ name: registeredUser.name, role: registeredUser.role, email: registeredUser.email });
+      const demoUser = DEMO_USERS.find(
+        (account) => account.email.toLowerCase() === email.toLowerCase() && account.password === password,
+      );
+
+      if (demoUser) {
+        persistUser({ name: demoUser.name, role: demoUser.role, email: demoUser.email });
         return;
       }
 
-      if (email.toLowerCase() === "auditor@finguard.ai") {
-        persistUser({
-          name: "auditor",
-          role: "admin",
-          email,
-        });
-        return;
-      }
-
-      persistUser({
-        name: email.split("@")[0] || "FinGuard User",
-        role: "demo user",
-        email,
-      });
+      throw new Error("Invalid credentials");
     }
   };
 
   const register = async ({ name, email, password }: RegisterInput) => {
-    const accounts = getRegisteredUsers();
     const normalizedEmail = email.toLowerCase();
-    const nextAccounts = accounts.filter((account) => account.email.toLowerCase() !== normalizedEmail);
     const nextUser = { name, role: "customer", email: normalizedEmail };
 
     try {
@@ -106,10 +77,6 @@ export function useAuth() {
       // Keep the demo usable when the backend or database is not running.
     }
 
-    localStorage.setItem(
-      REGISTERED_USERS_KEY,
-      JSON.stringify([...nextAccounts, { name, email: normalizedEmail, password, role: "customer" }]),
-    );
     persistUser(nextUser);
   };
 

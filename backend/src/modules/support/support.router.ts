@@ -1,6 +1,10 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
+import { z } from "zod";
 import { createDemoSupportChatReply, createSupportChatReply } from "../ai-agent/openai.service";
 import { SupportChatMessage } from "../../types";
+import { asyncHandler } from "../../lib/async-handler";
+import { validateBody } from "../../lib/validation";
 
 const router = Router();
 
@@ -9,7 +13,23 @@ type IncomingSupportMessage = {
   content?: unknown;
 };
 
-router.post("/chat", async (req, res) => {
+const supportRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+});
+
+const supportChatSchema = z.object({
+  messages: z.array(
+    z.object({
+      role: z.enum(["user", "assistant"]),
+      content: z.string().trim().min(1).max(1000),
+    }),
+  ).min(1).max(16),
+});
+
+router.post("/chat", supportRateLimit, validateBody(supportChatSchema), asyncHandler(async (req, res) => {
   const rawMessages: IncomingSupportMessage[] = Array.isArray(req.body?.messages) ? req.body.messages : [];
   const messages: SupportChatMessage[] = rawMessages
     .filter(
@@ -38,6 +58,6 @@ router.post("/chat", async (req, res) => {
       },
     });
   }
-});
+}));
 
 export { router as supportRouter };

@@ -1,9 +1,9 @@
 import { FormEvent, Suspense, lazy, useEffect, useMemo, useState } from "react";
-import bankImage from "../images/bank_1.png";
-import heroBankImage from "../images/bank_2.png";
-import boyWithCardImage from "../images/2_boy_with_card.png";
-import girlWithCardImage from "../images/1_girl_with_card.png";
-import safetyImage from "../images/safety.png";
+import bankImage from "../images/bank_1.webp";
+import heroBankImage from "../images/bank_2.webp";
+import boyWithCardImage from "../images/2_boy_with_card.webp";
+import girlWithCardImage from "../images/1_girl_with_card.webp";
+import safetyImage from "../images/safety.webp";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
 import {
@@ -1126,7 +1126,7 @@ function createLocalSupportReply(message: string) {
 
 function App() {
   const { user, login, register, logout } = useAuth();
-  const socket = useSocket();
+  const socket = useSocket(Boolean(user));
   const [accounts, setAccounts] = useState<BankAccount[]>(demoAccounts);
   const [transactions, setTransactions] = useState<Transaction[]>(demoTransactions);
   const [disputes, setDisputes] = useState<Dispute[]>(demoDisputes);
@@ -1163,7 +1163,7 @@ function App() {
     securityChecks: true,
   });
   const c = user ? content.en : localizedContent[language];
-  const isAuditor = user?.role === "admin" || user?.role === "auditor" || user?.email?.toLowerCase() === "auditor@finguard.ai";
+  const isAuditor = user?.role === "admin";
 
   const showToast = (title: string, message: string, tone: ToastTone = "success") => {
     setToast({ title, message, tone });
@@ -1234,20 +1234,6 @@ function App() {
       socket.off("status:updated", handleStatusUpdate);
     };
   }, [socket]);
-
-  const stats = useMemo(() => {
-    const reviewCount = transactions.filter((item) => item.status === "review").length;
-    const volume = transactions.reduce((sum, item) => sum + item.amount, 0);
-    const activeDisputes = disputes.filter((item) => item.status !== "resolved").length;
-    const accountBalance = accounts.reduce((sum, item) => sum + item.balance, 0);
-
-    return [
-      { label: language === "uk" ? "Загальний баланс" : "Total balance", value: formatCurrency(accountBalance, accounts[0]?.currency ?? "EUR") },
-      { label: language === "uk" ? "На перевірці" : "Items to review", value: reviewCount.toString() },
-      { label: language === "uk" ? "Захищений обсяг" : "Protected volume", value: formatCurrency(volume, "EUR") },
-      { label: language === "uk" ? "Відкриті справи" : "Open cases", value: activeDisputes.toString() },
-    ];
-  }, [accounts, transactions, disputes, language]);
 
   const filteredTransactions = useMemo(() => {
     const search = transactionSearch.trim().toLowerCase();
@@ -1372,12 +1358,17 @@ function App() {
       return;
     }
 
-    if (authMode === "login") {
-      await login({ email, password: authForm.password });
-      showToast(c.toast.loginTitle, email);
-    } else {
-      await register({ name, email, password: authForm.password });
-      showToast(c.toast.registerTitle, email);
+    try {
+      if (authMode === "login") {
+        await login({ email, password: authForm.password });
+        showToast(c.toast.loginTitle, email);
+      } else {
+        await register({ name, email, password: authForm.password });
+        showToast(c.toast.registerTitle, email);
+      }
+    } catch {
+      setAuthError(c.auth.missingCredentials);
+      return;
     }
 
     setAuthForm(initialAuthForm);
@@ -1426,7 +1417,7 @@ function App() {
       showToast(c.disputes.created, newDispute.reason);
     } catch {
       const fallbackDispute: Dispute = {
-        id: `disp_${Date.now()}`,
+        id: `disp_${crypto.randomUUID()}`,
         transactionId: disputeForm.transactionId,
         accountNumber: transaction?.accountNumber,
         reason: disputeForm.reason.trim(),
@@ -1499,29 +1490,6 @@ function App() {
     } finally {
       setIsChatLoading(false);
     }
-  };
-
-  const handleServiceClick = (service: string) => {
-    if (service === c.serviceTiles[5]) {
-      openSupportChat();
-      setLastEvent("Support questions opened");
-      return;
-    }
-
-    if (!user) {
-      openAuth("login");
-      showToast(c.auth.secureAccess, c.dashboard.loginPromptText, "info");
-      return;
-    }
-
-    if (service === c.serviceTiles[4]) {
-      downloadEvidence();
-      return;
-    }
-
-    document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" });
-    setLastEvent(`${service} selected`);
-    showToast(c.toast.actionTitle, service, "info");
   };
 
   return (

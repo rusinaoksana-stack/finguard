@@ -76,4 +76,25 @@ model Dispute {
   notes         String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  auditLogs     AuditLog[]
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  actorId        String?
+  actorEmail     String?
+  action         String
+  entityType     String
+  entityId       String
+  previousStatus String?
+  nextStatus     String?
+  reason         String?
+  metadata       Json?
+  disputeId      String?
+  dispute        Dispute? @relation(fields: [disputeId], references: [id], onDelete: SetNull)
+  createdAt      DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([createdAt])
 }

@@ -14,19 +14,43 @@ Automated FinTech dispute and compliance platform scaffold.
    npm install
    ```
 
-2. Start backend
+2. Copy environment examples
+   ```bash
+   cp backend/.env.example backend/.env
+   cp frontend/.env.example frontend/.env
+   ```
+
+3. Start backend
    ```bash
    npm run dev:backend
    ```
 
-3. Start frontend
+4. Start frontend
    ```bash
    npm run dev:frontend
    ```
 
+## Quality checks
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+npm audit --omit=dev
+```
+
+## Assets
+
+Used frontend images are generated as WebP files for production builds.
+
+```bash
+npm run optimize:images
+```
+
 ## Notes
 
-- Add `.env` files in `backend/` and `frontend/` for secrets and environment configuration.
+- Keep production secrets out of git and set a strong `JWT_SECRET`.
+- Run Prisma migrations before starting a fresh database.
 - The backend includes sample routes for auth, transactions, disputes, and AI integrations.
 - The frontend includes a dashboard and chat UI skeleton.
 - Test customer: customer.demo@finguard.ai / Password123
