@@ -177,63 +177,63 @@ const statusStyles: Record<TransactionStatus | DisputeStatus, string> = {
 
 const benefits = [
   {
-    title: "Smart fraud checks",
-    text: "Review suspicious card and account activity before it turns into a formal dispute.",
+    title: "Risk signals surfaced early",
+    text: "Spot suspicious payment patterns before they become disputes, losses, or compliance escalations.",
   },
   {
-    title: "Dispute evidence in one place",
-    text: "Bring customer notes, merchant signals, and transaction history into a clear case view.",
+    title: "Case evidence in one place",
+    text: "Give reviewers the transaction history, customer context, case reason, and next action in one view.",
   },
   {
-    title: "Compliance-ready audit trail",
-    text: "Keep decisions, recommendations, and status changes ready for internal review.",
+    title: "Audit-ready decisions",
+    text: "Keep status changes, evidence summaries, and reviewer actions ready for internal or regulatory review.",
   },
 ];
 
-const quickLinks = ["Current account protection", "Card dispute support", "Transaction monitoring", "AI case review"];
+const quickLinks = ["Risk payment review", "Dispute evidence", "Audit-ready exports", "Human-led AI recommendations"];
 
 const accountCards = [
   {
-    title: "Everyday Current Account",
-    text: "Manage daily payments, transfers, and account activity with built-in AI monitoring.",
-    action: "Explore account",
+    title: "Payment Risk Review",
+    text: "Prioritize suspicious transactions and move each case toward a clear, defensible decision.",
+    action: "Review workflow",
   },
   {
-    title: "Secure Digital Card",
-    text: "Track card spending, flag unusual purchases, and prepare dispute evidence faster.",
-    action: "View card tools",
+    title: "Dispute Evidence Hub",
+    text: "Bring notes, transaction details, and case status together so teams can act with confidence.",
+    action: "View evidence",
   },
   {
-    title: "Family Banking Support",
-    text: "Keep shared payments visible with helpful alerts and simple review workflows.",
-    action: "Learn more",
+    title: "Compliance Trail",
+    text: "Keep every review step traceable for internal checks, handovers, and audit preparation.",
+    action: "See audit trail",
   },
 ];
 
 const serviceTiles = [
-  "Open an account",
-  "Report a payment issue",
-  "Check transaction status",
-  "Review card activity",
-  "Download statements",
-  "Contact support",
+  "Request access",
+  "Open payment review",
+  "Check case status",
+  "Analyze card activity",
+  "Export evidence",
+  "Contact a specialist",
 ];
 
 const faqItems = [
   {
-    question: "Can FinGuard work without the backend running?",
+    question: "Who is FinGuard built for?",
     answer:
-      "Yes. The frontend keeps a demo mode available, so login, registration, dashboard cards, transactions, and disputes can still be reviewed while the API is offline.",
+      "FinGuard is designed for digital banking, fintech, fraud, support, and compliance teams that need one workspace for risky payments, disputes, and review evidence.",
   },
   {
-    question: "How does the AI recommendation fit into the review process?",
+    question: "Does AI make the final decision?",
     answer:
-      "AI recommendations are shown as decision support. A reviewer can check the customer history, transaction details, and dispute context before taking any final action.",
+      "No. AI is used as decision support. Reviewers can check customer history, transaction context, and dispute evidence before taking the final action.",
   },
   {
-    question: "Can teams export transaction and dispute evidence?",
+    question: "What evidence can teams export?",
     answer:
-      "The interface is prepared for export workflows, including transaction history, case notes, status changes, and evidence summaries for internal review.",
+      "Teams can prepare transaction details, dispute reasons, case statuses, and evidence summaries for internal review or compliance checks.",
   },
 ];
 
@@ -297,18 +297,18 @@ const content = {
       accounts: "Accounts",
       features: "Features",
       benefits: "Benefits",
-      dashboard: "Demo dashboard",
+      dashboard: "Review workspace",
       cabinet: "My cabinet",
       support: "Support",
     },
     auth: {
       login: "Log in",
-      register: "Register",
-      createAccount: "Create account",
+      register: "Request access",
+      createAccount: "Request access",
       secureAccess: "Secure access",
-      newAccount: "New account",
-      loginTitle: "Log in to FinGuard",
-      registerTitle: "Create your account",
+      newAccount: "Platform access",
+      loginTitle: "Access FinGuard",
+      registerTitle: "Create secure access",
       fullName: "Full name",
       email: "Email",
       password: "Password",
@@ -319,8 +319,8 @@ const content = {
       missingName: "Please enter your full name.",
       shortPassword: "Password must be at least 6 characters.",
       mismatch: "Passwords do not match.",
-      demoAccess: "Test access",
-      fillDemo: "Use",
+      demoAccess: "Guided access",
+      fillDemo: "Fill",
     },
     profile: {
       accountOverview: "Account overview",
@@ -355,11 +355,11 @@ const content = {
     },
     hero: {
       breadcrumb: "Home / Accounts / Protection",
-      title: "Automated dispute protection for modern banking",
+      title: "Payment Risk Control",
       text:
-        "FinGuard helps digital banking teams spot risky activity, manage disputes, and prepare evidence with clear, confident workflows.",
-      startDemo: "Start demo",
-      viewFeatures: "View features",
+        "FinGuard gives banking teams a secure review workspace for suspicious transactions, dispute evidence, and audit-ready decisions.",
+      startDemo: "Request access",
+      viewFeatures: "See workflow",
     },
     cabinet: {
       kicker: "My banking cabinet",
@@ -377,15 +377,15 @@ const content = {
       open: "open",
     },
     accountsSection: {
-      kicker: "Banking made clearer",
-      title: "Accounts and card services with protection built in",
-      text: "A React-powered banking experience for customers who want simple account tools and smart protection in one place.",
+      kicker: "Risk review without the chase",
+      title: "Every payment, case, and evidence point in one review workspace",
+      text: "Analysts see customer activity, transaction status, dispute reason, and next action without switching tools.",
     },
     featuresSection: {
       kicker: "Features and benefits",
-      title: "Designed for modern banking protection",
+      title: "Built for fraud, support, and compliance teams",
       text:
-        "A calm, practical experience for teams who need fast answers, consistent decisions, and a complete view of each customer case.",
+        "Move from alert to evidence-backed decision with consistent status tracking, human review, and exportable records.",
     },
     popular: {
       kicker: "Popular services",
@@ -393,7 +393,7 @@ const content = {
     },
     cta: {
       kicker: "Why teams choose it",
-      title: "Less manual checking. More time for the cases that matter.",
+      title: "Turn scattered payment checks into clear, defensible decisions.",
     },
     app: {
       quickActions: "Quick actions",
@@ -410,11 +410,11 @@ const content = {
       protected: "Protected",
     },
     dashboard: {
-      demoKicker: "Demo dashboard",
+      demoKicker: "Review workspace",
       userKicker: "User cabinet",
       demoTitle: "Account activity under review",
       userTitleSuffix: "'s banking overview",
-      demoText: "Log in to open the customer cabinet with account, transaction, and dispute data.",
+      demoText: "Sign in to review accounts, transactions, and dispute cases in a secure workspace.",
       userText: "Review your bank accounts, recent transactions, and payment disputes in one secure workspace.",
       syncing: "Syncing",
       activeRecords: "active record(s)",
@@ -442,7 +442,7 @@ const content = {
       supportMessage: "Support questions are ready below.",
       actionTitle: "Action selected",
       statusTitle: "Status updated",
-      demoStatusTitle: "Demo status updated",
+      demoStatusTitle: "Status updated",
       loginTitle: "Welcome back",
       registerTitle: "Account created",
     },
@@ -462,7 +462,7 @@ const content = {
       chooseError: "Choose a transaction and enter a short reason.",
       duplicateError: "This transaction already has a review case.",
       created: "New review case created",
-      demoCreated: "Review case created in demo mode",
+      demoCreated: "Review case created",
       noCases: "No dispute cases yet.",
       openButton: "Open",
       escalateButton: "Escalate",
@@ -483,7 +483,7 @@ const content = {
       close: "Close support chat",
     },
     footer: {
-      text: "A React banking frontend for secure account monitoring, dispute support, and customer protection.",
+      text: "An AI-assisted review workspace for secure payment monitoring, dispute support, and audit-ready evidence.",
       banking: "Banking",
       support: "Support",
       currentAccounts: "Current accounts",
@@ -516,18 +516,18 @@ const content = {
       accounts: "Акаунти",
       features: "Можливості",
       benefits: "Переваги",
-      dashboard: "Демо-панель",
+      dashboard: "Review workspace",
       cabinet: "Мій кабінет",
       support: "Підтримка",
     },
     auth: {
       login: "Увійти",
-      register: "Реєстрація",
-      createAccount: "Створити акаунт",
+      register: "Отримати доступ",
+      createAccount: "Отримати доступ",
       secureAccess: "Безпечний доступ",
-      newAccount: "Новий акаунт",
+      newAccount: "Доступ до платформи",
       loginTitle: "Увійти у FinGuard",
-      registerTitle: "Створити акаунт",
+      registerTitle: "Створити безпечний доступ",
       fullName: "Повне імʼя",
       email: "Email",
       password: "Пароль",
@@ -538,8 +538,8 @@ const content = {
       missingName: "Введіть повне імʼя.",
       shortPassword: "Пароль має містити щонайменше 6 символів.",
       mismatch: "Паролі не збігаються.",
-      demoAccess: "Тестовий доступ",
-      fillDemo: "Взяти",
+      demoAccess: "Швидкий доступ",
+      fillDemo: "Заповнити",
     },
     profile: {
       accountOverview: "Огляд акаунта",
@@ -574,11 +574,11 @@ const content = {
     },
     hero: {
       breadcrumb: "Головна / Акаунти / Захист",
-      title: "Автоматизований захист спорів для сучасного банкінгу",
+      title: "Контроль ризикових платежів",
       text:
-        "FinGuard допомагає банківським командам виявляти ризикову активність, керувати заявками та готувати докази в зрозумілому робочому процесі.",
-      startDemo: "Запустити демо",
-      viewFeatures: "Переглянути можливості",
+        "FinGuard дає банківським командам захищений простір для підозрілих транзакцій, доказів по спорах і рішень, готових до аудиту.",
+      startDemo: "Отримати доступ",
+      viewFeatures: "Переглянути процес",
     },
     cabinet: {
       kicker: "Мій банківський кабінет",
@@ -596,15 +596,15 @@ const content = {
       open: "відкрито",
     },
     accountsSection: {
-      kicker: "Банкінг простіше",
-      title: "Акаунти та карткові сервіси з вбудованим захистом",
-      text: "React-інтерфейс для клієнтів, яким потрібні прості банківські інструменти й розумний захист в одному місці.",
+      kicker: "Перевірка без зайвого пошуку",
+      title: "Платежі, заявки й докази в одному робочому просторі",
+      text: "Аналітики бачать активність клієнта, статус транзакції, причину спору та наступну дію без перемикання між інструментами.",
     },
     featuresSection: {
       kicker: "Можливості та переваги",
-      title: "Створено для сучасного банківського захисту",
+      title: "Для fraud, support і compliance-команд",
       text:
-        "Спокійний і практичний досвід для команд, яким потрібні швидкі відповіді, послідовні рішення та повна картина кожної справи клієнта.",
+        "Переходьте від сигналу ризику до рішення з доказами: статуси, ручна перевірка, історія справи та експортовані записи в одному місці.",
     },
     popular: {
       kicker: "Популярні сервіси",
@@ -612,7 +612,7 @@ const content = {
     },
     cta: {
       kicker: "Чому команди обирають це",
-      title: "Менше ручних перевірок. Більше часу для важливих справ.",
+      title: "Перетворіть розрізнені перевірки платежів на чіткі рішення з доказами.",
     },
     app: {
       quickActions: "Швидкі дії",
@@ -629,11 +629,11 @@ const content = {
       protected: "Захищено",
     },
     dashboard: {
-      demoKicker: "Демо-панель",
+      demoKicker: "Робочий простір перевірки",
       userKicker: "Кабінет користувача",
       demoTitle: "Активність акаунта на перевірці",
       userTitleSuffix: ": банківський огляд",
-      demoText: "Увійдіть, щоб відкрити кабінет з акаунтами, транзакціями та заявками.",
+      demoText: "Увійдіть, щоб працювати з акаунтами, транзакціями та заявками в захищеному просторі.",
       userText: "Переглядайте банківські акаунти, останні транзакції та спірні платежі в одному захищеному просторі.",
       syncing: "Синхронізація",
       activeRecords: "активних записів",
@@ -661,7 +661,7 @@ const content = {
       supportMessage: "Питання підтримки доступні нижче.",
       actionTitle: "Дію обрано",
       statusTitle: "Статус оновлено",
-      demoStatusTitle: "Demo-статус оновлено",
+      demoStatusTitle: "Статус оновлено",
       loginTitle: "Вітаємо знову",
       registerTitle: "Акаунт створено",
     },
@@ -681,7 +681,7 @@ const content = {
       chooseError: "Оберіть транзакцію і введіть коротку причину.",
       duplicateError: "Ця транзакція вже має заявку на перевірку.",
       created: "Нову заявку створено",
-      demoCreated: "Заявку створено в demo mode",
+      demoCreated: "Заявку створено",
       noCases: "Заявок ще немає.",
       openButton: "Відкрити",
       escalateButton: "Ескалювати",
@@ -703,7 +703,7 @@ const content = {
       close: "Закрити чат підтримки",
     },
     footer: {
-      text: "React-банкінг для моніторингу акаунтів, підтримки заявок і захисту клієнтів.",
+      text: "AI-workspace для моніторингу платежів, підтримки спорів і підготовки доказів до аудиту.",
       banking: "Банкінг",
       support: "Підтримка",
       currentAccounts: "Поточні акаунти",
@@ -716,52 +716,52 @@ const content = {
     },
     benefits: [
       {
-        title: "Розумні fraud-перевірки",
-        text: "Перевіряйте підозрілу активність по картці та акаунту до того, як вона стане формальною заявкою.",
+        title: "Ризикові сигнали раніше",
+        text: "Виявляйте підозрілі платіжні патерни до того, як вони стануть спором, збитком або compliance-ескалацією.",
       },
       {
-        title: "Докази по заявці в одному місці",
-        text: "Обʼєднуйте нотатки клієнта, сигнали продавця та історію транзакцій у зрозумілому перегляді справи.",
+        title: "Докази справи в одному місці",
+        text: "Дайте reviewerʼам історію транзакцій, контекст клієнта, причину заявки та наступну дію в одному перегляді.",
       },
       {
-        title: "Audit trail для compliance",
-        text: "Зберігайте рішення, рекомендації та зміни статусів для внутрішньої перевірки.",
+        title: "Рішення, готові до аудиту",
+        text: "Зберігайте зміни статусів, evidence summaries і дії спеціалістів для внутрішніх або регуляторних перевірок.",
       },
     ],
-    quickLinks: ["Захист поточного акаунта", "Підтримка карткових спорів", "Моніторинг транзакцій", "AI-перевірка справ"],
+    quickLinks: ["Перевірка ризикових платежів", "Докази по спорах", "Експорт для аудиту", "AI-рекомендації під контролем людини"],
     accountCards: [
       {
-        title: "Щоденний поточний акаунт",
-        text: "Керуйте платежами, переказами та активністю акаунта з вбудованим AI-моніторингом.",
-        action: "Переглянути акаунт",
+        title: "Перевірка ризикових платежів",
+        text: "Пріоритизуйте підозрілі транзакції та доводьте кожну справу до чіткого рішення з доказами.",
+        action: "Переглянути процес",
       },
       {
-        title: "Захищена цифрова картка",
-        text: "Відстежуйте витрати, позначайте незвичні покупки та швидше готуйте докази.",
-        action: "Інструменти картки",
+        title: "Центр доказів по спорах",
+        text: "Обʼєднуйте нотатки, деталі транзакції та статус справи, щоб команда діяла впевнено.",
+        action: "Переглянути докази",
       },
       {
-        title: "Підтримка сімейного банкінгу",
-        text: "Тримайте спільні платежі видимими завдяки корисним сповіщенням і простим перевіркам.",
-        action: "Дізнатися більше",
+        title: "Compliance trail",
+        text: "Зберігайте кожен крок перевірки для handover, внутрішнього контролю та підготовки до аудиту.",
+        action: "Переглянути audit trail",
       },
     ],
-    serviceTiles: ["Відкрити акаунт", "Повідомити про платіж", "Перевірити статус", "Переглянути картку", "Завантажити виписку", "Звʼязатися з підтримкою"],
+    serviceTiles: ["Отримати доступ", "Відкрити перевірку платежу", "Перевірити статус справи", "Проаналізувати карткову активність", "Експортувати докази", "Звʼязатися зі спеціалістом"],
     faqItems: [
       {
-        question: "Чи може FinGuard працювати без backend?",
+        question: "Для кого створено FinGuard?",
         answer:
-          "Так. Frontend має demo mode, тому логін, реєстрація, dashboard, транзакції та заявки залишаються доступними навіть якщо API тимчасово не запущений.",
+          "FinGuard створено для digital banking, fintech, fraud, support і compliance-команд, яким потрібен один простір для ризикових платежів, спорів і доказів.",
       },
       {
-        question: "Як AI-рекомендація входить у процес перевірки?",
+        question: "Чи ухвалює AI фінальне рішення?",
         answer:
-          "AI-рекомендації є підтримкою для рішення. Спеціаліст може перевірити історію клієнта, деталі транзакції та контекст заявки перед фінальною дією.",
+          "Ні. AI працює як підтримка для рішення. Спеціаліст перевіряє історію клієнта, контекст транзакції та докази перед фінальною дією.",
       },
       {
-        question: "Чи можна експортувати транзакції та докази?",
+        question: "Які докази можна підготувати для аудиту?",
         answer:
-          "Інтерфейс підготовлений для експорту історії транзакцій, нотаток, змін статусів і доказів для внутрішньої перевірки.",
+          "Команда може підготувати деталі транзакцій, причини заявок, статуси справ і evidence summaries для внутрішньої або compliance-перевірки.",
       },
     ],
   },
@@ -789,7 +789,7 @@ const localizedContent: Record<Language, Content> = {
       accounts: "Счета",
       features: "Возможности",
       benefits: "Преимущества",
-      dashboard: "Демо-панель",
+      dashboard: "Пространство проверки",
       cabinet: "Кабинет",
       support: "Поддержка",
     },
@@ -886,7 +886,7 @@ const localizedContent: Record<Language, Content> = {
       accounts: "Cuentas",
       features: "Funciones",
       benefits: "Ventajas",
-      dashboard: "Panel demo",
+      dashboard: "Área de revisión",
       cabinet: "Mi cuenta",
       support: "Soporte",
     },
@@ -983,7 +983,7 @@ const localizedContent: Record<Language, Content> = {
       accounts: "Conti",
       features: "Funzioni",
       benefits: "Vantaggi",
-      dashboard: "Dashboard demo",
+      dashboard: "Area di revisione",
       cabinet: "Area personale",
       support: "Supporto",
     },
@@ -1082,10 +1082,15 @@ function formatTime(value: string) {
   }).format(new Date(value));
 }
 
+function formatDisplayEmail(email?: string | null) {
+  if (!email) return "customer@finguard.ai";
+  return email.toLowerCase() === "customer.demo@finguard.ai" ? "customer@finguard.ai" : email;
+}
+
 const localSupportKnowledgeBase = [
   { patterns: [/log ?in|sign ?in|access/i], answer: "To sign in, use the Log in button in the header and enter your email and password. After login, your cabinet shows accounts, transactions, and review cases." },
-  { patterns: [/register|create.*account|new account/i], answer: "To create an account, choose Create account, enter your name, email, and password, then submit the registration form." },
-  { patterns: [/forgot|reset.*password|change.*password/i], answer: "For password issues, use the login screen and request support if reset is unavailable in the demo. Never share your password or one-time codes in chat." },
+  { patterns: [/register|create.*account|new account/i], answer: "To request access, choose Request access, enter your name, email, and password, then submit the secure access form." },
+  { patterns: [/forgot|reset.*password|change.*password/i], answer: "For password issues, use the login screen and request support if reset is unavailable. Never share your password or one-time codes in chat." },
   { patterns: [/delete.*account|remove.*account|close.*account|cancel.*account|account.*delete|account.*close/i], answer: "To close or delete your account, open your profile menu, go to Settings, and contact support for final verification. For security, FinGuard does not delete banking data from chat." },
   { patterns: [/update.*profile|change.*name|change.*email|personal details/i], answer: "Open the profile menu and go to Settings to review your personal information. Sensitive profile changes may require support verification." },
   { patterns: [/language|translate|україн|русск|spanish|italian/i], answer: "Use the language selector in the header to switch the interface language. FinGuard keeps the selected language for this browser." },
@@ -1107,7 +1112,7 @@ const localSupportKnowledgeBase = [
   { patterns: [/export|evidence|csv|audit/i], answer: "Use Export in the dispute support area to download evidence, transaction details, and case status information for review." },
   { patterns: [/contact|email|human|agent|support/i], answer: "For direct support, use Contact info in the header or email support@finguard.app." },
   { patterns: [/payment status|pending|completed|review status/i], answer: "Payment status is shown in Transactions. Pending means still processing, Completed means settled, and Review means it may need manual checking." },
-  { patterns: [/add money|top up|deposit/i], answer: "Use Add money in Quick actions to start a top-up flow. In this demo, the action is prepared as part of the banking dashboard experience." },
+  { patterns: [/add money|top up|deposit/i], answer: "Use Add money in Quick actions to start a top-up flow. The action is prepared as part of the secure banking dashboard experience." },
   { patterns: [/send money|transfer money|make transfer/i], answer: "Use Transfer in Quick actions to start a payment flow. Always check recipient details carefully before confirming a transfer." },
   { patterns: [/currency|exchange|foreign|international/i], answer: "International payments and currency exchange may include rates and fees. Review the transaction details before confirming." },
   { patterns: [/subscription|direct debit|recurring payment/i], answer: "For subscriptions or direct debits, check Transactions for recurring activity. To stop future payments, contact the merchant and report the payment if needed." },
@@ -1201,7 +1206,7 @@ function App() {
         .catch(() => {
           setAuditorCustomers(demoAuditorCustomers);
           setSelectedAuditorCustomerId(demoAuditorCustomers[0]?.id ?? "");
-          setLastEvent("Auditor demo mode active while API is offline");
+          setLastEvent("Audit workspace ready while API is offline");
         })
         .finally(() => setIsLoading(false));
       return;
@@ -1217,7 +1222,7 @@ function App() {
         setAccounts(demoAccounts);
         setTransactions(demoTransactions);
         setDisputes(demoDisputes);
-        setLastEvent("Demo mode active while API is offline");
+        setLastEvent("Secure review workspace ready while API is offline");
       })
       .finally(() => setIsLoading(false));
   }, [isAuditor, user]);
@@ -1294,6 +1299,10 @@ function App() {
   const displayUserName = useMemo(() => {
     if (!user) return "";
     return user.email?.toLowerCase() === "customer.demo@finguard.ai" ? "Emma Murphy" : user.name;
+  }, [user]);
+
+  const displayUserEmail = useMemo(() => {
+    return formatDisplayEmail(user?.email);
   }, [user]);
 
   const userInitials = useMemo(() => {
@@ -1387,7 +1396,7 @@ function App() {
       setDisputes((current) =>
         current.map((item) => (item.id === selectedDispute.id ? { ...item, status } : item)),
       );
-      setLastEvent(`${selectedDispute.reason} marked as ${status} in demo mode`);
+      setLastEvent(`${selectedDispute.reason} marked as ${status}`);
       showToast(c.toast.demoStatusTitle, `${selectedDispute.reason}: ${statusLabel(status)}`, "info");
     }
   };
@@ -1646,14 +1655,14 @@ function App() {
             </button>
           </div>
           <button className="air-open-button" onClick={() => openAuth("register")} type="button">
-            Open an account
+            {c.hero.startDemo}
             <span aria-hidden="true">⌖</span>
           </button>
           {isMobileMenuOpen ? (
             <nav className="air-menu-panel" aria-label="FinGuard public menu">
-              <a href="#accounts" onClick={() => setIsMobileMenuOpen(false)}>Accounts</a>
-              <a href="#features" onClick={() => setIsMobileMenuOpen(false)}>Security</a>
-              <a href="#benefits" onClick={() => setIsMobileMenuOpen(false)}>Location</a>
+              <a href="#accounts" onClick={() => setIsMobileMenuOpen(false)}>{c.accountsSection.kicker}</a>
+              <a href="#features" onClick={() => setIsMobileMenuOpen(false)}>{c.featuresSection.kicker}</a>
+              <a href="#benefits" onClick={() => setIsMobileMenuOpen(false)}>{c.nav.benefits}</a>
               <button onClick={() => openAuth("login")} type="button">{c.auth.login}</button>
               <label>
                 <span className="sr-only">Language</span>
@@ -1750,7 +1759,7 @@ function App() {
                             <strong>{customer.name}</strong>
                             <small>{customer.id}</small>
                           </td>
-                          <td>{customer.email}</td>
+                          <td>{formatDisplayEmail(customer.email)}</td>
                           <td>{formatTime(customer.createdAt)}</td>
                           <td>{customer.summary.accountCount}</td>
                           <td>{customer.summary.transactionCount}</td>
@@ -1771,7 +1780,9 @@ function App() {
                       <div>
                         <p className="section-kicker">Selected user</p>
                         <h3 className="mt-2 text-2xl font-black">{selectedAuditorCustomer.name}</h3>
-                        <p className="mt-1 text-sm font-semibold text-[#4B5563]">{selectedAuditorCustomer.email}</p>
+                        <p className="mt-1 text-sm font-semibold text-[#4B5563]">
+                          {formatDisplayEmail(selectedAuditorCustomer.email)}
+                        </p>
                       </div>
                       <span className="badge border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]">
                         {selectedAuditorTransactions.length} payments loaded
@@ -2037,7 +2048,7 @@ function App() {
                 <div className="mt-5 grid gap-3">
                   {[
                     [c.dashboard.sessionSecure, "Active"],
-                    [c.dashboard.databaseConnected, accounts.length ? "Online" : "Demo"],
+                    [c.dashboard.databaseConnected, accounts.length ? "Online" : "Ready"],
                     [c.dashboard.apiReady, isLoading ? "Syncing" : "Ready"],
                   ].map(([label, value]) => (
                     <div className="bank-health-row" key={label}>
@@ -2098,7 +2109,7 @@ function App() {
       {!user ? (
         <>
           <section className="air-hero">
-            <div className="air-hero-slogan">THE ARCHITECTURE<br />OF SECURE BANKING</div>
+            <div className="air-hero-slogan">{c.hero.title}</div>
             <div className="air-hero-letters" aria-label="FinGuard">
               <span>F</span>
               <img className="air-hero-letter-image air-hero-letter-image-percent" src={girlWithCardImage} alt="" aria-hidden="true" />
@@ -2115,41 +2126,45 @@ function App() {
 
           <section className="air-photo-section" id="accounts">
             <div className="air-word-row" aria-hidden="true">
-              <span>THE MOMENTUM TO BANK HIGHER</span>
+              <span>{c.accountsSection.kicker}</span>
             </div>
             <p className="air-center-copy">
-              FINGUARD IS A NEW GENERATION OF PREMIUM BANKING THAT BRINGS PRIVATE ACCOUNTS,
-              PAYMENT SECURITY, AND DIGITAL SUPPORT TO A NEW LEVEL OF QUALITY.
+              {c.hero.text}
             </p>
             <div className="air-split">
-              <div>
+              <div className="air-split-copy">
                 <h2>
-                  EFFICIENT ACCOUNTS AND PREMIUM INFRASTRUCTURE, PROTECTED PAYMENTS,
-                  INTELLIGENT REVIEW, AND A PRIVATE BANKING EXPERIENCE SET A NEW
-                  BENCHMARK FOR DIGITAL FINANCE.
+                  {c.accountsSection.title}
                 </h2>
-                <p>AT THIS LEVEL,<br />YOUR BANK HAS NO NOISE.</p>
+                <p>{c.accountsSection.text}</p>
+                <div className="air-proof-list">
+                  {c.benefits.map((item) => (
+                    <article key={item.title}>
+                      <h3>{item.title}</h3>
+                      <p>{item.text}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
               <div className="air-glass-image">
-                <img alt="Premium bank building exterior" src={bankImage} />
+                <img alt="Secure banking operations building exterior" src={bankImage} />
               </div>
             </div>
             <button className="air-inline-card" onClick={() => openAuth("register")} type="button">
-              ABOUT THE BANK
+              {c.hero.startDemo}
               <span aria-hidden="true">⌖</span>
             </button>
           </section>
 
           <section className="air-white-feature" id="features">
             <div className="air-word-row">
-              <span>A NEW PREMIUM FORMAT</span>
+              <span>{c.featuresSection.title}</span>
             </div>
             <p className="air-center-copy">
-              FINGUARD IS NOT ONLY A DIGITAL BANK BUT ALSO A STRONG SECURITY STATEMENT
-              FOR CLIENTS WHO EXPECT CONTROL, PRIVACY, AND CLARITY.
+              {c.featuresSection.text}
             </p>
             <div className="air-wide-image">
-              <img alt="Premium banking architecture against blue sky" src={heroBankImage} />
+              <img alt="Secure banking architecture against blue sky" src={heroBankImage} />
             </div>
           </section>
 
@@ -2159,10 +2174,10 @@ function App() {
             </Suspense>
             <div className="air-dark-grid">
               {[
-                ["1", "MIN", "OPEN ACCOUNT"],
-                ["3", "MIN", "CARD ISSUE"],
+                ["1", "MIN", "FLAG RISK"],
+                ["3", "MIN", "OPEN CASE"],
                 ["7", "MIN", "AI REVIEW"],
-                ["11", "MIN", "SUPPORT"],
+                ["11", "MIN", "EXPORT EVIDENCE"],
               ].map(([value, unit, label]) => (
                 <article className="air-dark-card" key={label}>
                   <strong>{value}</strong>
@@ -2179,17 +2194,14 @@ function App() {
             </div>
             <div className="air-black-copy">
               <h2>
-                THE PREMIUM FINGUARD BANKING SYSTEM IS DESIGNED TO BECOME A SYMBOL
-                OF CONFIDENCE, SECURITY, AND MODERN MONEY MANAGEMENT.
+                {c.cta.title}
               </h2>
               <button className="air-dark-link" onClick={() => openSupportChat()} type="button">
-                SUPPORT
+                {c.hero.viewFeatures}
                 <span aria-hidden="true">⌖</span>
               </button>
               <p>
-                THROUGH INTELLIGENT MONITORING, PROTECTED ACCOUNTS, AND CLEAR DIGITAL
-                FLOWS, FINGUARD CREATES A PRIVATE BANKING ENVIRONMENT FOR THE NEXT
-                GENERATION OF CLIENTS.
+                {c.footer.text}
               </p>
             </div>
           </section>
@@ -2534,7 +2546,7 @@ function App() {
                 className="profile-upgrade-button"
                 onClick={() => {
                   setIsUserMenuOpen(false);
-                  setLastEvent("Premium upgrade selected");
+                  setLastEvent("Advanced access selected");
                 }}
                 type="button"
               >
@@ -2546,20 +2558,20 @@ function App() {
             <div className="profile-identity">
               <span className="profile-photo" aria-hidden="true">{userInitials}</span>
               <h2>{displayUserName}</h2>
-              <p>{profileHandle} · {user.email ?? "customer.demo@finguard.ai"}</p>
+              <p>{profileHandle} · {displayUserEmail}</p>
             </div>
 
             <button
               className="profile-premium-card"
               onClick={() => {
                 setIsUserMenuOpen(false);
-                setLastEvent("Premium plan benefits opened");
+                setLastEvent("Advanced access benefits opened");
               }}
               type="button"
             >
               <span>
-                <strong>Premium</strong>
-                <small>Переваги плану ›</small>
+                <strong>Advanced</strong>
+                <small>Розширені можливості ›</small>
               </span>
               <span className="profile-card-stack" aria-hidden="true">
                 <span />
@@ -2632,7 +2644,7 @@ function App() {
               </div>
               <div className="detail-row">
                 <dt>{c.profile.email}</dt>
-                <dd>{user.email ?? c.profile.notAvailable}</dd>
+                <dd>{displayUserEmail}</dd>
               </div>
               <div className="detail-row">
                 <dt>{c.profile.role}</dt>
@@ -2762,7 +2774,7 @@ function App() {
                         <span>
                           <span className="block font-black text-[#111827]">{credential.label}</span>
                           <span className="block break-all text-xs font-semibold text-[#4B5563]">
-                            {credential.email} / {credential.password}
+                            Secure {credential.label.toLowerCase()} profile / {credential.password}
                           </span>
                         </span>
                         <span className="shrink-0 rounded border border-[#C0C7D1] px-2 py-1 text-xs font-black text-[#4B5563]">
