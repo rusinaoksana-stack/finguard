@@ -261,8 +261,8 @@ const initialAuthForm: AuthFormState = {
 };
 
 const demoCredentials = [
-  { label: "Customer", email: "customer.demo@finguard.ai", password: "Password123" },
-  { label: "Auditor", email: "auditor@finguard.ai", password: "Password123" },
+  { label: "Customer workspace", email: "customer.demo@finguard.ai", password: "Password123" },
+  { label: "Audit workspace", email: "auditor@finguard.ai", password: "Password123" },
 ];
 
 const initialDisputeForm = {
@@ -271,6 +271,7 @@ const initialDisputeForm = {
 };
 
 const LANGUAGE_KEY = "finguard_language";
+const COOKIE_KEY = "finguard_cookie_consent";
 
 const languageLabels: Record<Language, string> = {
   en: "EN",
@@ -481,6 +482,11 @@ const content = {
       thinking: "Assistant is checking this...",
       error: "The assistant is temporarily unavailable. Please try again.",
       close: "Close support chat",
+    },
+    cookie: {
+      text: "This website uses",
+      label: "cookies",
+      accept: "Accept",
     },
     footer: {
       text: "An AI-assisted review workspace for secure payment monitoring, dispute support, and audit-ready evidence.",
@@ -701,6 +707,11 @@ const content = {
       thinking: "Асистент перевіряє запит...",
       error: "Асистент тимчасово недоступний. Спробуйте ще раз.",
       close: "Закрити чат підтримки",
+    },
+    cookie: {
+      text: "Цей сайт використовує",
+      label: "cookies",
+      accept: "Прийняти",
     },
     footer: {
       text: "AI-workspace для моніторингу платежів, підтримки спорів і підготовки доказів до аудиту.",
@@ -1151,6 +1162,7 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isCookieVisible, setIsCookieVisible] = useState(() => localStorage.getItem(COOKIE_KEY) !== "accepted");
   const [chatMessages, setChatMessages] = useState<SupportChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
@@ -1473,6 +1485,11 @@ function App() {
     setChatError("");
   };
 
+  const acceptCookies = () => {
+    localStorage.setItem(COOKIE_KEY, "accepted");
+    setIsCookieVisible(false);
+  };
+
   const submitChatMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -1651,7 +1668,7 @@ function App() {
               onClick={openSupportChat}
               type="button"
             >
-              Support
+              {c.nav.support}
             </button>
           </div>
           <button className="air-open-button" onClick={() => openAuth("register")} type="button">
@@ -2117,10 +2134,12 @@ function App() {
               <img className="air-hero-letter-image air-hero-letter-image-cards" src={boyWithCardImage} alt="" aria-hidden="true" />
               <span>B</span>
             </div>
-            <div className="air-cookie">
-              THIS WEBSITE USES <strong>COOKIES</strong>
-              <button type="button">ACCEPT</button>
-            </div>
+            {isCookieVisible ? (
+              <div className="air-cookie">
+                {c.cookie.text} <strong>{c.cookie.label}</strong>
+                <button onClick={acceptCookies} type="button">{c.cookie.accept}</button>
+              </div>
+            ) : null}
             <a className="air-scroll" href="#accounts" aria-label="Scroll down">↓</a>
           </section>
 
@@ -2774,7 +2793,7 @@ function App() {
                         <span>
                           <span className="block font-black text-[#111827]">{credential.label}</span>
                           <span className="block break-all text-xs font-semibold text-[#4B5563]">
-                            Secure {credential.label.toLowerCase()} profile / {credential.password}
+                            Secure profile access
                           </span>
                         </span>
                         <span className="shrink-0 rounded border border-[#C0C7D1] px-2 py-1 text-xs font-black text-[#4B5563]">

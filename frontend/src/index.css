@@ -189,13 +189,13 @@ body {
   }
 
   .air-word-row {
-    @apply pointer-events-none flex w-full whitespace-nowrap px-7 pt-5 text-[clamp(3.25rem,5vw,6rem)] font-normal uppercase leading-[0.9] text-black;
+    @apply pointer-events-none flex w-full whitespace-normal px-7 pt-5 text-[clamp(3rem,4.7vw,5.8rem)] font-normal uppercase leading-[0.92] text-black;
   }
 
   .air-word-row span {
     @apply block w-full max-w-full;
-    text-align: justify;
-    text-align-last: justify;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
   }
 
   .air-white-feature .air-word-row {
