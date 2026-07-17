@@ -4,7 +4,7 @@ import heroBankImage from "../images/bank_2.webp";
 import boyWithCardImage from "../images/2_boy_with_card.webp";
 import girlWithCardImage from "../images/1_girl_with_card.webp";
 import safetyImage from "../images/safety.webp";
-import { useAuth } from "./hooks/useAuth";
+import { useAuth, type PreviewProfile } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
 import {
   fetchAccounts,
@@ -145,7 +145,7 @@ const demoAuditorCustomers: AuditorCustomer[] = [
   {
     id: "demo_customer_001",
     name: "Emma Murphy",
-    email: "customer.demo@finguard.ai",
+    email: "customer@finguard.ai",
     role: "user",
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 120).toISOString(),
     accounts: demoAccounts.map((account) => ({
@@ -260,9 +260,9 @@ const initialAuthForm: AuthFormState = {
   confirmPassword: "",
 };
 
-const demoCredentials = [
-  { label: "Customer workspace", email: "customer.demo@finguard.ai", password: "Password123" },
-  { label: "Audit workspace", email: "auditor@finguard.ai", password: "Password123" },
+const previewProfiles: Array<PreviewProfile & { label: string }> = [
+  { label: "Customer workspace", name: "Emma Murphy", role: "user", email: "customer@finguard.ai" },
+  { label: "Audit workspace", name: "FinGuard Auditor", role: "admin", email: "auditor@finguard.ai" },
 ];
 
 const initialDisputeForm = {
@@ -283,15 +283,15 @@ const languageLabels: Record<Language, string> = {
 
 const content = {
   en: {
-    topNav: ["Personal", "Business", "Support"],
+    topNav: ["Risk review", "Teams", "Support"],
     help: "Help centre",
     contact: "Contact info",
     tagline: "Secure banking intelligence",
     signedIn: "Signed in as",
     publicNav: {
-      personal: "Personal",
-      business: "Business",
-      kids: "Kids & Teens",
+      personal: "Payment review",
+      business: "Teams",
+      kids: "Evidence",
       company: "Company",
     },
     nav: {
@@ -339,7 +339,7 @@ const content = {
       email: "Email",
       role: "Role",
       accounts: "Accounts",
-      note: "These preferences are saved for this browser session and are ready for backend persistence.",
+      note: "These preferences are saved for this browser session and ready to sync with your secure workspace.",
       backToCabinet: "Back to cabinet",
       notAvailable: "Not available",
     },
@@ -365,7 +365,7 @@ const content = {
     cabinet: {
       kicker: "My banking cabinet",
       titleSuffix: "'s account overview",
-      text: "Your bank accounts, recent transactions, and payment review cases are loaded from PostgreSQL.",
+      text: "Accounts, recent transactions, and payment review cases are available in one secure workspace.",
       loading: "Loading account data",
       bankAccounts: "Bank accounts",
       currentAccount: "Current account",
@@ -430,7 +430,7 @@ const content = {
       noMatches: "No transactions match this search.",
       loginPrompt: "Log in to open your cabinet",
       loginPromptText:
-        "The cabinet connects to PostgreSQL and shows bank accounts, transactions, and dispute cases for the signed-in user.",
+        "The workspace shows accounts, transactions, and dispute cases for the signed-in reviewer.",
       sessionSecure: "Secure session",
       databaseConnected: "Database connected",
       apiReady: "API ready",
@@ -445,7 +445,7 @@ const content = {
       statusTitle: "Status updated",
       demoStatusTitle: "Status updated",
       loginTitle: "Welcome back",
-      registerTitle: "Account created",
+      registerTitle: "Access ready",
     },
     disputes: {
       title: "Dispute support",
@@ -563,7 +563,7 @@ const content = {
       email: "Email",
       role: "Роль",
       accounts: "Акаунти",
-      note: "Ці налаштування зберігаються для поточної сесії браузера та готові до збереження на backend.",
+      note: "Ці налаштування зберігаються для поточної сесії браузера та готові до синхронізації із захищеним workspace.",
       backToCabinet: "До кабінету",
       notAvailable: "Недоступно",
     },
@@ -589,7 +589,7 @@ const content = {
     cabinet: {
       kicker: "Мій банківський кабінет",
       titleSuffix: ": огляд акаунта",
-      text: "Банківські акаунти, останні транзакції та заявки на перевірку завантажуються з PostgreSQL.",
+      text: "Акаунти, останні транзакції та заявки на перевірку доступні в одному захищеному workspace.",
       loading: "Завантаження даних",
       bankAccounts: "Банківські акаунти",
       currentAccount: "Поточний акаунт",
@@ -654,7 +654,7 @@ const content = {
       noMatches: "Немає транзакцій за цим пошуком.",
       loginPrompt: "Увійдіть, щоб відкрити кабінет",
       loginPromptText:
-        "Кабінет підключається до PostgreSQL і показує акаунти, транзакції та заявки залогіненого користувача.",
+        "Workspace показує акаунти, транзакції та заявки для користувача, який увійшов у систему.",
       sessionSecure: "Безпечна сесія",
       databaseConnected: "База підключена",
       apiReady: "API готовий",
@@ -669,7 +669,7 @@ const content = {
       statusTitle: "Статус оновлено",
       demoStatusTitle: "Статус оновлено",
       loginTitle: "Вітаємо знову",
-      registerTitle: "Акаунт створено",
+      registerTitle: "Доступ готовий",
     },
     disputes: {
       title: "Підтримка заявок",
@@ -785,15 +785,15 @@ const localizedContent: Record<Language, Content> = {
   uk: content.uk,
   ru: {
     ...content.en,
-    topNav: ["Личный", "Бизнес", "Поддержка"],
+    topNav: ["Риски", "Команды", "Поддержка"],
     help: "Центр помощи",
     contact: "Контактная информация",
     tagline: "Безопасная банковская аналитика",
     signedIn: "Вход выполнен как",
     publicNav: {
-      personal: "Личный",
-      business: "Бизнес",
-      kids: "Дети и подростки",
+      personal: "Проверка платежей",
+      business: "Команды",
+      kids: "Доказательства",
       company: "Компания",
     },
     nav: {
@@ -807,10 +807,10 @@ const localizedContent: Record<Language, Content> = {
     auth: {
       ...content.en.auth,
       login: "Войти",
-      register: "Регистрация",
-      createAccount: "Создать аккаунт",
+      register: "Получить доступ",
+      createAccount: "Получить доступ",
       loginTitle: "Войти в FinGuard",
-      registerTitle: "Создать аккаунт",
+      registerTitle: "Создать безопасный доступ",
       password: "Пароль",
       confirmPassword: "Подтвердите пароль",
     },
@@ -821,10 +821,16 @@ const localizedContent: Record<Language, Content> = {
       signOut: "Выйти",
       profileSecurity: "Профиль и безопасность",
       notifications: "Уведомления",
+      note: "Эти настройки сохраняются для текущей сессии браузера и готовы к синхронизации с защищенным workspace.",
       name: "Имя",
       role: "Роль",
       accounts: "Счета",
       backToCabinet: "К кабинету",
+    },
+    toast: {
+      ...content.en.toast,
+      loginTitle: "С возвращением",
+      registerTitle: "Доступ готов",
     },
     app: {
       ...content.en.app,
@@ -842,11 +848,11 @@ const localizedContent: Record<Language, Content> = {
     },
     cabinet: {
       ...content.en.cabinet,
-      kicker: "Мой банковский кабинет",
-      titleSuffix: ": обзор счета",
-      text: "Счета, последние транзакции и заявки на проверку загружаются из PostgreSQL.",
+      kicker: "Рабочее пространство",
+      titleSuffix: ": обзор проверок",
+      text: "Счета, последние транзакции и заявки на проверку доступны в одном защищенном workspace.",
       loading: "Загрузка данных",
-      bankAccounts: "Банковские счета",
+      bankAccounts: "Счета",
       recentTransactions: "Последние транзакции",
       reviewCases: "Заявки на проверку",
       viewAll: "Все",
@@ -879,18 +885,23 @@ const localizedContent: Record<Language, Content> = {
       createButton: "Создать",
       export: "Экспорт",
     },
+    cookie: {
+      text: "Этот сайт использует",
+      label: "cookies",
+      accept: "Принять",
+    },
   },
   es: {
     ...content.en,
-    topNav: ["Personal", "Empresa", "Soporte"],
+    topNav: ["Riesgo", "Equipos", "Soporte"],
     help: "Centro de ayuda",
     contact: "Información de contacto",
     tagline: "Inteligencia bancaria segura",
     signedIn: "Sesión iniciada como",
     publicNav: {
-      personal: "Personal",
-      business: "Business",
-      kids: "Kids & Teens",
+      personal: "Revisión de pagos",
+      business: "Equipos",
+      kids: "Evidencia",
       company: "Company",
     },
     nav: {
@@ -904,10 +915,10 @@ const localizedContent: Record<Language, Content> = {
     auth: {
       ...content.en.auth,
       login: "Entrar",
-      register: "Registro",
-      createAccount: "Crear cuenta",
+      register: "Solicitar acceso",
+      createAccount: "Solicitar acceso",
       loginTitle: "Entrar en FinGuard",
-      registerTitle: "Crear cuenta",
+      registerTitle: "Crear acceso seguro",
       password: "Contraseña",
       confirmPassword: "Confirmar contraseña",
     },
@@ -918,10 +929,16 @@ const localizedContent: Record<Language, Content> = {
       signOut: "Salir",
       profileSecurity: "Perfil y seguridad",
       notifications: "Notificaciones",
+      note: "Estas preferencias se guardan para esta sesión del navegador y están listas para sincronizarse con tu espacio seguro.",
       name: "Nombre",
       role: "Rol",
       accounts: "Cuentas",
       backToCabinet: "Volver al panel",
+    },
+    toast: {
+      ...content.en.toast,
+      loginTitle: "Bienvenido de nuevo",
+      registerTitle: "Acceso listo",
     },
     app: {
       ...content.en.app,
@@ -939,11 +956,11 @@ const localizedContent: Record<Language, Content> = {
     },
     cabinet: {
       ...content.en.cabinet,
-      kicker: "Mi panel bancario",
-      titleSuffix: ": resumen de cuenta",
-      text: "Tus cuentas, transacciones recientes y casos de revisión se cargan desde PostgreSQL.",
+      kicker: "Espacio de revisión",
+      titleSuffix: ": resumen de revisión",
+      text: "Cuentas, transacciones recientes y casos de revisión están disponibles en un espacio seguro.",
       loading: "Cargando datos",
-      bankAccounts: "Cuentas bancarias",
+      bankAccounts: "Cuentas",
       recentTransactions: "Transacciones recientes",
       reviewCases: "Casos de revisión",
       viewAll: "Ver todo",
@@ -976,18 +993,23 @@ const localizedContent: Record<Language, Content> = {
       createButton: "Crear",
       export: "Exportar",
     },
+    cookie: {
+      text: "Este sitio usa",
+      label: "cookies",
+      accept: "Aceptar",
+    },
   },
   it: {
     ...content.en,
-    topNav: ["Personale", "Business", "Supporto"],
+    topNav: ["Rischio", "Team", "Supporto"],
     help: "Centro assistenza",
     contact: "Info contatto",
     tagline: "Intelligenza bancaria sicura",
     signedIn: "Accesso come",
     publicNav: {
-      personal: "Personal",
-      business: "Business",
-      kids: "Kids & Teens",
+      personal: "Revisione pagamenti",
+      business: "Team",
+      kids: "Evidenze",
       company: "Company",
     },
     nav: {
@@ -1001,10 +1023,10 @@ const localizedContent: Record<Language, Content> = {
     auth: {
       ...content.en.auth,
       login: "Accedi",
-      register: "Registrati",
-      createAccount: "Crea account",
+      register: "Richiedi accesso",
+      createAccount: "Richiedi accesso",
       loginTitle: "Accedi a FinGuard",
-      registerTitle: "Crea account",
+      registerTitle: "Crea accesso sicuro",
       password: "Password",
       confirmPassword: "Conferma password",
     },
@@ -1015,10 +1037,16 @@ const localizedContent: Record<Language, Content> = {
       signOut: "Esci",
       profileSecurity: "Profilo e sicurezza",
       notifications: "Notifiche",
+      note: "Queste preferenze vengono salvate per questa sessione del browser e sono pronte per la sincronizzazione con lo spazio sicuro.",
       name: "Nome",
       role: "Ruolo",
       accounts: "Conti",
       backToCabinet: "Torna all'area",
+    },
+    toast: {
+      ...content.en.toast,
+      loginTitle: "Bentornato",
+      registerTitle: "Accesso pronto",
     },
     app: {
       ...content.en.app,
@@ -1036,11 +1064,11 @@ const localizedContent: Record<Language, Content> = {
     },
     cabinet: {
       ...content.en.cabinet,
-      kicker: "Area bancaria",
-      titleSuffix: ": panoramica account",
-      text: "Conti, transazioni recenti e casi di revisione vengono caricati da PostgreSQL.",
+      kicker: "Area di revisione",
+      titleSuffix: ": panoramica revisioni",
+      text: "Conti, transazioni recenti e casi di revisione sono disponibili in uno spazio sicuro.",
       loading: "Caricamento dati",
-      bankAccounts: "Conti bancari",
+      bankAccounts: "Conti",
       recentTransactions: "Transazioni recenti",
       reviewCases: "Casi di revisione",
       viewAll: "Vedi tutto",
@@ -1073,6 +1101,11 @@ const localizedContent: Record<Language, Content> = {
       createButton: "Crea",
       export: "Esporta",
     },
+    cookie: {
+      text: "Questo sito usa",
+      label: "cookies",
+      accept: "Accetta",
+    },
   },
 };
 
@@ -1095,40 +1128,40 @@ function formatTime(value: string) {
 
 function formatDisplayEmail(email?: string | null) {
   if (!email) return "customer@finguard.ai";
-  return email.toLowerCase() === "customer.demo@finguard.ai" ? "customer@finguard.ai" : email;
+  return email;
 }
 
 const localSupportKnowledgeBase = [
-  { patterns: [/log ?in|sign ?in|access/i], answer: "To sign in, use the Log in button in the header and enter your email and password. After login, your cabinet shows accounts, transactions, and review cases." },
-  { patterns: [/register|create.*account|new account/i], answer: "To request access, choose Request access, enter your name, email, and password, then submit the secure access form." },
-  { patterns: [/forgot|reset.*password|change.*password/i], answer: "For password issues, use the login screen and request support if reset is unavailable. Never share your password or one-time codes in chat." },
-  { patterns: [/delete.*account|remove.*account|close.*account|cancel.*account|account.*delete|account.*close/i], answer: "To close or delete your account, open your profile menu, go to Settings, and contact support for final verification. For security, FinGuard does not delete banking data from chat." },
-  { patterns: [/update.*profile|change.*name|change.*email|personal details/i], answer: "Open the profile menu and go to Settings to review your personal information. Sensitive profile changes may require support verification." },
+  { patterns: [/log ?in|sign ?in|access/i], answer: "Use Request access or Log in from the header. Once authorized, FinGuard opens the review workspace with payment activity, cases, evidence, and team actions." },
+  { patterns: [/register|create.*account|new account/i], answer: "To request workspace access, choose Request access, enter your work details, and submit the secure access form. A team admin can confirm the right role." },
+  { patterns: [/forgot|reset.*password|change.*password/i], answer: "For password issues, use the login screen or contact support for a secure reset. Never share passwords, one-time codes, or full card details in chat." },
+  { patterns: [/delete.*account|remove.*account|close.*account|cancel.*account|account.*delete|account.*close/i], answer: "For workspace removal or data retention requests, contact support for verification. Case records and evidence exports should follow your organization's compliance policy." },
+  { patterns: [/update.*profile|change.*name|change.*email|personal details/i], answer: "Open the profile menu and go to Settings to review profile details, notifications, and security preferences. Sensitive changes may require admin verification." },
   { patterns: [/language|translate|україн|русск|spanish|italian/i], answer: "Use the language selector in the header to switch the interface language. FinGuard keeps the selected language for this browser." },
-  { patterns: [/balance|available funds|how much money/i], answer: "Your available balance is shown in My cabinet on the main account card. Account details are loaded from the connected banking data." },
-  { patterns: [/transaction history|transactions|payment activity|activity/i], answer: "Open Transactions in your cabinet to review payment activity, amounts, dates, statuses, and transaction IDs." },
+  { patterns: [/balance|available funds|how much money/i], answer: "Balances and payment totals appear inside the review workspace so teams can assess transaction context without switching tools." },
+  { patterns: [/transaction history|transactions|payment activity|activity/i], answer: "Open Transactions to review payment activity, amounts, dates, statuses, transaction IDs, and case context." },
   { patterns: [/search.*transaction|find.*transaction|transaction id/i], answer: "Use the search field in Transactions to find activity by transaction ID, status, or description." },
-  { patterns: [/statement|download.*statement|bank statement/i], answer: "Use Download statements or the export tools in the dashboard to prepare account and transaction records for review." },
-  { patterns: [/cancel.*payment|stop.*payment|void.*payment|reverse.*payment|payment.*cancel/i], answer: "To cancel a payment, open Transactions, find the payment, and check its status. Pending payments can be reviewed or reported as a payment issue. Completed payments cannot usually be cancelled, but you can open a dispute or contact support for review." },
-  { patterns: [/failed.*transfer|transfer.*failed|payment failed|declined/i], answer: "If a transfer failed or was declined, check the transaction status first. Confirm the account details, available balance, and card or transfer limits before trying again." },
+  { patterns: [/statement|download.*statement|bank statement/i], answer: "Use Export in the review workspace to prepare case evidence, transaction details, and status records for audit or support handoff." },
+  { patterns: [/cancel.*payment|stop.*payment|void.*payment|reverse.*payment|payment.*cancel/i], answer: "Open Transactions, select the payment, and check its status. Pending items can move into review; completed payments usually require a dispute, chargeback, or support workflow." },
+  { patterns: [/failed.*transfer|transfer.*failed|payment failed|declined/i], answer: "For failed or declined payments, check status, reason, limit context, and evidence before deciding whether the case needs review or customer follow-up." },
   { patterns: [/duplicate|charged twice|double charge|same payment/i], answer: "For a duplicate charge, open Transactions, select the duplicate payment, and create a review case with the reason Duplicate payment." },
   { patterns: [/dispute|chargeback|refund|payment issue|open.*case/i], answer: "To dispute a payment, open Review cases, choose the transaction, add a short reason, and submit the case for review." },
-  { patterns: [/lost.*card|stolen.*card|freeze.*card|block.*card/i], answer: "If your card is lost or stolen, freeze or block it immediately from Cards if available, then contact support for replacement and security review." },
-  { patterns: [/virtual card|digital card|card details/i], answer: "The virtual card panel in your cabinet shows secure online payment readiness. Use Cards to manage digital card access and limits." },
-  { patterns: [/card limit|spending limit|limit/i], answer: "Card and transfer limits are usually managed from Cards or Settings. Some limit changes may require additional verification." },
-  { patterns: [/fee|fees|charge|pricing/i], answer: "Fees depend on the account, card, and payment type. Check the transaction details or contact support for a full fee breakdown." },
+  { patterns: [/lost.*card|stolen.*card|freeze.*card|block.*card/i], answer: "For lost-card or stolen-card reports, create or review the related case, confirm affected transactions, and route urgent actions to the support or fraud team." },
+  { patterns: [/virtual card|digital card|card details/i], answer: "Card context helps reviewers connect payment activity with risk signals. Do not share full card numbers or sensitive credentials in chat." },
+  { patterns: [/card limit|spending limit|limit/i], answer: "Limit information should be reviewed alongside transaction status, customer context, and available evidence before a decision is recorded." },
+  { patterns: [/fee|fees|charge|pricing/i], answer: "Fees and charges should be checked in the transaction details and included in the evidence record when they affect a case decision." },
   { patterns: [/fraud|suspicious|unknown merchant|unauthorized|security alert/i], answer: "If you see suspicious activity, open the transaction, create a review case, and contact support. Do not share passwords, card numbers, or one-time codes." },
-  { patterns: [/locked|blocked|cannot access|account blocked/i], answer: "If your account is locked, contact support for identity verification. This protects your account from unauthorized access." },
-  { patterns: [/notification|alert|email alert|push/i], answer: "Open Settings from the profile menu to manage alerts, monthly summaries, and security notifications." },
+  { patterns: [/locked|blocked|cannot access|account blocked/i], answer: "For locked access, contact support or a workspace admin for verification. FinGuard keeps sensitive actions behind controlled access." },
+  { patterns: [/notification|alert|email alert|push/i], answer: "Open Settings from the profile menu to manage risk alerts, summaries, and security notifications." },
   { patterns: [/export|evidence|csv|audit/i], answer: "Use Export in the dispute support area to download evidence, transaction details, and case status information for review." },
   { patterns: [/contact|email|human|agent|support/i], answer: "For direct support, use Contact info in the header or email support@finguard.app." },
-  { patterns: [/payment status|pending|completed|review status/i], answer: "Payment status is shown in Transactions. Pending means still processing, Completed means settled, and Review means it may need manual checking." },
-  { patterns: [/add money|top up|deposit/i], answer: "Use Add money in Quick actions to start a top-up flow. The action is prepared as part of the secure banking dashboard experience." },
-  { patterns: [/send money|transfer money|make transfer/i], answer: "Use Transfer in Quick actions to start a payment flow. Always check recipient details carefully before confirming a transfer." },
+  { patterns: [/payment status|pending|completed|review status/i], answer: "Payment status is shown in Transactions. Pending means still processing, Completed means settled, and Review means it needs manual attention." },
+  { patterns: [/add money|top up|deposit/i], answer: "FinGuard focuses on payment review rather than deposits. Use transaction and case context to decide the next support or risk action." },
+  { patterns: [/send money|transfer money|make transfer/i], answer: "FinGuard reviews payment activity and case evidence. Payment initiation should remain in the connected banking or payment system." },
   { patterns: [/currency|exchange|foreign|international/i], answer: "International payments and currency exchange may include rates and fees. Review the transaction details before confirming." },
-  { patterns: [/subscription|direct debit|recurring payment/i], answer: "For subscriptions or direct debits, check Transactions for recurring activity. To stop future payments, contact the merchant and report the payment if needed." },
-  { patterns: [/how long|processing time|pending time/i], answer: "Processing time depends on the payment type. Pending card payments may settle or reverse automatically, while bank transfers can take longer." },
-  { patterns: [/safe|secure|privacy|data|gdpr/i], answer: "FinGuard is designed around secure account monitoring and review workflows. Never share passwords, full card numbers, or verification codes in chat." },
+  { patterns: [/subscription|direct debit|recurring payment/i], answer: "For subscriptions or direct debits, check recurring activity in Transactions and include relevant history in the review case." },
+  { patterns: [/how long|processing time|pending time/i], answer: "Processing time depends on payment type and provider status. Use FinGuard to record review decisions and keep evidence export-ready." },
+  { patterns: [/safe|secure|privacy|data|gdpr/i], answer: "FinGuard is designed around controlled workspace access, secure review workflows, and evidence-ready records. Never share passwords, full card numbers, or verification codes in chat." },
 ];
 
 function createLocalSupportReply(message: string) {
@@ -1137,11 +1170,11 @@ function createLocalSupportReply(message: string) {
     entry.patterns.some((pattern) => pattern.test(text)),
   );
 
-  return matchedEntry?.answer ?? "I can help you with FinGuard accounts, transactions, disputed payments, review cases, and profile settings.";
+  return matchedEntry?.answer ?? "I can help your team review payment activity, manage disputed payments, prepare evidence, and route support or risk actions.";
 }
 
 function App() {
-  const { user, login, register, logout } = useAuth();
+  const { user, login, register, logout, startPreviewSession } = useAuth();
   const socket = useSocket(Boolean(user));
   const [accounts, setAccounts] = useState<BankAccount[]>(demoAccounts);
   const [transactions, setTransactions] = useState<Transaction[]>(demoTransactions);
@@ -1310,7 +1343,7 @@ function App() {
 
   const displayUserName = useMemo(() => {
     if (!user) return "";
-    return user.email?.toLowerCase() === "customer.demo@finguard.ai" ? "Emma Murphy" : user.name;
+    return user.name;
   }, [user]);
 
   const displayUserEmail = useMemo(() => {
@@ -2776,22 +2809,25 @@ function App() {
                 <div className="rounded border border-[#C0C7D1] bg-[#F9FAFB] p-3">
                   <p className="text-xs font-black uppercase tracking-wide text-[#4B5563]">{c.auth.demoAccess}</p>
                   <div className="mt-3 grid gap-2">
-                    {demoCredentials.map((credential) => (
+                    {previewProfiles.map((profile) => (
                       <button
                         className="flex min-h-12 items-center justify-between gap-3 rounded border border-[#C0C7D1] bg-white px-3 text-left text-sm transition hover:border-[#8A8F98] hover:bg-[#E5E7EB]"
-                        key={credential.email}
+                        key={profile.email}
                         onClick={() => {
-                          setAuthForm((current) => ({
-                            ...current,
-                            email: credential.email,
-                            password: credential.password,
-                          }));
-                          setAuthError("");
+                          try {
+                            startPreviewSession(profile);
+                            showToast(c.toast.loginTitle, profile.email);
+                            setAuthForm(initialAuthForm);
+                            setAuthError("");
+                            setIsAuthOpen(false);
+                          } catch {
+                            setAuthError(c.auth.missingCredentials);
+                          }
                         }}
                         type="button"
                       >
                         <span>
-                          <span className="block font-black text-[#111827]">{credential.label}</span>
+                          <span className="block font-black text-[#111827]">{profile.label}</span>
                           <span className="block break-all text-xs font-semibold text-[#4B5563]">
                             Secure profile access
                           </span>

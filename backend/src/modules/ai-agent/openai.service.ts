@@ -17,23 +17,23 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
 const supportKnowledgeBase = [
   {
     patterns: [/log ?in|sign ?in|access/i],
-    answer: "To sign in, use the Log in button in the header and enter your email and password. After login, your cabinet shows accounts, transactions, and review cases.",
+    answer: "Use Request access or Log in from the header. Once authorized, FinGuard opens the review workspace with payment activity, cases, evidence, and team actions.",
   },
   {
     patterns: [/register|create.*account|new account/i],
-    answer: "To create an account, choose Create account, enter your name, email, and password, then submit the registration form.",
+    answer: "To request workspace access, choose Request access, enter your work details, and submit the secure access form. A team admin can confirm the right role.",
   },
   {
     patterns: [/forgot|reset.*password|change.*password/i],
-    answer: "For password issues, use the login screen and request support if reset is unavailable in the demo. Never share your password or one-time codes in chat.",
+    answer: "For password issues, use the login screen or contact support for a secure reset. Never share passwords, one-time codes, or full card details in chat.",
   },
   {
     patterns: [/delete.*account|remove.*account|close.*account|cancel.*account|account.*delete|account.*close/i],
-    answer: "To close or delete your account, open your profile menu, go to Settings, and contact support for final verification. For security, FinGuard does not delete banking data from chat.",
+    answer: "For workspace removal or data retention requests, contact support for verification. Case records and evidence exports should follow your organization's compliance policy.",
   },
   {
     patterns: [/update.*profile|change.*name|change.*email|personal details/i],
-    answer: "Open the profile menu and go to Settings to review your personal information. Sensitive profile changes may require support verification.",
+    answer: "Open the profile menu and go to Settings to review profile details, notifications, and security preferences. Sensitive changes may require admin verification.",
   },
   {
     patterns: [/language|translate|україн|русск|spanish|italian/i],
@@ -41,11 +41,11 @@ const supportKnowledgeBase = [
   },
   {
     patterns: [/balance|available funds|how much money/i],
-    answer: "Your available balance is shown in My cabinet on the main account card. Account details are loaded from the connected banking data.",
+    answer: "Balances and payment totals appear inside the review workspace so teams can assess transaction context without switching tools.",
   },
   {
     patterns: [/transaction history|transactions|payment activity|activity/i],
-    answer: "Open Transactions in your cabinet to review payment activity, amounts, dates, statuses, and transaction IDs.",
+    answer: "Open Transactions to review payment activity, amounts, dates, statuses, transaction IDs, and case context.",
   },
   {
     patterns: [/search.*transaction|find.*transaction|transaction id/i],
@@ -53,15 +53,15 @@ const supportKnowledgeBase = [
   },
   {
     patterns: [/statement|download.*statement|bank statement/i],
-    answer: "Use Download statements or the export tools in the dashboard to prepare account and transaction records for review.",
+    answer: "Use Export in the review workspace to prepare case evidence, transaction details, and status records for audit or support handoff.",
   },
   {
     patterns: [/cancel.*payment|stop.*payment|void.*payment|reverse.*payment|payment.*cancel/i],
-    answer: "To cancel a payment, open Transactions, find the payment, and check its status. Pending payments can be reviewed or reported as a payment issue. Completed payments cannot usually be cancelled, but you can open a dispute or contact support for review.",
+    answer: "Open Transactions, select the payment, and check its status. Pending items can move into review; completed payments usually require a dispute, chargeback, or support workflow.",
   },
   {
     patterns: [/failed.*transfer|transfer.*failed|payment failed|declined/i],
-    answer: "If a transfer failed or was declined, check the transaction status first. Confirm the account details, available balance, and card or transfer limits before trying again.",
+    answer: "For failed or declined payments, check status, reason, limit context, and evidence before deciding whether the case needs review or customer follow-up.",
   },
   {
     patterns: [/duplicate|charged twice|double charge|same payment/i],
@@ -73,19 +73,19 @@ const supportKnowledgeBase = [
   },
   {
     patterns: [/lost.*card|stolen.*card|freeze.*card|block.*card/i],
-    answer: "If your card is lost or stolen, freeze or block it immediately from Cards if available, then contact support for replacement and security review.",
+    answer: "For lost-card or stolen-card reports, create or review the related case, confirm affected transactions, and route urgent actions to the support or fraud team.",
   },
   {
     patterns: [/virtual card|digital card|card details/i],
-    answer: "The virtual card panel in your cabinet shows secure online payment readiness. Use Cards to manage digital card access and limits.",
+    answer: "Card context helps reviewers connect payment activity with risk signals. Do not share full card numbers or sensitive credentials in chat.",
   },
   {
     patterns: [/card limit|spending limit|limit/i],
-    answer: "Card and transfer limits are usually managed from Cards or Settings. Some limit changes may require additional verification.",
+    answer: "Limit information should be reviewed alongside transaction status, customer context, and available evidence before a decision is recorded.",
   },
   {
     patterns: [/fee|fees|charge|pricing/i],
-    answer: "Fees depend on the account, card, and payment type. Check the transaction details or contact support for a full fee breakdown.",
+    answer: "Fees and charges should be checked in the transaction details and included in the evidence record when they affect a case decision.",
   },
   {
     patterns: [/fraud|suspicious|unknown merchant|unauthorized|security alert/i],
@@ -93,11 +93,11 @@ const supportKnowledgeBase = [
   },
   {
     patterns: [/locked|blocked|cannot access|account blocked/i],
-    answer: "If your account is locked, contact support for identity verification. This protects your account from unauthorized access.",
+    answer: "For locked access, contact support or a workspace admin for verification. FinGuard keeps sensitive actions behind controlled access.",
   },
   {
     patterns: [/notification|alert|email alert|push/i],
-    answer: "Open Settings from the profile menu to manage alerts, monthly summaries, and security notifications.",
+    answer: "Open Settings from the profile menu to manage risk alerts, summaries, and security notifications.",
   },
   {
     patterns: [/export|evidence|csv|audit/i],
@@ -109,15 +109,15 @@ const supportKnowledgeBase = [
   },
   {
     patterns: [/payment status|pending|completed|review status/i],
-    answer: "Payment status is shown in Transactions. Pending means still processing, Completed means settled, and Review means it may need manual checking.",
+    answer: "Payment status is shown in Transactions. Pending means still processing, Completed means settled, and Review means it needs manual attention.",
   },
   {
     patterns: [/add money|top up|deposit/i],
-    answer: "Use Add money in Quick actions to start a top-up flow. In this demo, the action is prepared as part of the banking dashboard experience.",
+    answer: "FinGuard focuses on payment review rather than deposits. Use transaction and case context to decide the next support or risk action.",
   },
   {
     patterns: [/send money|transfer money|make transfer/i],
-    answer: "Use Transfer in Quick actions to start a payment flow. Always check recipient details carefully before confirming a transfer.",
+    answer: "FinGuard reviews payment activity and case evidence. Payment initiation should remain in the connected banking or payment system.",
   },
   {
     patterns: [/currency|exchange|foreign|international/i],
@@ -125,19 +125,19 @@ const supportKnowledgeBase = [
   },
   {
     patterns: [/subscription|direct debit|recurring payment/i],
-    answer: "For subscriptions or direct debits, check Transactions for recurring activity. To stop future payments, contact the merchant and report the payment if needed.",
+    answer: "For subscriptions or direct debits, check recurring activity in Transactions and include relevant history in the review case.",
   },
   {
     patterns: [/how long|processing time|pending time/i],
-    answer: "Processing time depends on the payment type. Pending card payments may settle or reverse automatically, while bank transfers can take longer.",
+    answer: "Processing time depends on payment type and provider status. Use FinGuard to record review decisions and keep evidence export-ready.",
   },
   {
     patterns: [/safe|secure|privacy|data|gdpr/i],
-    answer: "FinGuard is designed around secure account monitoring and review workflows. Never share passwords, full card numbers, or verification codes in chat.",
+    answer: "FinGuard is designed around controlled workspace access, secure review workflows, and evidence-ready records. Never share passwords, full card numbers, or verification codes in chat.",
   },
 ];
 
-export function createDemoSupportChatReply(messages: SupportChatMessage[]): string {
+export function createFallbackSupportChatReply(messages: SupportChatMessage[]): string {
   const latestMessage = messages[messages.length - 1]?.content.trim().toLowerCase() || "";
   const matchedEntry = supportKnowledgeBase.find((entry) =>
     entry.patterns.some((pattern) => pattern.test(latestMessage)),
@@ -145,7 +145,7 @@ export function createDemoSupportChatReply(messages: SupportChatMessage[]): stri
 
   if (matchedEntry) return matchedEntry.answer;
 
-  return "I can help you with FinGuard accounts, transactions, disputed payments, review cases, and profile settings. Tell me what you want to do, and I will guide you.";
+  return "I can help your team review payment activity, manage disputed payments, prepare evidence, and route support or risk actions. Tell me what you need to resolve.";
 }
 
 export async function analyzeTransaction(transaction: Transaction): Promise<AiAnalysisResponse> {
@@ -176,7 +176,7 @@ export async function analyzeTransaction(transaction: Transaction): Promise<AiAn
 
 export async function createSupportChatReply(messages: SupportChatMessage[]): Promise<string> {
   if (!config.OPENAI_API_KEY) {
-    return createDemoSupportChatReply(messages);
+    return createFallbackSupportChatReply(messages);
   }
 
   const history = messages
@@ -205,9 +205,9 @@ Assistant:`;
       SUPPORT_CHAT_TIMEOUT_MS,
     );
 
-    return response.output_text?.trim() || createDemoSupportChatReply(messages);
+    return response.output_text?.trim() || createFallbackSupportChatReply(messages);
   } catch (error) {
-    console.warn("OpenAI support chat unavailable, using demo assistant.", error);
-    return createDemoSupportChatReply(messages);
+    console.warn("OpenAI support chat unavailable, using fallback assistant.", error);
+    return createFallbackSupportChatReply(messages);
   }
 }

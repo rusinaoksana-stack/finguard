@@ -1,11 +1,13 @@
 # FinGuard
 
-Automated FinTech dispute and compliance platform scaffold.
+FinGuard is an AI-assisted payment risk review workspace for digital banking, fintech, fraud, support, and compliance teams.
+
+It brings suspicious transactions, dispute cases, customer context, evidence summaries, and audit-ready decisions into one secure product experience.
 
 ## Structure
 
-- `backend/` - Express + TypeScript API server with OpenAI integration and JWT auth.
-- `frontend/` - React + Vite TypeScript client with Tailwind CSS.
+- `backend/` - Express + TypeScript API with OpenAI integration, JWT auth, Prisma, and review workflow routes.
+- `frontend/` - React + Vite TypeScript client with Tailwind CSS, public product pages, reviewer workspaces, and support chat.
 
 ## Run locally
 
@@ -47,11 +49,10 @@ Used frontend images are generated as WebP files for production builds.
 npm run optimize:images
 ```
 
-## Notes
+## Product Notes
 
 - Keep production secrets out of git and set a strong `JWT_SECRET`.
 - Run Prisma migrations before starting a fresh database.
-- The backend includes sample routes for auth, transactions, disputes, and AI integrations.
-- The frontend includes a dashboard and chat UI skeleton.
-- Test customer: customer.demo@finguard.ai / Password123
-- Test auditor: auditor@finguard.ai / Password123
+- The backend includes routes for auth, accounts, transactions, disputes, support, and AI-assisted review.
+- The frontend includes public positioning, role-aware workspaces, transaction review, dispute evidence export, and support chat.
+- Guided access profiles are available from the login screen for product walkthroughs.

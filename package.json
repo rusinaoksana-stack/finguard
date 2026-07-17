@@ -13,6 +13,7 @@
     "build": "npm --workspace backend run build && npm --workspace frontend run build",
     "typecheck": "npm --workspace backend run typecheck && npm --workspace frontend run typecheck",
     "lint": "eslint backend/src frontend/src --ext .ts,.tsx",
+    "test": "node --test tests/*.test.mjs",
     "optimize:images": "node scripts/optimize-images.mjs"
   },
   "devDependencies": {

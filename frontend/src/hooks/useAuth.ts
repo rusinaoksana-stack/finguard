@@ -3,10 +3,7 @@ import { login as requestLogin, register as requestRegister, setAccessToken } fr
 
 const STORAGE_KEY = "finguard_user";
 const TOKEN_KEY = "finguard_token";
-const DEMO_USERS = [
-  { name: "Emma Murphy", role: "user", email: "customer.demo@finguard.ai", password: "Password123" },
-  { name: "FinGuard Auditor", role: "admin", email: "auditor@finguard.ai", password: "Password123" },
-];
+const ALLOW_PREVIEW_ACCESS = import.meta.env.DEV || import.meta.env.VITE_ENABLE_PREVIEW_ACCESS === "true";
 
 type AuthUser = {
   name: string;
@@ -21,6 +18,12 @@ type LoginInput = {
 
 type RegisterInput = LoginInput & {
   name: string;
+};
+
+export type PreviewProfile = {
+  name: string;
+  role: "user" | "admin";
+  email: string;
 };
 
 export function useAuth() {
@@ -52,15 +55,6 @@ export function useAuth() {
       const data = await requestLogin(email, password);
       persistUser(data.user, data.accessToken);
     } catch {
-      const demoUser = DEMO_USERS.find(
-        (account) => account.email.toLowerCase() === email.toLowerCase() && account.password === password,
-      );
-
-      if (demoUser) {
-        persistUser({ name: demoUser.name, role: demoUser.role, email: demoUser.email });
-        return;
-      }
-
       throw new Error("Invalid credentials");
     }
   };
@@ -74,10 +68,20 @@ export function useAuth() {
       persistUser(data.user, data.accessToken);
       return;
     } catch {
-      // Keep the demo usable when the backend or database is not running.
+      if (!ALLOW_PREVIEW_ACCESS) {
+        throw new Error("Registration service unavailable");
+      }
     }
 
     persistUser(nextUser);
+  };
+
+  const startPreviewSession = (profile: PreviewProfile) => {
+    if (!ALLOW_PREVIEW_ACCESS) {
+      throw new Error("Preview access is unavailable");
+    }
+
+    persistUser(profile);
   };
 
   const logout = () => {
@@ -87,5 +91,5 @@ export function useAuth() {
     setUser(null);
   };
 
-  return { user, login, register, logout };
+  return { user, login, register, logout, startPreviewSession };
 }

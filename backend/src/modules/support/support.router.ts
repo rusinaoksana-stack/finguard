@@ -1,7 +1,7 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
-import { createDemoSupportChatReply, createSupportChatReply } from "../ai-agent/openai.service";
+import { createFallbackSupportChatReply, createSupportChatReply } from "../ai-agent/openai.service";
 import { SupportChatMessage } from "../../types";
 import { asyncHandler } from "../../lib/async-handler";
 import { validateBody } from "../../lib/validation";
@@ -54,7 +54,7 @@ router.post("/chat", supportRateLimit, validateBody(supportChatSchema), asyncHan
     console.error("Support chat failed", error);
     return res.json({
       data: {
-        reply: createDemoSupportChatReply(messages),
+        reply: createFallbackSupportChatReply(messages),
       },
     });
   }
