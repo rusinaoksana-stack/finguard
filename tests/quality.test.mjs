@@ -7,18 +7,32 @@ const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 test("client auth does not ship password-based preview credentials", async () => {
   const authSource = await read("frontend/src/hooks/useAuth.ts");
   const appSource = await read("frontend/src/App.tsx");
+  const previewConfigSource = await read("frontend/src/config/preview.ts");
   const combined = `${authSource}\n${appSource}`;
 
   assert.equal(combined.includes("Password123"), false);
   assert.equal(combined.includes("customer.demo@finguard.ai"), false);
   assert.equal(combined.includes("DEMO_USERS"), false);
-  assert.match(authSource, /VITE_ENABLE_PREVIEW_ACCESS/);
+  assert.match(previewConfigSource, /VITE_ENABLE_PREVIEW_ACCESS/);
   assert.match(appSource, /startPreviewSession/);
+});
+
+test("preview workspace data stays outside the main app shell", async () => {
+  const appSource = await read("frontend/src/App.tsx");
+  const previewSource = await read("frontend/src/data/previewWorkspace.ts");
+
+  for (const forbidden of ["demoAccounts", "demoTransactions", "demoDisputes", "demoAuditorCustomers"]) {
+    assert.equal(appSource.includes(forbidden), false);
+  }
+
+  assert.equal(appSource.includes('from "./data/previewWorkspace"'), false);
+  assert.match(appSource, /loadPreviewWorkspaceData/);
+  assert.match(previewSource, /createPreviewWorkspaceData/);
 });
 
 test("support fallback keeps the current B2B risk-review positioning", async () => {
   const backendSupport = await read("backend/src/modules/ai-agent/openai.service.ts");
-  const frontendSupport = await read("frontend/src/App.tsx");
+  const frontendSupport = await read("frontend/src/support/localSupport.ts");
 
   for (const source of [backendSupport, frontendSupport]) {
     assert.equal(source.includes("reset is unavailable in the demo"), false);

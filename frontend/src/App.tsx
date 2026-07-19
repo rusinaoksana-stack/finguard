@@ -4,7 +4,9 @@ import heroBankImage from "../images/bank_2.webp";
 import boyWithCardImage from "../images/2_boy_with_card.webp";
 import girlWithCardImage from "../images/1_girl_with_card.webp";
 import safetyImage from "../images/safety.webp";
-import { useAuth, type PreviewProfile } from "./hooks/useAuth";
+import { isPreviewAccessEnabled } from "./config/preview";
+import { previewProfiles } from "./data/previewProfiles";
+import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
 import {
   fetchAccounts,
@@ -16,155 +18,9 @@ import {
   sendSupportChatMessage,
   SupportChatMessage,
 } from "./services/api";
-
-type TransactionStatus = "pending" | "completed" | "review";
-type DisputeStatus = "open" | "resolved" | "escalated";
-
-type Transaction = {
-  id: string;
-  accountId?: string;
-  accountNumber?: string;
-  amount: number;
-  currency: string;
-  status: TransactionStatus;
-  createdAt: string;
-  description: string;
-};
-
-type Dispute = {
-  id: string;
-  transactionId: string;
-  accountNumber?: string;
-  reason: string;
-  status: DisputeStatus;
-  createdAt: string;
-};
-
-type BankAccount = {
-  id: string;
-  accountNumber: string;
-  balance: number;
-  currency: string;
-  status: "active" | "frozen" | "closed";
-  createdAt: string;
-};
-
-type AuditorDispute = Dispute & {
-  notes?: string | null;
-};
-
-type AuditorTransaction = Transaction & {
-  dispute?: AuditorDispute | null;
-};
-
-type AuditorAccount = BankAccount & {
-  transactions: AuditorTransaction[];
-};
-
-type AuditorCustomer = {
-  id: string;
-  name: string;
-  email: string;
-  role: "user";
-  createdAt: string;
-  accounts: AuditorAccount[];
-  summary: {
-    accountCount: number;
-    transactionCount: number;
-    reviewCount: number;
-    openDisputeCount: number;
-    totalBalance: number;
-    totalVolume: number;
-  };
-};
-
-const demoAccounts: BankAccount[] = [
-  {
-    id: "acc_demo",
-    accountNumber: "FG-10293847",
-    balance: 2450.8,
-    currency: "EUR",
-    status: "active",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 120).toISOString(),
-  },
-];
-
-const demoTransactions: Transaction[] = [
-  {
-    id: "txn_001",
-    accountId: "acc_demo",
-    accountNumber: "FG-10293847",
-    amount: 48.75,
-    currency: "EUR",
-    status: "review",
-    createdAt: new Date().toISOString(),
-    description: "Refund request for duplicate charge",
-  },
-  {
-    id: "txn_002",
-    accountId: "acc_demo",
-    accountNumber: "FG-10293847",
-    amount: 12.5,
-    currency: "EUR",
-    status: "completed",
-    createdAt: new Date(Date.now() - 1000 * 60 * 38).toISOString(),
-    description: "Merchant settlement",
-  },
-  {
-    id: "txn_003",
-    accountId: "acc_demo",
-    accountNumber: "FG-10293847",
-    amount: 734.2,
-    currency: "EUR",
-    status: "pending",
-    createdAt: new Date(Date.now() - 1000 * 60 * 94).toISOString(),
-    description: "Cross-border wallet transfer",
-  },
-];
-
-const demoDisputes: Dispute[] = [
-  {
-    id: "disp_001",
-    transactionId: "txn_001",
-    accountNumber: "FG-10293847",
-    reason: "Duplicate payment",
-    status: "open",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "disp_002",
-    transactionId: "txn_003",
-    accountNumber: "FG-10293847",
-    reason: "Unusual transfer pattern",
-    status: "escalated",
-    createdAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-  },
-];
-
-const demoAuditorCustomers: AuditorCustomer[] = [
-  {
-    id: "demo_customer_001",
-    name: "Emma Murphy",
-    email: "customer@finguard.ai",
-    role: "user",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 120).toISOString(),
-    accounts: demoAccounts.map((account) => ({
-      ...account,
-      transactions: demoTransactions.map((transaction) => ({
-        ...transaction,
-        dispute: demoDisputes.find((dispute) => dispute.transactionId === transaction.id) ?? null,
-      })),
-    })),
-    summary: {
-      accountCount: demoAccounts.length,
-      transactionCount: demoTransactions.length,
-      reviewCount: demoTransactions.filter((transaction) => transaction.status === "review").length,
-      openDisputeCount: demoDisputes.filter((dispute) => dispute.status !== "resolved").length,
-      totalBalance: demoAccounts.reduce((sum, account) => sum + account.balance, 0),
-      totalVolume: demoTransactions.reduce((sum, transaction) => sum + transaction.amount, 0),
-    },
-  },
-];
+import { createLocalSupportReply } from "./support/localSupport";
+import type { AuditorCustomer, AuditorDispute, BankAccount, Dispute, DisputeStatus, Transaction, TransactionStatus } from "./types/domain";
+import { formatCurrency, formatDisplayEmail, formatTime } from "./utils/formatters";
 
 const statusStyles: Record<TransactionStatus | DisputeStatus, string> = {
   completed: "border-[#C0C7D1] bg-[#E5E7EB] text-[#4B5563]",
@@ -259,11 +115,6 @@ const initialAuthForm: AuthFormState = {
   password: "",
   confirmPassword: "",
 };
-
-const previewProfiles: Array<PreviewProfile & { label: string }> = [
-  { label: "Customer workspace", name: "Emma Murphy", role: "user", email: "customer@finguard.ai" },
-  { label: "Audit workspace", name: "FinGuard Auditor", role: "admin", email: "auditor@finguard.ai" },
-];
 
 const initialDisputeForm = {
   transactionId: "",
@@ -1109,78 +960,20 @@ const localizedContent: Record<Language, Content> = {
   },
 };
 
-function formatCurrency(amount: number, currency: string) {
-  return new Intl.NumberFormat("en-IE", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 2,
-  }).format(amount);
-}
-
-function formatTime(value: string) {
-  return new Intl.DateTimeFormat("en-IE", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
-}
-
-function formatDisplayEmail(email?: string | null) {
-  if (!email) return "customer@finguard.ai";
-  return email;
-}
-
-const localSupportKnowledgeBase = [
-  { patterns: [/log ?in|sign ?in|access/i], answer: "Use Request access or Log in from the header. Once authorized, FinGuard opens the review workspace with payment activity, cases, evidence, and team actions." },
-  { patterns: [/register|create.*account|new account/i], answer: "To request workspace access, choose Request access, enter your work details, and submit the secure access form. A team admin can confirm the right role." },
-  { patterns: [/forgot|reset.*password|change.*password/i], answer: "For password issues, use the login screen or contact support for a secure reset. Never share passwords, one-time codes, or full card details in chat." },
-  { patterns: [/delete.*account|remove.*account|close.*account|cancel.*account|account.*delete|account.*close/i], answer: "For workspace removal or data retention requests, contact support for verification. Case records and evidence exports should follow your organization's compliance policy." },
-  { patterns: [/update.*profile|change.*name|change.*email|personal details/i], answer: "Open the profile menu and go to Settings to review profile details, notifications, and security preferences. Sensitive changes may require admin verification." },
-  { patterns: [/language|translate|україн|русск|spanish|italian/i], answer: "Use the language selector in the header to switch the interface language. FinGuard keeps the selected language for this browser." },
-  { patterns: [/balance|available funds|how much money/i], answer: "Balances and payment totals appear inside the review workspace so teams can assess transaction context without switching tools." },
-  { patterns: [/transaction history|transactions|payment activity|activity/i], answer: "Open Transactions to review payment activity, amounts, dates, statuses, transaction IDs, and case context." },
-  { patterns: [/search.*transaction|find.*transaction|transaction id/i], answer: "Use the search field in Transactions to find activity by transaction ID, status, or description." },
-  { patterns: [/statement|download.*statement|bank statement/i], answer: "Use Export in the review workspace to prepare case evidence, transaction details, and status records for audit or support handoff." },
-  { patterns: [/cancel.*payment|stop.*payment|void.*payment|reverse.*payment|payment.*cancel/i], answer: "Open Transactions, select the payment, and check its status. Pending items can move into review; completed payments usually require a dispute, chargeback, or support workflow." },
-  { patterns: [/failed.*transfer|transfer.*failed|payment failed|declined/i], answer: "For failed or declined payments, check status, reason, limit context, and evidence before deciding whether the case needs review or customer follow-up." },
-  { patterns: [/duplicate|charged twice|double charge|same payment/i], answer: "For a duplicate charge, open Transactions, select the duplicate payment, and create a review case with the reason Duplicate payment." },
-  { patterns: [/dispute|chargeback|refund|payment issue|open.*case/i], answer: "To dispute a payment, open Review cases, choose the transaction, add a short reason, and submit the case for review." },
-  { patterns: [/lost.*card|stolen.*card|freeze.*card|block.*card/i], answer: "For lost-card or stolen-card reports, create or review the related case, confirm affected transactions, and route urgent actions to the support or fraud team." },
-  { patterns: [/virtual card|digital card|card details/i], answer: "Card context helps reviewers connect payment activity with risk signals. Do not share full card numbers or sensitive credentials in chat." },
-  { patterns: [/card limit|spending limit|limit/i], answer: "Limit information should be reviewed alongside transaction status, customer context, and available evidence before a decision is recorded." },
-  { patterns: [/fee|fees|charge|pricing/i], answer: "Fees and charges should be checked in the transaction details and included in the evidence record when they affect a case decision." },
-  { patterns: [/fraud|suspicious|unknown merchant|unauthorized|security alert/i], answer: "If you see suspicious activity, open the transaction, create a review case, and contact support. Do not share passwords, card numbers, or one-time codes." },
-  { patterns: [/locked|blocked|cannot access|account blocked/i], answer: "For locked access, contact support or a workspace admin for verification. FinGuard keeps sensitive actions behind controlled access." },
-  { patterns: [/notification|alert|email alert|push/i], answer: "Open Settings from the profile menu to manage risk alerts, summaries, and security notifications." },
-  { patterns: [/export|evidence|csv|audit/i], answer: "Use Export in the dispute support area to download evidence, transaction details, and case status information for review." },
-  { patterns: [/contact|email|human|agent|support/i], answer: "For direct support, use Contact info in the header or email support@finguard.app." },
-  { patterns: [/payment status|pending|completed|review status/i], answer: "Payment status is shown in Transactions. Pending means still processing, Completed means settled, and Review means it needs manual attention." },
-  { patterns: [/add money|top up|deposit/i], answer: "FinGuard focuses on payment review rather than deposits. Use transaction and case context to decide the next support or risk action." },
-  { patterns: [/send money|transfer money|make transfer/i], answer: "FinGuard reviews payment activity and case evidence. Payment initiation should remain in the connected banking or payment system." },
-  { patterns: [/currency|exchange|foreign|international/i], answer: "International payments and currency exchange may include rates and fees. Review the transaction details before confirming." },
-  { patterns: [/subscription|direct debit|recurring payment/i], answer: "For subscriptions or direct debits, check recurring activity in Transactions and include relevant history in the review case." },
-  { patterns: [/how long|processing time|pending time/i], answer: "Processing time depends on payment type and provider status. Use FinGuard to record review decisions and keep evidence export-ready." },
-  { patterns: [/safe|secure|privacy|data|gdpr/i], answer: "FinGuard is designed around controlled workspace access, secure review workflows, and evidence-ready records. Never share passwords, full card numbers, or verification codes in chat." },
-];
-
-function createLocalSupportReply(message: string) {
-  const text = message.toLowerCase();
-  const matchedEntry = localSupportKnowledgeBase.find((entry) =>
-    entry.patterns.some((pattern) => pattern.test(text)),
-  );
-
-  return matchedEntry?.answer ?? "I can help your team review payment activity, manage disputed payments, prepare evidence, and route support or risk actions.";
+async function loadPreviewWorkspaceData() {
+  if (!isPreviewAccessEnabled) return null;
+  const { createPreviewWorkspaceData } = await import("./data/previewWorkspace");
+  return createPreviewWorkspaceData();
 }
 
 function App() {
   const { user, login, register, logout, startPreviewSession } = useAuth();
   const socket = useSocket(Boolean(user));
-  const [accounts, setAccounts] = useState<BankAccount[]>(demoAccounts);
-  const [transactions, setTransactions] = useState<Transaction[]>(demoTransactions);
-  const [disputes, setDisputes] = useState<Dispute[]>(demoDisputes);
-  const [auditorCustomers, setAuditorCustomers] = useState<AuditorCustomer[]>(demoAuditorCustomers);
-  const [selectedAuditorCustomerId, setSelectedAuditorCustomerId] = useState(demoAuditorCustomers[0]?.id ?? "");
+  const [accounts, setAccounts] = useState<BankAccount[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [disputes, setDisputes] = useState<Dispute[]>([]);
+  const [auditorCustomers, setAuditorCustomers] = useState<AuditorCustomer[]>([]);
+  const [selectedAuditorCustomerId, setSelectedAuditorCustomerId] = useState("");
   const [lastEvent, setLastEvent] = useState("Monitoring is ready");
   const [isLoading, setIsLoading] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
@@ -1190,7 +983,7 @@ function App() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [transactionFilter, setTransactionFilter] = useState<TransactionFilter>("all");
   const [transactionSearch, setTransactionSearch] = useState("");
-  const [selectedDisputeId, setSelectedDisputeId] = useState(demoDisputes[0]?.id ?? "");
+  const [selectedDisputeId, setSelectedDisputeId] = useState("");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -1242,32 +1035,38 @@ function App() {
 
     if (isAuditor) {
       fetchAuditorCustomers()
-        .then((customerData) => {
-          const nextCustomers = customerData.length ? customerData : demoAuditorCustomers;
+        .then(async (customerData) => {
+          const previewData = customerData.length ? null : await loadPreviewWorkspaceData();
+          const nextCustomers = customerData.length ? customerData : previewData?.auditorCustomers ?? [];
           setAuditorCustomers(nextCustomers);
           setSelectedAuditorCustomerId((current) => current || nextCustomers[0]?.id || "");
           setLastEvent(`${nextCustomers.length} customers loaded for audit`);
         })
-        .catch(() => {
-          setAuditorCustomers(demoAuditorCustomers);
-          setSelectedAuditorCustomerId(demoAuditorCustomers[0]?.id ?? "");
-          setLastEvent("Audit workspace ready while API is offline");
+        .catch(async () => {
+          const previewData = await loadPreviewWorkspaceData();
+          const nextCustomers = previewData?.auditorCustomers ?? [];
+          setAuditorCustomers(nextCustomers);
+          setSelectedAuditorCustomerId(nextCustomers[0]?.id ?? "");
+          setLastEvent(previewData ? "Audit workspace ready while API is offline" : "Audit API is unavailable");
         })
         .finally(() => setIsLoading(false));
       return;
     }
 
     Promise.all([fetchAccounts(), fetchTransactions(), fetchDisputes()])
-      .then(([accountData, transactionData, disputeData]) => {
-        setAccounts(accountData.length ? accountData : demoAccounts);
-        setTransactions(transactionData.length ? transactionData : demoTransactions);
-        setDisputes(disputeData.length ? disputeData : demoDisputes);
+      .then(async ([accountData, transactionData, disputeData]) => {
+        const shouldUsePreview = !accountData.length && !transactionData.length && !disputeData.length;
+        const previewData = shouldUsePreview ? await loadPreviewWorkspaceData() : null;
+        setAccounts(accountData.length ? accountData : previewData?.accounts ?? []);
+        setTransactions(transactionData.length ? transactionData : previewData?.transactions ?? []);
+        setDisputes(disputeData.length ? disputeData : previewData?.disputes ?? []);
       })
-      .catch(() => {
-        setAccounts(demoAccounts);
-        setTransactions(demoTransactions);
-        setDisputes(demoDisputes);
-        setLastEvent("Secure review workspace ready while API is offline");
+      .catch(async () => {
+        const previewData = await loadPreviewWorkspaceData();
+        setAccounts(previewData?.accounts ?? []);
+        setTransactions(previewData?.transactions ?? []);
+        setDisputes(previewData?.disputes ?? []);
+        setLastEvent(previewData ? "Secure review workspace ready while API is offline" : "Review API is unavailable");
       })
       .finally(() => setIsLoading(false));
   }, [isAuditor, user]);
@@ -2805,7 +2604,7 @@ function App() {
             </div>
 
             <form className="mt-5 space-y-4" onSubmit={handleAuthSubmit}>
-              {authMode === "login" ? (
+              {authMode === "login" && isPreviewAccessEnabled ? (
                 <div className="rounded border border-[#C0C7D1] bg-[#F9FAFB] p-3">
                   <p className="text-xs font-black uppercase tracking-wide text-[#4B5563]">{c.auth.demoAccess}</p>
                   <div className="mt-3 grid gap-2">

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { isPreviewAccessEnabled } from "../config/preview";
 import { login as requestLogin, register as requestRegister, setAccessToken } from "../services/api";
 
 const STORAGE_KEY = "finguard_user";
 const TOKEN_KEY = "finguard_token";
-const ALLOW_PREVIEW_ACCESS = import.meta.env.DEV || import.meta.env.VITE_ENABLE_PREVIEW_ACCESS === "true";
 
 type AuthUser = {
   name: string;
@@ -68,7 +68,7 @@ export function useAuth() {
       persistUser(data.user, data.accessToken);
       return;
     } catch {
-      if (!ALLOW_PREVIEW_ACCESS) {
+      if (!isPreviewAccessEnabled) {
         throw new Error("Registration service unavailable");
       }
     }
@@ -77,7 +77,7 @@ export function useAuth() {
   };
 
   const startPreviewSession = (profile: PreviewProfile) => {
-    if (!ALLOW_PREVIEW_ACCESS) {
+    if (!isPreviewAccessEnabled) {
       throw new Error("Preview access is unavailable");
     }
 
