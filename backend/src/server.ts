@@ -13,6 +13,7 @@ import { supportRouter } from "./modules/support/support.router";
 import { auditorRouter } from "./modules/auditor/auditor.router";
 import { verifyAccessToken } from "./modules/auth/auth.middleware";
 import { HttpError } from "./lib/http-error";
+import { logger } from "./lib/logger";
 
 const app = express();
 const server = http.createServer(app);
@@ -77,7 +78,7 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
     return res.status(error.statusCode).json({ message: error.message, details: error.details });
   }
 
-  console.error("Unhandled API error", error);
+  logger.error("Unhandled API error", error);
   return res.status(500).json({ message: "Internal server error" });
 });
 
@@ -97,7 +98,7 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("Socket connected", socket.id);
+  logger.info("Socket connected", { socketId: socket.id });
   socket.on("admin:updateStatus", (payload) => {
     if (socket.data.user?.role !== "admin") {
       socket.emit("error", { message: "Auditor access is required" });
@@ -110,5 +111,5 @@ io.on("connection", (socket) => {
 
 const port = config.PORT || 4000;
 server.listen(port, () => {
-  console.log(`Backend running on http://localhost:${port}`);
+  logger.info("Backend running", { url: `http://localhost:${port}` });
 });

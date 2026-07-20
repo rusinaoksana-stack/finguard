@@ -9,7 +9,7 @@ function requiredEnv(name: string, fallback?: string) {
   if (value) return value;
 
   if (nodeEnv !== "production" && fallback) {
-    console.warn(`Missing ${name}; using development fallback.`);
+    process.stderr.write(`Missing ${name}; using development fallback.\n`);
     return fallback;
   }
 

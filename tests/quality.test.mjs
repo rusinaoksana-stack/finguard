@@ -41,3 +41,26 @@ test("support fallback keeps the current B2B risk-review positioning", async () 
     assert.match(source, /review workspace|payment activity|evidence|risk actions/);
   }
 });
+
+test("frontend API responses are typed through a shared envelope", async () => {
+  const apiSource = await read("frontend/src/services/api.ts");
+
+  assert.match(apiSource, /type ApiEnvelope<T>/);
+  assert.match(apiSource, /apiData<T>/);
+  assert.match(apiSource, /get<ApiEnvelope<Transaction\[\]>>/);
+  assert.match(apiSource, /post<ApiEnvelope<Dispute>>/);
+  assert.equal(apiSource.includes("response.data.data as"), false);
+});
+
+test("backend console output is centralized through the logger", async () => {
+  const serverSource = await read("backend/src/server.ts");
+  const supportSource = await read("backend/src/modules/support/support.router.ts");
+  const aiSource = await read("backend/src/modules/ai-agent/openai.service.ts");
+  const loggerSource = await read("backend/src/lib/logger.ts");
+
+  for (const source of [serverSource, supportSource, aiSource]) {
+    assert.equal(/console\.(log|info|warn|error|debug)/.test(source), false);
+  }
+
+  assert.match(loggerSource, /console\.(error|warn|info)/);
+});

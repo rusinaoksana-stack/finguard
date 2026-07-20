@@ -1,4 +1,21 @@
 import axios from "axios";
+import type { AuditorCustomer, BankAccount, Dispute, DisputeStatus, Transaction } from "../types/domain";
+
+type ApiEnvelope<T> = {
+  data: T;
+};
+
+export type AuthUser = {
+  id?: string;
+  name: string;
+  role: "user" | "admin";
+  email?: string;
+};
+
+type AuthResponse = {
+  user: AuthUser;
+  accessToken: string;
+};
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api",
@@ -15,43 +32,42 @@ export function setAccessToken(token: string | null) {
   }
 }
 
-export async function fetchTransactions() {
-  const response = await api.get("/transactions");
+async function apiData<T>(request: Promise<{ data: ApiEnvelope<T> }>) {
+  const response = await request;
   return response.data.data;
+}
+
+export async function fetchTransactions() {
+  return apiData<Transaction[]>(api.get<ApiEnvelope<Transaction[]>>("/transactions"));
 }
 
 export async function fetchAccounts() {
-  const response = await api.get("/accounts");
-  return response.data.data;
+  return apiData<BankAccount[]>(api.get<ApiEnvelope<BankAccount[]>>("/accounts"));
 }
 
 export async function fetchDisputes() {
-  const response = await api.get("/disputes");
-  return response.data.data;
+  return apiData<Dispute[]>(api.get<ApiEnvelope<Dispute[]>>("/disputes"));
 }
 
 export async function fetchAuditorCustomers() {
-  const response = await api.get("/auditor/customers");
-  return response.data.data;
+  return apiData<AuditorCustomer[]>(api.get<ApiEnvelope<AuditorCustomer[]>>("/auditor/customers"));
 }
 
 export async function createDispute(transactionId: string, reason: string) {
-  const response = await api.post("/disputes", { transactionId, reason });
-  return response.data.data;
+  return apiData<Dispute>(api.post<ApiEnvelope<Dispute>>("/disputes", { transactionId, reason }));
 }
 
-export async function updateDisputeStatus(id: string, status: "open" | "resolved" | "escalated") {
-  const response = await api.patch(`/disputes/${id}/status`, { status });
-  return response.data.data;
+export async function updateDisputeStatus(id: string, status: DisputeStatus) {
+  return apiData<Dispute>(api.patch<ApiEnvelope<Dispute>>(`/disputes/${id}/status`, { status }));
 }
 
-export async function login(email: string, password: string) {
-  const response = await api.post("/auth/login", { email, password });
+export async function login(email: string, password: string): Promise<AuthResponse> {
+  const response = await api.post<AuthResponse>("/auth/login", { email, password });
   return response.data;
 }
 
-export async function register(name: string, email: string, password: string) {
-  const response = await api.post("/auth/register", { name, email, password });
+export async function register(name: string, email: string, password: string): Promise<AuthResponse> {
+  const response = await api.post<AuthResponse>("/auth/register", { name, email, password });
   return response.data;
 }
 
@@ -61,6 +77,5 @@ export type SupportChatMessage = {
 };
 
 export async function sendSupportChatMessage(messages: SupportChatMessage[]) {
-  const response = await api.post("/support/chat", { messages });
-  return response.data.data as { reply: string };
+  return apiData<{ reply: string }>(api.post<ApiEnvelope<{ reply: string }>>("/support/chat", { messages }));
 }

@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import { isPreviewAccessEnabled } from "../config/preview";
-import { login as requestLogin, register as requestRegister, setAccessToken } from "../services/api";
+import { login as requestLogin, register as requestRegister, setAccessToken, type AuthUser } from "../services/api";
 
 const STORAGE_KEY = "finguard_user";
 const TOKEN_KEY = "finguard_token";
-
-type AuthUser = {
-  name: string;
-  role: string;
-  email?: string;
-};
 
 type LoginInput = {
   email: string;
@@ -26,17 +20,35 @@ export type PreviewProfile = {
   email: string;
 };
 
+function readStoredUser() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) return null;
+
+  try {
+    const storedUser = JSON.parse(stored) as AuthUser;
+    if (!storedUser.name || (storedUser.role !== "user" && storedUser.role !== "admin")) {
+      throw new Error("Invalid stored user");
+    }
+
+    return storedUser;
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+    setAccessToken(null);
+    return null;
+  }
+}
+
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
       setAccessToken(token);
     }
-    if (stored) {
-      const storedUser = JSON.parse(stored) as AuthUser;
+    const storedUser = readStoredUser();
+    if (storedUser) {
       setUser(storedUser);
     }
   }, []);
@@ -61,7 +73,7 @@ export function useAuth() {
 
   const register = async ({ name, email, password }: RegisterInput) => {
     const normalizedEmail = email.toLowerCase();
-    const nextUser = { name, role: "customer", email: normalizedEmail };
+    const nextUser: AuthUser = { name, role: "user", email: normalizedEmail };
 
     try {
       const data = await requestRegister(name, normalizedEmail, password);

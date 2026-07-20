@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createFallbackSupportChatReply, createSupportChatReply } from "../ai-agent/openai.service";
 import { SupportChatMessage } from "../../types";
 import { asyncHandler } from "../../lib/async-handler";
+import { logger } from "../../lib/logger";
 import { validateBody } from "../../lib/validation";
 
 const router = Router();
@@ -51,7 +52,7 @@ router.post("/chat", supportRateLimit, validateBody(supportChatSchema), asyncHan
     const reply = await createSupportChatReply(messages);
     return res.json({ data: { reply } });
   } catch (error) {
-    console.error("Support chat failed", error);
+    logger.error("Support chat failed", error);
     return res.json({
       data: {
         reply: createFallbackSupportChatReply(messages),

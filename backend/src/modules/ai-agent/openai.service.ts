@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { config } from "../../config";
+import { logger } from "../../lib/logger";
 import { Transaction, AiAnalysisResponse, SupportChatMessage } from "../../types";
 
 const client = new OpenAI({ apiKey: config.OPENAI_API_KEY });
@@ -207,7 +208,9 @@ Assistant:`;
 
     return response.output_text?.trim() || createFallbackSupportChatReply(messages);
   } catch (error) {
-    console.warn("OpenAI support chat unavailable, using fallback assistant.", error);
+    logger.warn("OpenAI support chat unavailable, using fallback assistant", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return createFallbackSupportChatReply(messages);
   }
 }
