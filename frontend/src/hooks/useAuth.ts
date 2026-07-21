@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { isPreviewAccessEnabled } from "../config/preview";
+import { AUTH_STORAGE_KEY, AUTH_TOKEN_KEY, getStorageItem, removeStorageItem, setStorageItem } from "../config/storage";
 import { login as requestLogin, register as requestRegister, setAccessToken, type AuthUser } from "../services/api";
-
-const STORAGE_KEY = "finguard_user";
-const TOKEN_KEY = "finguard_token";
 
 type LoginInput = {
   email: string;
@@ -21,7 +19,7 @@ export type PreviewProfile = {
 };
 
 function readStoredUser() {
-  const stored = localStorage.getItem(STORAGE_KEY);
+  const stored = getStorageItem(AUTH_STORAGE_KEY);
   if (!stored) return null;
 
   try {
@@ -32,8 +30,8 @@ function readStoredUser() {
 
     return storedUser;
   } catch {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(TOKEN_KEY);
+    removeStorageItem(AUTH_STORAGE_KEY);
+    removeStorageItem(AUTH_TOKEN_KEY);
     setAccessToken(null);
     return null;
   }
@@ -43,7 +41,7 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY);
+    const token = getStorageItem(AUTH_TOKEN_KEY);
     if (token) {
       setAccessToken(token);
     }
@@ -54,9 +52,9 @@ export function useAuth() {
   }, []);
 
   const persistUser = (nextUser: AuthUser, token?: string) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
+    setStorageItem(AUTH_STORAGE_KEY, JSON.stringify(nextUser));
     if (token) {
-      localStorage.setItem(TOKEN_KEY, token);
+      setStorageItem(AUTH_TOKEN_KEY, token);
       setAccessToken(token);
     }
     setUser(nextUser);
@@ -97,8 +95,8 @@ export function useAuth() {
   };
 
   const logout = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(TOKEN_KEY);
+    removeStorageItem(AUTH_STORAGE_KEY);
+    removeStorageItem(AUTH_TOKEN_KEY);
     setAccessToken(null);
     setUser(null);
   };

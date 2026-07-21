@@ -5,6 +5,12 @@ import boyWithCardImage from "../images/2_boy_with_card.webp";
 import girlWithCardImage from "../images/1_girl_with_card.webp";
 import safetyImage from "../images/safety.webp";
 import { isPreviewAccessEnabled } from "./config/preview";
+import {
+  COOKIE_CONSENT_STORAGE_KEY,
+  LANGUAGE_STORAGE_KEY,
+  getStorageItem,
+  setStorageItem,
+} from "./config/storage";
 import { previewProfiles } from "./data/previewProfiles";
 import { useAuth } from "./hooks/useAuth";
 import { useSocket } from "./hooks/useSocket";
@@ -120,9 +126,6 @@ const initialDisputeForm = {
   transactionId: "",
   reason: "",
 };
-
-const LANGUAGE_KEY = "finguard_language";
-const COOKIE_KEY = "finguard_cookie_consent";
 
 const languageLabels: Record<Language, string> = {
   en: "EN",
@@ -988,7 +991,7 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isCookieVisible, setIsCookieVisible] = useState(() => localStorage.getItem(COOKIE_KEY) !== "accepted");
+  const [isCookieVisible, setIsCookieVisible] = useState(() => getStorageItem(COOKIE_CONSENT_STORAGE_KEY) !== "accepted");
   const [chatMessages, setChatMessages] = useState<SupportChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
@@ -996,7 +999,7 @@ function App() {
   const [disputeForm, setDisputeForm] = useState(initialDisputeForm);
   const [disputeError, setDisputeError] = useState("");
   const [language, setLanguage] = useState<Language>(() => {
-    const stored = localStorage.getItem(LANGUAGE_KEY);
+    const stored = getStorageItem(LANGUAGE_STORAGE_KEY);
     return stored === "uk" || stored === "en" || stored === "ru" || stored === "es" || stored === "it" ? stored : "en";
   });
   const [toast, setToast] = useState<{ title: string; message: string; tone: ToastTone } | null>(null);
@@ -1017,7 +1020,7 @@ function App() {
   };
 
   useEffect(() => {
-    localStorage.setItem(LANGUAGE_KEY, language);
+    setStorageItem(LANGUAGE_STORAGE_KEY, language);
     document.documentElement.lang = user ? "en" : language === "uk" ? "uk" : "en";
   }, [language, user]);
 
@@ -1318,7 +1321,7 @@ function App() {
   };
 
   const acceptCookies = () => {
-    localStorage.setItem(COOKIE_KEY, "accepted");
+    setStorageItem(COOKIE_CONSENT_STORAGE_KEY, "accepted");
     setIsCookieVisible(false);
   };
 

@@ -64,3 +64,18 @@ test("backend console output is centralized through the logger", async () => {
 
   assert.match(loggerSource, /console\.(error|warn|info)/);
 });
+
+test("browser storage keys are centralized and guarded", async () => {
+  const appSource = await read("frontend/src/App.tsx");
+  const authSource = await read("frontend/src/hooks/useAuth.ts");
+  const socketSource = await read("frontend/src/hooks/useSocket.ts");
+  const storageSource = await read("frontend/src/config/storage.ts");
+
+  for (const source of [appSource, authSource, socketSource]) {
+    assert.equal(source.includes("localStorage."), false);
+    assert.equal(source.includes('"finguard_token"'), false);
+  }
+
+  assert.match(storageSource, /AUTH_TOKEN_KEY/);
+  assert.match(storageSource, /try \{/);
+});

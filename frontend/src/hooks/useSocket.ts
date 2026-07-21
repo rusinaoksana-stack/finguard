@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-
-const TOKEN_KEY = "finguard_token";
+import { AUTH_TOKEN_KEY, getStorageItem } from "../config/storage";
 
 export function useSocket(enabled: boolean) {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -12,7 +11,7 @@ export function useSocket(enabled: boolean) {
       return;
     }
 
-    const token = localStorage.getItem(TOKEN_KEY);
+    const token = getStorageItem(AUTH_TOKEN_KEY);
     if (!token) {
       setSocket(null);
       return;

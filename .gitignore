@@ -3,7 +3,17 @@ dist
 build
 .env
 .DS_Store
+Icon?
+*.swp
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 coverage
+
+# Keep optimized production images tracked; ignore stray source/export variants.
+frontend/images/76112d9773d0fd07184827a9ee3ea508.jpg
+frontend/images/bank_3.png
+frontend/images/bank_out.png
+frontend/images/logo.png
+frontend/images/persent.png
+frontend/images/snapedit_1779843350490.png

@@ -37,6 +37,7 @@ It brings suspicious transactions, dispute cases, customer context, evidence sum
 ```bash
 npm run typecheck
 npm run lint
+npm run test
 npm run build
 npm audit --omit=dev
 ```
@@ -52,6 +53,7 @@ npm run optimize:images
 ## Product Notes
 
 - Keep production secrets out of git and set a strong `JWT_SECRET`.
+- Enable `VITE_ENABLE_PREVIEW_ACCESS=true` only for guided product walkthrough environments.
 - Run Prisma migrations before starting a fresh database.
 - The backend includes routes for auth, accounts, transactions, disputes, support, and AI-assisted review.
 - The frontend includes public positioning, role-aware workspaces, transaction review, dispute evidence export, and support chat.
