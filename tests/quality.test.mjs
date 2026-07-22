@@ -30,6 +30,18 @@ test("preview workspace data stays outside the main app shell", async () => {
   assert.match(previewSource, /createPreviewWorkspaceData/);
 });
 
+test("localized page content stays outside the main app shell", async () => {
+  const appSource = await read("frontend/src/App.tsx");
+  const contentSource = await read("frontend/src/content/appContent.ts");
+
+  assert.equal(appSource.includes("const benefits = ["), false);
+  assert.equal(appSource.includes("const quickLinks = ["), false);
+  assert.equal(appSource.includes("export const content ="), false);
+  assert.equal(appSource.includes("export const localizedContent"), false);
+  assert.match(contentSource, /export const content =/);
+  assert.match(contentSource, /export const localizedContent/);
+});
+
 test("support fallback keeps the current B2B risk-review positioning", async () => {
   const backendSupport = await read("backend/src/modules/ai-agent/openai.service.ts");
   const frontendSupport = await read("frontend/src/support/localSupport.ts");
