@@ -4,7 +4,7 @@
   "private": true,
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "db:generate": "prisma generate",
@@ -12,7 +12,7 @@
     "db:seed": "prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node-dev --transpile-only --exit-child prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
@@ -35,7 +35,7 @@
     "@types/jsonwebtoken": "^9.0.3",
     "@types/node": "^20.14.2",
     "prisma": "^6.8.2",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.23.1",
     "typescript": "^5.5.4"
   }
 }

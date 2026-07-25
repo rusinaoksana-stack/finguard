@@ -91,3 +91,46 @@ test("browser storage keys are centralized and guarded", async () => {
   assert.match(storageSource, /AUTH_TOKEN_KEY/);
   assert.match(storageSource, /try \{/);
 });
+
+test("interactive overlays and authentication remain accessible", async () => {
+  const appSource = await read("frontend/src/App.tsx");
+
+  assert.match(appSource, /aria-labelledby="settings-dialog-title"/);
+  assert.match(appSource, /id="settings-dialog-title"/);
+  assert.match(appSource, /aria-labelledby="auth-dialog-title"/);
+  assert.match(appSource, /id="auth-dialog-title"/);
+  assert.match(appSource, /autoComplete="name"/);
+  assert.match(appSource, /autoComplete="email"/);
+  assert.match(appSource, /autoComplete=\{authMode === "login" \? "current-password" : "new-password"\}/);
+  assert.match(appSource, /autoComplete="new-password"/);
+  assert.match(appSource, /aria-label=\{c\.chat\.placeholder\}/);
+});
+
+test("client-only fallbacks are robust and cleanup browser resources", async () => {
+  const appSource = await read("frontend/src/App.tsx");
+  const idSource = await read("frontend/src/utils/ids.ts");
+
+  assert.match(appSource, /createClientId\("disp"\)/);
+  assert.equal(appSource.includes("crypto.randomUUID()"), false);
+  assert.match(idSource, /crypto\.randomUUID/);
+  assert.match(idSource, /Math\.random/);
+  assert.match(appSource, /URL\.createObjectURL/);
+  assert.match(appSource, /URL\.revokeObjectURL\(url\)/);
+});
+
+test("root quality script runs the full release gate", async () => {
+  const packageSource = await read("package.json");
+  const packageJson = JSON.parse(packageSource);
+
+  assert.equal(
+    packageJson.scripts.quality,
+    "npm run test && npm run lint && npm run typecheck && npm run build && npm audit --omit=dev",
+  );
+});
+
+test("frontend dependencies do not include unused router runtime", async () => {
+  const frontendPackageSource = await read("frontend/package.json");
+  const frontendPackageJson = JSON.parse(frontendPackageSource);
+
+  assert.equal(frontendPackageJson.dependencies["react-router-dom"], undefined);
+});

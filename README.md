@@ -35,6 +35,12 @@ It brings suspicious transactions, dispute cases, customer context, evidence sum
 ## Quality checks
 
 ```bash
+npm run quality
+```
+
+Or run the checks individually:
+
+```bash
 npm run typecheck
 npm run lint
 npm run test

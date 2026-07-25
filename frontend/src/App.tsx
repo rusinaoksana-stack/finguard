@@ -28,6 +28,7 @@ import {
 import { createLocalSupportReply } from "./support/localSupport";
 import type { AuditorCustomer, AuditorDispute, BankAccount, Dispute, DisputeStatus, Transaction, TransactionStatus } from "./types/domain";
 import { formatCurrency, formatDisplayEmail, formatTime } from "./utils/formatters";
+import { createClientId } from "./utils/ids";
 
 type AuthMode = "login" | "register";
 type TransactionFilter = "all" | TransactionStatus;
@@ -366,7 +367,7 @@ function App() {
       showToast(c.disputes.created, newDispute.reason);
     } catch {
       const fallbackDispute: Dispute = {
-        id: `disp_${crypto.randomUUID()}`,
+        id: createClientId("disp"),
         transactionId: disputeForm.transactionId,
         accountNumber: transaction?.accountNumber,
         reason: disputeForm.reason.trim(),
@@ -1464,9 +1465,11 @@ function App() {
 
           <form className="support-chat-form" onSubmit={submitChatMessage}>
             <input
+              aria-label={c.chat.placeholder}
               className="support-chat-input"
               onChange={(event) => setChatInput(event.target.value)}
               placeholder={c.chat.placeholder}
+              type="text"
               value={chatInput}
             />
             <button className="support-chat-send" disabled={!chatInput.trim() || isChatLoading} type="submit">
@@ -1567,12 +1570,17 @@ function App() {
       ) : null}
 
       {isSettingsOpen && user ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
+        <div
+          aria-labelledby="settings-dialog-title"
+          className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6"
+          role="dialog"
+          aria-modal="true"
+        >
           <section className="w-full max-w-lg rounded border border-[#C0C7D1] bg-white p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-kicker">{c.profile.settings}</p>
-                <h2 className="mt-2 text-2xl font-black">{c.profile.profileSecurity}</h2>
+                <h2 className="mt-2 text-2xl font-black" id="settings-dialog-title">{c.profile.profileSecurity}</h2>
               </div>
               <button
                 aria-label="Close settings"
@@ -1653,12 +1661,17 @@ function App() {
       ) : null}
 
       {isAuthOpen ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6" role="dialog" aria-modal="true">
+        <div
+          aria-labelledby="auth-dialog-title"
+          className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 py-6"
+          role="dialog"
+          aria-modal="true"
+        >
           <section className="w-full max-w-md rounded border border-[#C0C7D1] bg-white p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="section-kicker">{authMode === "login" ? c.auth.secureAccess : c.auth.newAccount}</p>
-                <h2 className="mt-2 text-2xl font-black text-[#111827]">
+                <h2 className="mt-2 text-2xl font-black text-[#111827]" id="auth-dialog-title">
                   {authMode === "login" ? c.auth.loginTitle : c.auth.registerTitle}
                 </h2>
               </div>
@@ -1740,6 +1753,7 @@ function App() {
                 <label className="block">
                   <span className="text-sm font-bold text-[#4B5563]">{c.auth.fullName}</span>
                   <input
+                    autoComplete="name"
                     className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                     onChange={(event) => updateAuthField("name", event.target.value)}
                     placeholder="Emma Murphy"
@@ -1752,6 +1766,7 @@ function App() {
               <label className="block">
                 <span className="text-sm font-bold text-[#4B5563]">{c.auth.email}</span>
                 <input
+                  autoComplete="email"
                   className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                   onChange={(event) => updateAuthField("email", event.target.value)}
                   placeholder="you@example.com"
@@ -1763,6 +1778,7 @@ function App() {
               <label className="block">
                 <span className="text-sm font-bold text-[#4B5563]">{c.auth.password}</span>
                 <input
+                  autoComplete={authMode === "login" ? "current-password" : "new-password"}
                   className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                   onChange={(event) => updateAuthField("password", event.target.value)}
                   placeholder={c.auth.minPassword}
@@ -1775,6 +1791,7 @@ function App() {
                 <label className="block">
                   <span className="text-sm font-bold text-[#4B5563]">{c.auth.confirmPassword}</span>
                   <input
+                    autoComplete="new-password"
                     className="mt-2 min-h-12 w-full rounded border border-[#C0C7D1] px-4 text-base outline-none transition focus:border-[#4B5563] focus:ring-4 focus:ring-[#C0C7D1]"
                     onChange={(event) => updateAuthField("confirmPassword", event.target.value)}
                     placeholder={c.auth.repeatPassword}
