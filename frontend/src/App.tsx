@@ -104,6 +104,11 @@ function App() {
   });
   const c = user ? content.en : localizedContent[language];
   const isAuditor = user?.role === "admin";
+  const featureTitleSplit = c.featuresSection.title.split(", and ");
+  const featureTitleLines =
+    featureTitleSplit.length === 2
+      ? [`${featureTitleSplit[0]},`, `and ${featureTitleSplit[1]}`]
+      : [c.featuresSection.title];
 
   const showToast = (title: string, message: string, tone: ToastTone = "success") => {
     setToast({ title, message, tone });
@@ -1093,20 +1098,27 @@ function App() {
                     </article>
                   ))}
                 </div>
+                <button className="air-inline-card" onClick={() => openAuth("register")} type="button">
+                  {c.hero.startDemo}
+                  <span aria-hidden="true">⌖</span>
+                </button>
               </div>
               <div className="air-glass-image">
                 <img alt="Secure banking operations building exterior" src={bankImage} />
               </div>
             </div>
-            <button className="air-inline-card" onClick={() => openAuth("register")} type="button">
-              {c.hero.startDemo}
-              <span aria-hidden="true">⌖</span>
-            </button>
           </section>
 
           <section className="air-white-feature" id="features">
-            <div className="air-word-row">
-              <span>{c.featuresSection.title}</span>
+            <div className="air-word-row air-feature-title">
+              {featureTitleLines.map((line, index) => (
+                <span
+                  className={`air-feature-title-line ${index === 1 ? "air-feature-title-line-offset" : ""}`}
+                  key={line}
+                >
+                  {line}
+                </span>
+              ))}
             </div>
             <p className="air-center-copy">
               {c.featuresSection.text}

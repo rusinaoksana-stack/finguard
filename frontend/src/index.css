@@ -198,8 +198,28 @@ body {
     text-wrap: balance;
   }
 
+  .air-photo-section .air-word-row {
+    @apply justify-center text-center;
+  }
+
   .air-white-feature .air-word-row {
     padding-top: clamp(5.75rem, 9vh, 7rem);
+  }
+
+  .air-feature-title {
+    @apply flex-col gap-0;
+  }
+
+  .air-feature-title .air-feature-title-line {
+    width: max-content;
+    max-width: calc(100vw - 3.5rem);
+    white-space: nowrap;
+    overflow-wrap: normal;
+    text-wrap: nowrap;
+  }
+
+  .air-feature-title-line-offset {
+    margin-left: clamp(24rem, 37vw, 48rem);
   }
 
   .air-center-copy {
@@ -221,31 +241,23 @@ body {
       linear-gradient(#111827, #111827) right 1.75rem center / min(29vw, 36rem) 2px no-repeat;
   }
 
-  .air-photo-section .air-center-copy::before,
-  .air-photo-section .air-center-copy::after {
-    @apply pointer-events-none absolute left-1/2 h-[3px];
+  .air-photo-section .air-center-copy::before {
+    @apply pointer-events-none absolute left-1/2 h-[2px];
     content: "";
+    top: calc(-1 * clamp(6.5rem, 11vh, 9.5rem));
     width: 100vw;
     transform: translateX(-50%);
     background:
-      linear-gradient(#111827, #111827) left 2.35rem center / min(29vw, 36rem) 3px no-repeat,
-      linear-gradient(#111827, #111827) right 1.75rem center / min(29vw, 36rem) 3px no-repeat;
-  }
-
-  .air-photo-section .air-center-copy::before {
-    top: calc(-1 * clamp(8.5rem, 15vh, 12.5rem));
-  }
-
-  .air-photo-section .air-center-copy::after {
-    bottom: calc(-1 * clamp(8.5rem, 15vh, 12.5rem));
+      linear-gradient(#111827, #111827) left 2.35rem center / min(29vw, 36rem) 2px no-repeat,
+      linear-gradient(#111827, #111827) right 1.75rem center / min(29vw, 36rem) 2px no-repeat;
   }
 
   .air-split {
-    @apply mt-72 grid min-h-[48rem] grid-cols-1 gap-8 px-7 lg:grid-cols-[1fr_1.05fr];
+    @apply mt-28 grid min-h-[66rem] grid-cols-1 gap-8 px-7 lg:grid-cols-[1fr_1.05fr];
   }
 
   .air-split-copy {
-    @apply flex min-h-[42rem] flex-col;
+    @apply flex min-h-[66rem] flex-col;
   }
 
   .air-split h2 {
@@ -253,15 +265,15 @@ body {
   }
 
   .air-split-copy > p {
-    @apply mt-40 text-xl font-semibold uppercase leading-tight text-[#8f8f8f];
+    @apply mt-20 max-w-[58rem] text-xl font-semibold uppercase leading-tight text-[#8f8f8f];
   }
 
   .air-proof-list {
-    @apply mt-14 grid gap-0 border-y border-black text-black;
+    @apply mt-14 grid flex-1 gap-0 border-y-2 border-black text-black;
   }
 
   .air-proof-list article {
-    @apply grid gap-4 border-b border-black py-5 last:border-b-0 md:grid-cols-[0.42fr_0.58fr];
+    @apply grid min-h-[13.75rem] gap-4 border-b-2 border-black py-8 last:border-b-0 md:grid-cols-[0.42fr_0.58fr];
   }
 
   .air-proof-list h3 {
@@ -269,7 +281,8 @@ body {
   }
 
   .air-proof-list p {
-    @apply m-0 text-sm font-semibold uppercase leading-snug text-[#8f8f8f];
+    @apply m-0 max-w-[28rem] text-sm font-semibold uppercase leading-snug text-[#8f8f8f];
+    margin-top: clamp(4rem, 5vw, 5.25rem);
   }
 
   .air-proof-list h3,
@@ -284,11 +297,11 @@ body {
   }
 
   .air-glass-image {
-    @apply min-h-[42rem] bg-[#b8cfea];
+    @apply min-h-[66rem] bg-[#b8cfea];
   }
 
   .air-glass-image img {
-    @apply h-full min-h-[42rem] w-full object-cover object-center;
+    @apply h-full min-h-[66rem] w-full object-cover object-center;
   }
 
   .air-glass-image .air-architecture-scene,
@@ -300,7 +313,8 @@ body {
   }
 
   .air-inline-card {
-    @apply absolute bottom-8 left-[7vw] z-10 flex h-[4.75rem] w-[19rem] items-center justify-between rounded-md bg-[#ececec] px-4 text-sm font-medium uppercase text-black hover:bg-black hover:text-white;
+    @apply mt-8 flex h-[4.75rem] w-[19rem] items-center justify-between rounded-md bg-[#ececec] px-4 text-sm font-medium uppercase text-black hover:bg-black hover:text-white;
+    margin-left: clamp(4rem, 7vw, 8.5rem);
   }
 
   .air-wide-image {
@@ -508,6 +522,18 @@ body {
       padding-top: 1.5rem;
     }
 
+    .air-feature-title .air-feature-title-line {
+      width: 100%;
+      max-width: 100%;
+      white-space: normal;
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+    }
+
+    .air-feature-title-line-offset {
+      margin-left: 0;
+    }
+
     .air-word-row span {
       max-width: 100%;
       text-align: left;
@@ -547,7 +573,11 @@ body {
     }
 
     .air-proof-list article {
-      @apply grid-cols-1 py-4;
+      @apply min-h-0 grid-cols-1 py-5;
+    }
+
+    .air-proof-list p {
+      margin-top: 0;
     }
 
     .air-glass-image {
@@ -560,7 +590,8 @@ body {
     }
 
     .air-inline-card {
-      @apply static mx-4 mt-4 h-14;
+      @apply mx-0 mt-5 h-14;
+      margin-left: 0;
       width: calc(100% - 2rem);
     }
 
